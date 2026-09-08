@@ -5,6 +5,9 @@
   "engines": {
     "node": ">=18"
   },
+  "scripts": {
+    "build": "cd client && npm install && npm run build"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.40.0",
     "bcryptjs": "^2.4.3",
