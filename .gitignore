@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+client/dist/
+client/build/
+client/.vite/
+
+# Environment variables / secrets
+.env
+.env.local
+.env.production
+*.env
+
+# Runtime data (JSON-file database) and uploaded documents
+server/data/*.json
+server/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local dev/run artifacts
+*_out.txt
+*_err.txt
+pid.txt
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

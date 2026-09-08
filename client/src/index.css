@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Emerald green primary */
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 50% 96%;
+    --secondary-foreground: 160 60% 25%;
+
+    --muted: 160 30% 96%;
+    --muted-foreground: 215 20% 50%;
+
+    --accent: 160 60% 95%;
+    --accent-foreground: 160 70% 25%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 160 30% 90%;
+    --input: 160 30% 85%;
+    --ring: 160 84% 39%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 222 40% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 222 40% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 160 70% 45%;
+    --primary-foreground: 222 47% 10%;
+
+    --secondary: 222 35% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 222 35% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 160 40% 20%;
+    --accent-foreground: 160 60% 80%;
+
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 35% 22%;
+    --input: 222 35% 25%;
+    --ring: 160 70% 45%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .gradient-bg {
+    @apply min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent;
+  }
+  .gradient-btn {
+    @apply bg-gradient-to-r from-emerald-600 to-teal-500 text-white hover:from-emerald-700 hover:to-teal-600 transition-colors;
+  }
+  .gradient-card {
+    @apply bg-gradient-to-br from-white to-emerald-50 border border-emerald-100;
+  }
+}
