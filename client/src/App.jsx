@@ -14,6 +14,7 @@ import AdminPrograms from './pages/AdminPrograms';
 import AdminCategories from './pages/AdminCategories';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import ErrorBoundary from './components/ErrorBoundary';
 import { GraduationCap, Menu } from 'lucide-react';
 
 function FullPageLoader() {
