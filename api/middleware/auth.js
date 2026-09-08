@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+
 const JWT_SECRET = process.env.JWT_SECRET || 'research-system-secret-key-2026';
 
 function authenticateToken(req, res, next) {
