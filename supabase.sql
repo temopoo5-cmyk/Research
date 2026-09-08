@@ -64,18 +64,20 @@ CREATE INDEX IF NOT EXISTS idx_users_role         ON users (role);
 -- ============================================================
 
 -- Default admin account: admin / admin123 (bcrypt hash matches existing seed)
-INSERT INTO users (id, username, password, full_name, role, created_at)
+INSERT INTO users (id, username, password, full_name, role, created_at) OVERRIDING SYSTEM VALUE
 VALUES (1, 'admin', '$2a$10$dDYTMkTJV82aMnS98qKZ3.EPcKTkMkFyjiILbJGSGzYgvMbEF9eKS', 'System Administrator', 'admin', now())
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO programs (id, name, code, created_at) VALUES
+INSERT INTO programs (id, name, code, created_at) OVERRIDING SYSTEM VALUE
+VALUES
   (1, 'Computer Science', 'CS', now()),
   (2, 'Information Technology', 'IT', now()),
   (3, 'Information Systems', 'IS', now()),
   (4, 'Computer Engineering', 'CPE', now())
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO categories (id, name, created_at) VALUES
+INSERT INTO categories (id, name, created_at) OVERRIDING SYSTEM VALUE
+VALUES
   (1, 'Artificial Intelligence', now()),
   (2, 'Web Development', now()),
   (3, 'Data Science', now()),
