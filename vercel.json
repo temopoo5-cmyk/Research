@@ -3,6 +3,6 @@
   "outputDirectory": "client/dist",
   "installCommand": "cd client && npm install",
   "rewrites": [
-    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|api/|uploads/).*)", "destination": "/index.html" }
   ]
 }
