@@ -21,7 +21,7 @@ export default function AdminUsers() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ username: '', password: '', full_name: '', role: 'user' });
 
-  const fetchUsers = () => axios.get(`${API}/users/`).then(r => setUsers(r.data));
+  const fetchUsers = () => axios.get(`${API}/users/`).then(r => { if (Array.isArray(r.data)) setUsers(r.data); }).catch(() => {});
   useEffect(() => { fetchUsers(); }, []);
 
   const openNew = () => { setEditing(null); setForm({ username: '', password: '', full_name: '', role: 'user' }); setShowModal(true); };

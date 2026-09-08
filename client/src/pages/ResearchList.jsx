@@ -28,16 +28,16 @@ export default function ResearchList() {
     const params = { ...filters, page, limit: 12 };
     Object.keys(params).forEach(k => { if (!params[k]) delete params[k]; });
     axios.get(`${API}/research/`, { params }).then(r => {
-      setResearch(r.data.data);
-      setTotalPages(r.data.pages);
+      setResearch(Array.isArray(r.data?.data) ? r.data.data : []);
+      setTotalPages(Number.isFinite(r.data?.pages) ? r.data.pages : 1);
       setLoading(false);
-    });
+    }).catch(() => { setResearch([]); setTotalPages(1); setLoading(false); });
   };
 
   useEffect(() => {
-    axios.get(`${API}/programs/`).then(r => setPrograms(r.data));
-    axios.get(`${API}/categories/`).then(r => setCategories(r.data));
-    axios.get(`${API}/stats/`).then(r => setStats(r.data)).catch(() => {});
+    axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
+    axios.get(`${API}/categories/`).then(r => { if (Array.isArray(r.data)) setCategories(r.data); }).catch(() => {});
+    axios.get(`${API}/stats/`).then(r => { if (r.data && typeof r.data === 'object' && !Array.isArray(r.data)) setStats(r.data); }).catch(() => {});
   }, []);
 
   useEffect(() => { fetchData(); }, [page]);

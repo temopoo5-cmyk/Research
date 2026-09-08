@@ -25,8 +25,8 @@ export default function SubmitResearch() {
   const isEdit = !!id;
 
   useEffect(() => {
-    axios.get(`${API}/programs/`).then(r => setPrograms(r.data));
-    axios.get(`${API}/categories/`).then(r => setCategories(r.data));
+    axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
+    axios.get(`${API}/categories/`).then(r => { if (Array.isArray(r.data)) setCategories(r.data); }).catch(() => {});
     if (isEdit) {
       axios.get(`${API}/research/${id}`).then(r => {
         const d = r.data;

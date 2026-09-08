@@ -17,7 +17,7 @@ export default function AdminPrograms() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: '', code: '' });
 
-  const fetchData = () => axios.get(`${API}/programs/`).then(r => setPrograms(r.data));
+  const fetchData = () => axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
   useEffect(() => { fetchData(); }, []);
 
   const openNew = () => { setEditing(null); setForm({ name: '', code: '' }); setShowModal(true); };

@@ -21,7 +21,7 @@ export default function AdminResearch() {
     const params = {};
     if (filter !== 'all') params.status = filter;
     if (search) params.search = search;
-    axios.get(`${API}/research/all`, { params }).then(r => setResearch(r.data));
+    axios.get(`${API}/research/all`, { params }).then(r => { if (Array.isArray(r.data)) setResearch(r.data); }).catch(() => {});
   };
 
   useEffect(() => { fetchData(); }, [filter]);

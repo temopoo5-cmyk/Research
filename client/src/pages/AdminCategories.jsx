@@ -17,7 +17,7 @@ export default function AdminCategories() {
   const [editing, setEditing] = useState(null);
   const [name, setName] = useState('');
 
-  const fetchData = () => axios.get(`${API}/categories/`).then(r => setCategories(r.data));
+  const fetchData = () => axios.get(`${API}/categories/`).then(r => { if (Array.isArray(r.data)) setCategories(r.data); }).catch(() => {});
   useEffect(() => { fetchData(); }, []);
 
   const openNew = () => { setEditing(null); setName(''); setShowModal(true); };

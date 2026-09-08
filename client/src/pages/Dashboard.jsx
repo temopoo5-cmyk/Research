@@ -19,8 +19,8 @@ export default function Dashboard() {
   const [recent, setRecent] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API}/stats/`).then(r => setStats(r.data));
-    axios.get(`${API}/research/?limit=5`).then(r => setRecent(r.data.data));
+    axios.get(`${API}/stats/`).then(r => { if (r.data && typeof r.data === 'object' && !Array.isArray(r.data)) setStats(r.data); }).catch(() => {});
+    axios.get(`${API}/research/?limit=5`).then(r => { if (Array.isArray(r.data?.data)) setRecent(r.data.data); }).catch(() => {});
   }, []);
 
   if (!stats) return <div className="flex items-center justify-center h-64"><div className="text-lg font-semibold gradient-text">Loading...</div></div>;
