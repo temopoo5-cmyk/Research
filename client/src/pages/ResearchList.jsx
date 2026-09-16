@@ -10,25 +10,18 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight, GraduationCap, Cpu, Quote } from 'lucide-react';
+import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight, Quote } from 'lucide-react';
 import FloatingBooks from '../components/FloatingBooks';
-
-const typeMeta = {
-  'Research Paper': { icon: FileText, bar: 'bg-orange-500', chip: 'bg-orange-50 text-orange-600 border-orange-100' },
-  'Thesis': { icon: GraduationCap, bar: 'bg-blue-600', chip: 'bg-blue-50 text-blue-600 border-blue-100' },
-  'Capstone Project': { icon: Cpu, bar: 'bg-violet-600', chip: 'bg-violet-50 text-violet-600 border-violet-100' },
-};
 
 export default function ResearchList() {
   const navigate = useNavigate();
   const [research, setResearch] = useState([]);
   const [programs, setPrograms] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [stats, setStats] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({ search: '', code: '', program: '', year: '', category: '', type: '' });
+  const [filters, setFilters] = useState({ search: '', program: '', year: '' });
 
   const fetchData = () => {
     setLoading(true);
@@ -43,7 +36,6 @@ export default function ResearchList() {
 
   useEffect(() => {
     axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
-    axios.get(`${API}/categories/`).then(r => { if (Array.isArray(r.data)) setCategories(r.data); }).catch(() => {});
     axios.get(`${API}/stats/`).then(r => { if (r.data && typeof r.data === 'object' && !Array.isArray(r.data)) setStats(r.data); }).catch(() => {});
   }, []);
 
@@ -62,10 +54,10 @@ export default function ResearchList() {
               <Sparkles className="h-3.5 w-3.5" /> Central research repository
             </div>
             <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-4">
-              <span className="gradient-text">Browse research</span> papers, theses &amp; capstones
+              <span className="gradient-text">Browse research</span> works
             </h1>
             <p className="text-[#EAFBF1]/70 text-lg mb-8 max-w-2xl">
-              Search the repository by code, title, author, program, year, category, or keywords.
+              Search the repository by code, title, author, program, year, or keywords.
             </p>
             {stats && (
               <div className="flex flex-wrap gap-3">
@@ -99,12 +91,8 @@ export default function ResearchList() {
                   <Label className="text-xs text-muted-foreground">Search</Label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Title, author, keywords..." value={filters.search} onChange={e => setFilters({...filters, search: e.target.value})} className="pl-9 border-[#23CE6B]/30 ring-[#23CE6B]" />
+                    <Input placeholder="Title, author, code, keywords..." value={filters.search} onChange={e => setFilters({...filters, search: e.target.value})} className="pl-9 border-[#23CE6B]/30 ring-[#23CE6B]" />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Code</Label>
-                  <Input placeholder="e.g. TH-2026-0001" value={filters.code} onChange={e => setFilters({...filters, code: e.target.value})} className="border-[#23CE6B]/30 ring-[#23CE6B]" />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs text-muted-foreground">Program</Label>
@@ -123,28 +111,6 @@ export default function ResearchList() {
                     <SelectContent>
                       <SelectItem value="all">All Years</SelectItem>
                       {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Category</Label>
-                  <Select value={filters.category || 'all'} onValueChange={v => setFilters({...filters, category: v === 'all' ? '' : v})}>
-                    <SelectTrigger className="border-[#23CE6B]/30 ring-[#23CE6B]"><SelectValue placeholder="All Categories" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {categories.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Type</Label>
-                  <Select value={filters.type || 'all'} onValueChange={v => setFilters({...filters, type: v === 'all' ? '' : v})}>
-                    <SelectTrigger className="border-[#23CE6B]/30 ring-[#23CE6B]"><SelectValue placeholder="All Types" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="Research Paper">Research Paper</SelectItem>
-                      <SelectItem value="Thesis">Thesis</SelectItem>
-                      <SelectItem value="Capstone Project">Capstone Project</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -179,19 +145,13 @@ export default function ResearchList() {
       ) : (
         <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {research.map(r => {
-                const meta = typeMeta[r.research_type] || { icon: FileText, bar: 'bg-[#23CE6B]', chip: 'bg-[#23CE6B]/10 text-[#23CE6B] border-[#23CE6B]/20' };
-                const Icon = meta.icon;
-                return (
+{research.map(r => (
                   <Card key={r.id} className="border-[#23CE6B]/20 transition-all hover:shadow-xl hover:shadow-[#23CE6B]/10 hover:-translate-y-1 cursor-pointer overflow-hidden group bg-[#0F3A26]"
                   onClick={() => navigate(`/research/${r.id}`)}>
-                  <div className={`h-1.5 ${meta.bar}`} />
+                  <div className="h-1.5 bg-[#23CE6B]" />
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-xs font-bold text-white tracking-wide bg-[#23CE6B]/30 px-2.5 py-1 rounded-md">{r.code}</span>
-                      <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${meta.chip}`}>
-                        <Icon className="h-3 w-3" />{r.research_type}
-                      </span>
                     </div>
                       <h3 className="font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-white transition-colors">{r.title}</h3>
                       <p className="text-sm text-[#EAFBF1]/60 flex items-center gap-1.5 mb-2.5"><Users className="h-3.5 w-3.5 text-[#23CE6B]" />{r.authors}</p>
@@ -204,13 +164,11 @@ export default function ResearchList() {
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-[#23CE6B]/35">
                       {r.program_name && <span>{r.program_name}</span>}
                         <span>{r.year}</span>
-                        {r.category_name && <span className="text-[#23CE6B]">{r.category_name}</span>}
                     </div>
                     {r.adviser && <p className="text-xs text-muted-foreground mt-2">Adviser: {r.adviser}</p>}
                   </CardContent>
                 </Card>
-              );
-            })}
+            ))}
           </div>
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-4">

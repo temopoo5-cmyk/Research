@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
-import { LayoutDashboard, Upload, Users, FolderTree, Tags, BookMarked, LogOut, GraduationCap, X } from 'lucide-react';
+import { LayoutDashboard, Upload, Users, FolderTree, BookMarked, LogOut, GraduationCap, X } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -14,7 +14,6 @@ const adminItems = [
   { to: '/admin/research', label: 'Manage Research', icon: BookMarked },
   { to: '/admin/users', label: 'Manage Users', icon: Users },
   { to: '/admin/programs', label: 'Manage Programs', icon: FolderTree },
-  { to: '/admin/categories', label: 'Manage Categories', icon: Tags },
 ];
 
 export default function Sidebar({ open = false, onClose = () => {} }) {

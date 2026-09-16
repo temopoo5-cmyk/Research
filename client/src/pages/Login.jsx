@@ -41,10 +41,10 @@ export default function Login() {
             <span className="gradient-text">ResearchHub</span>
           </h1>
           <p className="text-[#EAFBF1] text-lg mb-8 max-w-md">
-            Centralized repository for research papers, theses, and capstone projects.
+            Centralized repository for the campus research works.
           </p>
           <div className="space-y-4">
-            {[['BookOpen', 'Research Repository', 'Organize papers, theses & capstones'], ['FolderOpen', 'Unique Cataloging', 'Auto-assigned codes for every work'], ['Search', 'Smart Search', 'Filter by program, year, category, keywords']].map(([icon, title, desc]) => {
+            {[['BookOpen', 'Research Repository', 'Browse the campus research collection'], ['FolderOpen', 'Unique Cataloging', 'Auto-assigned RS codes for every work'], ['Search', 'Smart Search', 'Filter by program, year, or keywords']].map(([icon, title, desc]) => {
               const Icon = icon === 'BookOpen' ? BookOpen : icon === 'FolderOpen' ? FolderOpen : Search;
               return (
                 <div key={title} className="flex items-start gap-4 p-4 rounded-xl bg-[#0F3A26]/70 backdrop-blur border border-[#23CE6B]/20 shadow-sm">

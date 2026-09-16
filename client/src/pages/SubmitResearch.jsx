@@ -17,8 +17,7 @@ export default function SubmitResearch() {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const [programs, setPrograms] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [form, setForm] = useState({ title: '', authors: '', adviser: '', program_id: '', year: new Date().getFullYear(), category_id: '', research_type: 'Thesis', abstract: '', keywords: '' });
+  const [form, setForm] = useState({ title: '', authors: '', adviser: '', program_id: '', year: new Date().getFullYear(), abstract: '', keywords: '' });
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -26,11 +25,10 @@ export default function SubmitResearch() {
 
   useEffect(() => {
     axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
-    axios.get(`${API}/categories/`).then(r => { if (Array.isArray(r.data)) setCategories(r.data); }).catch(() => {});
     if (isEdit) {
       axios.get(`${API}/research/${id}`).then(r => {
         const d = r.data;
-        setForm({ title: d.title, authors: d.authors, adviser: d.adviser || '', program_id: d.program_id ? String(d.program_id) : '', year: d.year, category_id: d.category_id ? String(d.category_id) : '', research_type: d.research_type, abstract: d.abstract || '', keywords: d.keywords || '' });
+        setForm({ title: d.title, authors: d.authors, adviser: d.adviser || '', program_id: d.program_id ? String(d.program_id) : '', year: d.year, abstract: d.abstract || '', keywords: d.keywords || '' });
       });
     }
   }, [id]);
@@ -61,7 +59,7 @@ export default function SubmitResearch() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-1"><span className="gradient-text">{isEdit ? 'Edit Research' : 'Submit Research'}</span></h1>
-        <p className="text-muted-foreground">{isEdit ? 'Update the research record' : 'Submit a new research paper, thesis, or capstone project'}</p>
+        <p className="text-muted-foreground">{isEdit ? 'Update the research record' : 'Submit a new research work to the institutional repository'}</p>
       </div>
 
       <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10 overflow-hidden bg-[#0F3A26]">
@@ -70,7 +68,7 @@ export default function SubmitResearch() {
           {error && <div className="mb-5 rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">{error}</div>}
           <div className="mb-6 flex items-center gap-3 text-sm text-[#EAFBF1]/60 p-3 rounded-lg bg-[#23CE6B]/10 border border-[#23CE6B]/20">
             <Info className="h-4 w-4 text-[#23CE6B] shrink-0" />
-            <span>A unique research code (e.g. <strong className="text-white">TH-2026-0001</strong>) will be automatically assigned when submitted.</span>
+            <span>A unique research code (e.g. <strong className="text-white">RS-2026-0001</strong>) will be automatically assigned when submitted.</span>
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
@@ -104,29 +102,6 @@ export default function SubmitResearch() {
                   <SelectTrigger className="border-[#23CE6B]/30 ring-[#23CE6B]"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div className="space-y-2">
-                <Label>Research Type *</Label>
-                <Select value={form.research_type} onValueChange={v => setForm({...form, research_type: v})}>
-                  <SelectTrigger className="border-[#23CE6B]/30 ring-[#23CE6B]"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Research Paper">Research Paper</SelectItem>
-                    <SelectItem value="Thesis">Thesis</SelectItem>
-                    <SelectItem value="Capstone Project">Capstone Project</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Select value={form.category_id ? String(form.category_id) : 'none'} onValueChange={v => setForm({...form, category_id: v === 'none' ? '' : v})}>
-                  <SelectTrigger className="border-[#23CE6B]/30 ring-[#23CE6B]"><SelectValue placeholder="Select category" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Select Category</SelectItem>
-                    {categories.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>

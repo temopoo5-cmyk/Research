@@ -18,7 +18,6 @@ const adminItems = [
   { to: '/admin/research', label: 'Manage Research' },
   { to: '/admin/users', label: 'Manage Users' },
   { to: '/admin/programs', label: 'Manage Programs' },
-  { to: '/admin/categories', label: 'Manage Categories' },
 ];
 
 const linkClass = ({ isActive }) =>

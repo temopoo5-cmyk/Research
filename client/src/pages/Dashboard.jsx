@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { BookOpen, CheckCircle2, Clock, XCircle, Users, FolderTree, ArrowRight, FileText, Award } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, XCircle, Users, FolderTree, ArrowRight, FileText } from 'lucide-react';
 
 const StatusIcon = ({ status }) => {
   const map = { approved: CheckCircle2, pending: Clock, rejected: XCircle };
@@ -72,7 +72,7 @@ export default function Dashboard() {
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent">
-                      <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Type</TableHead><TableHead>Status</TableHead>
+                      <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -80,7 +80,6 @@ export default function Dashboard() {
                       <TableRow key={r.id} className="cursor-pointer hover:bg-[#4F6D7A]" onClick={() => window.location.href = `/research/${r.id}`}>
                         <TableCell className="font-semibold text-white">{r.code}</TableCell>
                         <TableCell className="font-medium">{r.title}</TableCell>
-                        <TableCell>{r.research_type}</TableCell>
                         <TableCell>
                           <Badge variant={r.status} className="gap-1"><StatusIcon status={r.status} />{r.status}</Badge>
                         </TableCell>
@@ -94,22 +93,6 @@ export default function Dashboard() {
         </Card>
 
         <div className="space-y-6">
-          <Card className="border-[#23CE6B]/20 bg-[#0F3A26]">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2"><Award className="h-5 w-5 text-[#23CE6B]" /> By Type</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {stats.byType.length === 0 && <p className="text-sm text-muted-foreground">No data yet</p>}
-                {stats.byType.map(t => (
-                  <div key={t.research_type} className="flex items-center justify-between py-2 border-b border-[#23CE6B]/35 last:border-0">
-                    <span className="text-sm text-white">{t.research_type}</span>
-                    <Badge variant="secondary" className="bg-[#23CE6B]/15 text-[#EAFBF1] hover:bg-[#1CB85C]">{t.count}</Badge>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
           <Card className="border-[#23CE6B]/20 bg-[#0F3A26]">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-[#23CE6B]" /> By Year</CardTitle>

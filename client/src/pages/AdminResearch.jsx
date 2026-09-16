@@ -64,7 +64,7 @@ export default function AdminResearch() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-[#23CE6B]/50 hover:bg-[#4F6D7A]">
-                    <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Authors</TableHead><TableHead>Type</TableHead><TableHead>Year</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
+                    <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Authors</TableHead><TableHead>Year</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -73,7 +73,6 @@ export default function AdminResearch() {
                       <TableCell className="font-semibold text-white">{r.code}</TableCell>
                        <TableCell><Link to={`/research/${r.id}`} className="font-medium hover:text-[#23CE6B] hover:underline">{r.title}</Link></TableCell>
                       <TableCell className="text-muted-foreground">{r.authors}</TableCell>
-                      <TableCell>{r.research_type}</TableCell>
                       <TableCell className="text-muted-foreground">{r.year}</TableCell>
                       <TableCell><Badge variant={r.status} className="capitalize">{r.status}</Badge></TableCell>
                       <TableCell>

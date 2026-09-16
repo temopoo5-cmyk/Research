@@ -63,7 +63,7 @@ export function BookPile() {
           <p className="text-[10px] uppercase tracking-[0.3em] text-[#23CE6B]">ResearchHub</p>
           <p className="mt-1 text-xl font-bold leading-snug">A Library of<br />Ideas</p>
           <div className="mt-3 flex items-center gap-1.5 text-[10px] text-[#EAFBF1]/70">
-            <BookOpen className="h-3.5 w-3.5 text-[#23CE6B]" /> Theses, Capstones &amp; Papers
+            <BookOpen className="h-3.5 w-3.5 text-[#23CE6B]" /> Research Works
           </div>
         </div>
       </div>

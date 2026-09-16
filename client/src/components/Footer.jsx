@@ -31,7 +31,7 @@ export default function Footer() {
               <span className="font-bold text-lg text-white">ResearchHub</span>
             </div>
             <p className="mt-3 text-sm text-[#EAFBF1]/60 max-w-xs">
-              The central institutional repository for research papers, theses, and capstone projects.
+              The central institutional repository for the campus research works.
             </p>
           </div>
           <div>
@@ -49,8 +49,8 @@ export default function Footer() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-[#EAFBF1]/40 mb-3">Repository</p>
             <div className="space-y-2 text-sm text-[#EAFBF1]/60">
-              <p className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-[#23CE6B]" /> Research Paper · Thesis · Capstone</p>
-              <p className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-[#23CE6B]" /> Auto-cataloged codes (RP / TH / CP)</p>
+              <p className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-[#23CE6B]" /> Research Works</p>
+              <p className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-[#23CE6B]" /> Auto-cataloged RS codes</p>
             </div>
           </div>
         </div>

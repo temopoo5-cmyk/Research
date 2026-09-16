@@ -1,15 +1,15 @@
 # Research Management System
 
-A full-stack web application for managing research papers, theses, and capstone projects, built with **React.js** and **Node.js**.
+A full-stack web application for managing research works, built with **React.js** and **Node.js**.
 
 ## Features
 
-1. **Research Repository** – Centralized storage for research papers, theses, and capstone projects
-2. **Research Cataloging** – Each work is auto-assigned a unique code (e.g., `TH-2026-0001`, `CP-2026-0002`, `RP-2026-0003`)
-3. **Search and Filtering** – Search by code, title, author, program, year, category, and keywords
-4. **Research Information** – Displays title, author, adviser, program, year, research type, abstract, and keywords
+1. **Research Repository** – Centralized storage for research works
+2. **Research Cataloging** – Each work is auto-assigned a unique code (e.g., `RS-2026-0001`)
+3. **Search and Filtering** – Search by code, title, author, program, year, and keywords
+4. **Research Information** – Displays title, author, adviser, program, year, abstract, and keywords
 5. **Digital Document Access** – Authorized users can view and download approved PDF/DOC documents
-6. **Administrator Management** – Admins manage users, research records, categories, programs, submissions, and approval status
+6. **Administrator Management** – Admins manage users, research records, programs, submissions, and approval status
 
 ## Tech Stack
 
@@ -60,7 +60,7 @@ Users can self-register with regular (non-admin) accounts.
 server/
   server.js          # Express app entry point
   db.js              # JSON file-based database
-  routes/            # auth, research, users, programs, categories, stats
+  routes/            # auth, research, users, programs, stats
   middleware/auth.js # JWT + admin middleware
   uploads/           # uploaded documents
 client/
@@ -69,7 +69,7 @@ client/
     context/AuthContext.js
     components/Sidebar.js
     pages/           # Login, Register, Dashboard, ResearchList, ResearchDetail,
-                     # SubmitResearch, AdminUsers, AdminResearch, AdminPrograms, AdminCategories
+                     # SubmitResearch, AdminUsers, AdminResearch, AdminPrograms
 ```
 
 Data persists in `server/data/*.json`. Uploaded files go to `server/uploads/`.

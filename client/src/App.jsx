@@ -11,7 +11,6 @@ import SubmitResearch from './pages/SubmitResearch';
 import AdminUsers from './pages/AdminUsers';
 import AdminResearch from './pages/AdminResearch';
 import AdminPrograms from './pages/AdminPrograms';
-import AdminCategories from './pages/AdminCategories';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
@@ -86,7 +85,6 @@ function AppRoutes() {
       <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
       <Route path="/admin/research" element={<AdminRoute><AdminLayout><AdminResearch /></AdminLayout></AdminRoute>} />
       <Route path="/admin/programs" element={<AdminRoute><AdminLayout><AdminPrograms /></AdminLayout></AdminRoute>} />
-      <Route path="/admin/categories" element={<AdminRoute><AdminLayout><AdminCategories /></AdminLayout></AdminRoute>} />
     </Routes>
   );
 }

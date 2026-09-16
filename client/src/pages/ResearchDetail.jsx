@@ -13,8 +13,6 @@ const rowMeta = {
   adviser: { icon: Award, tint: 'bg-amber-100 text-amber-700' },
   program: { icon: FolderTree, tint: 'bg-[#23CE6B]/15 text-[#EAFBF1]' },
   year: { icon: Calendar, tint: 'bg-sky-100 text-sky-700' },
-  type: { icon: BookOpen, tint: 'bg-violet-100 text-violet-700' },
-  category: { icon: Tags, tint: 'bg-[#23CE6B]/20 text-[#EAFBF1]/70' },
   code: { icon: FileText, tint: 'bg-orange-100 text-orange-700' },
 };
 
@@ -48,13 +46,11 @@ export default function ResearchDetail() {
     { key: 'adviser', label: 'Adviser', value: research.adviser || 'N/A' },
     { key: 'program', label: 'Program', value: research.program_name ? `${research.program_name} (${research.program_code})` : 'N/A' },
     { key: 'year', label: 'Year', value: research.year },
-    { key: 'type', label: 'Research Type', value: research.research_type },
-    { key: 'category', label: 'Category', value: research.category_name || 'N/A' },
   ];
 
   return (
     <>
-      {opening && <BookOpening title={research.title} authors={authors.join(', ')} type={research.research_type} />}
+      {opening && <BookOpening title={research.title} authors={authors.join(', ')} />}
 
       <div
         className="mx-auto max-w-4xl px-4 sm:px-6 py-8 space-y-6"
