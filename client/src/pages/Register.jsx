@@ -30,8 +30,8 @@ export default function Register() {
       <Navbar />
       <div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)] relative">
         <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[#23CE6B]/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#4F6D7A]/20 blur-3xl" />
-        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#4F6D7A]/15 border-[#4F6D7A]/20 bg-[#DCEFE4]/95 backdrop-blur relative">
+        <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#23CE6B]/20 blur-3xl" />
+        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#23CE6B]/15 border-[#23CE6B]/20 bg-[#0F3A26]/95 backdrop-blur relative">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2 mb-2">
             <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#0A122A]" /></div>
@@ -45,15 +45,15 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="full_name">Full Name</Label>
-              <Input id="full_name" value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required placeholder="Your full name" className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
+              <Input id="full_name" value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required placeholder="Your full name" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" value={form.username} onChange={e => setForm({...form, username: e.target.value})} required placeholder="Choose a username" className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
+              <Input id="username" value={form.username} onChange={e => setForm({...form, username: e.target.value})} required placeholder="Choose a username" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required minLength={4} placeholder="Min 4 characters" className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
+              <Input id="password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required minLength={4} placeholder="Min 4 characters" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
             </div>
             <Button type="submit" disabled={loading} className="w-full gradient-btn">{loading ? 'Creating...' : 'Create Account'}</Button>
           </form>

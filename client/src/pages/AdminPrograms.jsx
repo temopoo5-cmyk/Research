@@ -44,17 +44,17 @@ export default function AdminPrograms() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold mb-1"><span className="gradient-text">Manage Programs</span></h1>
-          <p className="text-[#4F6D7A]/80">Academic programs available for research records</p>
+          <p className="text-[#EAFBF1]/60">Academic programs available for research records</p>
         </div>
         <Button className="gradient-btn" onClick={openNew}><FolderTree className="h-4 w-4" /> Add Program</Button>
       </div>
 
-      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#DCEFE4]">
+      <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10 bg-[#0F3A26]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-[#4F6D7A]/30 hover:bg-[#4F6D7A]/50">
+                <TableRow className="bg-[#23CE6B]/30 hover:bg-[#23CE6B]/50">
                   <TableHead>ID</TableHead><TableHead>Code</TableHead><TableHead>Name</TableHead><TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -62,11 +62,11 @@ export default function AdminPrograms() {
                 {programs.map(p => (
                   <TableRow key={p.id}>
                     <TableCell className="text-muted-foreground">{p.id}</TableCell>
-                    <TableCell className="font-semibold text-[#0A122A]">{p.code}</TableCell>
+                    <TableCell className="font-semibold text-[#EAFBF1]">{p.code}</TableCell>
                     <TableCell>{p.name}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10" onClick={() => openEdit(p)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
+                        <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => openEdit(p)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
                         <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleDelete(p.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
                       </div>
                     </TableCell>
@@ -79,7 +79,7 @@ export default function AdminPrograms() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="border-[#4F6D7A]/20 bg-[#DCEFE4]">
+        <DialogContent className="border-[#23CE6B]/20 bg-[#0F3A26]">
           <DialogHeader>
             <DialogTitle className="gradient-text">{editing ? 'Edit Program' : 'Add Program'}</DialogTitle>
             <DialogDescription>{editing ? 'Update program details' : 'Create a new academic program'}</DialogDescription>
@@ -87,14 +87,14 @@ export default function AdminPrograms() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label>Program Name</Label>
-              <Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} required className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
+              <Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} required className="border-[#23CE6B]/30 ring-[#23CE6B]" />
             </div>
             <div className="space-y-2">
               <Label>Program Code</Label>
-              <Input value={form.code} onChange={e => setForm({...form, code: e.target.value})} required placeholder="e.g. CS" className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
+              <Input value={form.code} onChange={e => setForm({...form, code: e.target.value})} required placeholder="e.g. CS" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
             </div>
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button type="button" variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => setShowModal(false)}>Cancel</Button>
               <Button type="submit" className="gradient-btn">{editing ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>

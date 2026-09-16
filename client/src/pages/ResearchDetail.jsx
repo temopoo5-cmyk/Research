@@ -11,10 +11,10 @@ import { ArrowLeft, Download, Eye, Users, Award, FolderTree, Calendar, FileText,
 
 const rowMeta = {
   adviser: { icon: Award, tint: 'bg-amber-100 text-amber-700' },
-  program: { icon: FolderTree, tint: 'bg-[#23CE6B]/15 text-[#243010]' },
+  program: { icon: FolderTree, tint: 'bg-[#23CE6B]/15 text-[#EAFBF1]' },
   year: { icon: Calendar, tint: 'bg-sky-100 text-sky-700' },
   type: { icon: BookOpen, tint: 'bg-violet-100 text-violet-700' },
-  category: { icon: Tags, tint: 'bg-[#4F6D7A]/20 text-[#4F6D7A]' },
+  category: { icon: Tags, tint: 'bg-[#23CE6B]/20 text-[#EAFBF1]/70' },
   code: { icon: FileText, tint: 'bg-orange-100 text-orange-700' },
 };
 
@@ -65,11 +65,11 @@ export default function ResearchDetail() {
         }}
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Button variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4" /> Back</Button>
+          <Button variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4" /> Back</Button>
           {isAdmin && (
             <div className="flex gap-2">
               {research.status !== 'approved' && (
-                <Button className="bg-[#23CE6B] hover:bg-[#1CB85C]" onClick={() => { axios.patch(`${API}/research/${id}/status`, { status: 'approved' }).then(r => setResearch(r.data)); }}>
+                <Button className="bg-[#23CE6B] hover:bg-[#1CB85C] text-[#0A122A]" onClick={() => { axios.patch(`${API}/research/${id}/status`, { status: 'approved' }).then(r => setResearch(r.data)); }}>
                   <CheckCircle2 className="h-4 w-4" /> Approve
                 </Button>
               )}
@@ -82,22 +82,22 @@ export default function ResearchDetail() {
           )}
         </div>
 
-        <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/50 overflow-hidden">
+        <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/50 overflow-hidden">
           <div className="h-1.5 bg-[#23CE6B]" />
           <CardHeader className="pb-4">
             <div className="flex flex-wrap items-center gap-3 mb-3">
               <Badge variant={research.status} className="capitalize">{research.status}</Badge>
-              <span className="text-sm font-bold text-[#243010] tracking-wide bg-[#4F6D7A]/10 px-3 py-1 rounded-md">{research.code}</span>
+              <span className="text-sm font-bold text-[#EAFBF1] tracking-wide bg-[#23CE6B]/10 px-3 py-1 rounded-md">{research.code}</span>
             </div>
             <CardTitle className="text-2xl leading-snug">{research.title}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid sm:grid-cols-2 gap-4">
               {detailRows.map(row => {
-                const meta = rowMeta[row.key] || { icon: FileText, tint: 'bg-[#23CE6B]/15 text-[#243010]' };
+                const meta = rowMeta[row.key] || { icon: FileText, tint: 'bg-[#23CE6B]/15 text-[#EAFBF1]' };
                 const Icon = meta.icon;
                 return (
-                  <div key={row.key} className="flex items-start gap-3 p-3 rounded-lg bg-[#4F6D7A]/10 border border-[#4F6D7A]/20">
+                  <div key={row.key} className="flex items-start gap-3 p-3 rounded-lg bg-[#23CE6B]/10 border border-[#23CE6B]/20">
                     <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${meta.tint}`}><Icon className="h-4 w-4" /></div>
                     <div>
                       <p className="text-xs text-muted-foreground">{row.label}</p>
@@ -112,7 +112,7 @@ export default function ResearchDetail() {
               <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> Authors</p>
               <div className="flex flex-wrap gap-2">
                 {authors.map((a, i) => (
-                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#DCEFE4] border border-[#4F6D7A]/20 shadow-sm text-sm font-medium text-[#0A122A]">
+                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0F3A26] border border-[#23CE6B]/20 shadow-sm text-sm font-medium text-[#EAFBF1]">
                     <span className="h-5 w-5 rounded-full bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center text-[10px] font-bold">{a.charAt(0).toUpperCase()}</span>
                     {a}
                   </span>
@@ -135,7 +135,7 @@ export default function ResearchDetail() {
               <div>
                 <Separator className="bg-[#23CE6B]/15 mb-4" />
                 <p className="text-sm font-semibold text-[#23CE6B] mb-2 flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Abstract</p>
-                <div className="relative rounded-xl border border-[#4F6D7A]/20 bg-[#DCEFE4] p-5 sm:p-6 overflow-hidden">
+                <div className="relative rounded-xl border border-[#23CE6B]/20 bg-[#0F3A26] p-5 sm:p-6 overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#23CE6B]" />
                   <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground font-serif first-letter:text-4xl first-letter:font-bold first-letter:text-[#23CE6B] first-letter:float-left first-letter:mr-2 first-letter:leading-none">
                     {research.abstract}
@@ -152,12 +152,12 @@ export default function ResearchDetail() {
                     <Button className="gradient-btn"><Download className="h-4 w-4" /> Download Document</Button>
                   </a>
                   <a href={`${API}/research/download/${research.id}`} target="_blank" rel="noreferrer">
-                    <Button variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10"><Eye className="h-4 w-4" /> Open Preview</Button>
+                    <Button variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10"><Eye className="h-4 w-4" /> Open Preview</Button>
                   </a>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-sm text-[#4F6D7A]/80 p-3 rounded-lg bg-[#4F6D7A]/10">
+              <div className="flex items-center gap-2 text-sm text-[#EAFBF1]/60 p-3 rounded-lg bg-[#23CE6B]/10">
                 <Inbox className="h-4 w-4" /> No digital document attached for this research.
               </div>
             )}

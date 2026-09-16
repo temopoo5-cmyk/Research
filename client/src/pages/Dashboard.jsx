@@ -27,11 +27,11 @@ export default function Dashboard() {
 
   const statCards = [
     { label: 'Total Research', value: stats.total, icon: BookOpen, color: 'bg-[#23CE6B] text-[#0A122A]' },
-    { label: 'Approved', value: stats.approved, icon: CheckCircle2, color: 'bg-[#23CE6B]/15 text-[#243010]' },
+    { label: 'Approved', value: stats.approved, icon: CheckCircle2, color: 'bg-[#23CE6B]/15 text-[#EAFBF1]' },
     { label: 'Pending', value: stats.pending, icon: Clock, color: 'bg-amber-100 text-amber-700' },
     { label: 'Rejected', value: stats.rejected, icon: XCircle, color: 'bg-red-100 text-red-700' },
-    { label: 'Users', value: stats.users, icon: Users, color: 'bg-[#4F6D7A]/20 text-[#4F6D7A]' },
-    { label: 'Programs', value: stats.programs, icon: FolderTree, color: 'bg-[#23CE6B]/15 text-[#243010]' },
+    { label: 'Users', value: stats.users, icon: Users, color: 'bg-[#23CE6B]/20 text-[#EAFBF1]/70' },
+    { label: 'Programs', value: stats.programs, icon: FolderTree, color: 'bg-[#23CE6B]/15 text-[#EAFBF1]' },
   ];
 
   return (
@@ -43,10 +43,10 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
         {statCards.map(s => (
-          <Card key={s.label} className="border-[#4F6D7A]/20 transition-all hover:shadow-lg hover:shadow-[#23CE6B]/10 hover:-translate-y-0.5 bg-[#DCEFE4]">
+          <Card key={s.label} className="border-[#23CE6B]/20 transition-all hover:shadow-lg hover:shadow-[#23CE6B]/10 hover:-translate-y-0.5 bg-[#0F3A26]">
             <CardContent className="p-5">
               <div className={`h-9 w-9 rounded-lg flex items-center justify-center mb-3 ${s.color}`}><s.icon className="h-4 w-4" /></div>
-              <p className="text-2xl font-bold text-[#0A122A]">{s.value}</p>
+              <p className="text-2xl font-bold text-[#EAFBF1]">{s.value}</p>
               <p className="text-xs text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
@@ -54,7 +54,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <Card className="md:col-span-2 border-[#4F6D7A]/20 bg-[#DCEFE4]">
+        <Card className="md:col-span-2 border-[#23CE6B]/20 bg-[#0F3A26]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-[#23CE6B]" /> Recent Submissions</CardTitle>
             <Link to="/research">
@@ -78,7 +78,7 @@ export default function Dashboard() {
                   <TableBody>
                     {recent.map(r => (
                       <TableRow key={r.id} className="cursor-pointer hover:bg-[#4F6D7A]" onClick={() => window.location.href = `/research/${r.id}`}>
-                        <TableCell className="font-semibold text-[#0A122A]">{r.code}</TableCell>
+                        <TableCell className="font-semibold text-[#EAFBF1]">{r.code}</TableCell>
                         <TableCell className="font-medium">{r.title}</TableCell>
                         <TableCell>{r.research_type}</TableCell>
                         <TableCell>
@@ -94,7 +94,7 @@ export default function Dashboard() {
         </Card>
 
         <div className="space-y-6">
-          <Card className="border-[#4F6D7A]/20 bg-[#DCEFE4]">
+          <Card className="border-[#23CE6B]/20 bg-[#0F3A26]">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2"><Award className="h-5 w-5 text-[#23CE6B]" /> By Type</CardTitle>
             </CardHeader>
@@ -102,15 +102,15 @@ export default function Dashboard() {
               <div className="space-y-2">
                 {stats.byType.length === 0 && <p className="text-sm text-muted-foreground">No data yet</p>}
                 {stats.byType.map(t => (
-                  <div key={t.research_type} className="flex items-center justify-between py-2 border-b border-[#4F6D7A]/35 last:border-0">
-                    <span className="text-sm text-[#0A122A]">{t.research_type}</span>
-                    <Badge variant="secondary" className="bg-[#23CE6B]/15 text-[#243010] hover:bg-[#1CB85C]">{t.count}</Badge>
+                  <div key={t.research_type} className="flex items-center justify-between py-2 border-b border-[#23CE6B]/35 last:border-0">
+                    <span className="text-sm text-[#EAFBF1]">{t.research_type}</span>
+                    <Badge variant="secondary" className="bg-[#23CE6B]/15 text-[#EAFBF1] hover:bg-[#1CB85C]">{t.count}</Badge>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
-          <Card className="border-[#4F6D7A]/20 bg-[#DCEFE4]">
+          <Card className="border-[#23CE6B]/20 bg-[#0F3A26]">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-[#23CE6B]" /> By Year</CardTitle>
             </CardHeader>
@@ -118,9 +118,9 @@ export default function Dashboard() {
               <div className="space-y-2">
                 {stats.byYear.length === 0 && <p className="text-sm text-muted-foreground">No data yet</p>}
                 {stats.byYear.slice(0, 5).map(y => (
-                  <div key={y.year} className="flex items-center justify-between py-2 border-b border-[#4F6D7A]/35 last:border-0">
-                    <span className="text-sm text-[#0A122A]">{y.year}</span>
-                    <Badge variant="secondary" className="bg-[#23CE6B]/15 text-[#243010] hover:bg-[#1CB85C]">{y.count}</Badge>
+                  <div key={y.year} className="flex items-center justify-between py-2 border-b border-[#23CE6B]/35 last:border-0">
+                    <span className="text-sm text-[#EAFBF1]">{y.year}</span>
+                    <Badge variant="secondary" className="bg-[#23CE6B]/15 text-[#EAFBF1] hover:bg-[#1CB85C]">{y.count}</Badge>
                   </div>
                 ))}
               </div>

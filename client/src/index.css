@@ -4,32 +4,32 @@
 
 @layer base {
   :root {
-    --background: 145 45% 95%;
-    --foreground: 220 50% 12%;
+    --background: 150 62% 10%;
+    --foreground: 144 68% 95%;
 
-    --card: 145 42% 92%;
-    --card-foreground: 220 50% 12%;
+    --card: 150 58% 14%;
+    --card-foreground: 144 68% 95%;
 
-    --popover: 145 42% 92%;
-    --popover-foreground: 220 50% 12%;
+    --popover: 150 58% 14%;
+    --popover-foreground: 144 68% 95%;
 
     --primary: 146 71% 47%;
     --primary-foreground: 224 62% 10%;
 
-    --secondary: 145 35% 90%;
-    --secondary-foreground: 150 40% 18%;
+    --secondary: 150 55% 16%;
+    --secondary-foreground: 144 68% 95%;
 
-    --muted: 145 35% 90%;
-    --muted-foreground: 215 18% 40%;
+    --muted: 150 55% 16%;
+    --muted-foreground: 153 30% 68%;
 
-    --accent: 146 38% 88%;
-    --accent-foreground: 150 45% 15%;
+    --accent: 150 50% 18%;
+    --accent-foreground: 144 68% 95%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 63% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 22% 84%;
-    --input: 150 22% 80%;
+    --border: 150 35% 26%;
+    --input: 150 30% 24%;
     --ring: 146 71% 47%;
 
     --radius: 0.75rem;
@@ -76,16 +76,16 @@
 @layer components {
   .gradient-bg {
     @apply min-h-screen;
-    background: linear-gradient(160deg, #EAF7F0 0%, #DCEFE4 50%, #E4F2EA 100%);
+    background: linear-gradient(160deg, #0A2B1C 0%, #0F3A26 50%, #0A2418 100%);
   }
   .gradient-text {
-    @apply text-[#243010];
+    @apply text-[#9FEBBF];
   }
   .gradient-btn {
     @apply bg-[#23CE6B] text-[#0A122A] font-semibold hover:bg-[#1CB85C] transition-colors;
   }
   .gradient-card {
-    @apply bg-[#DCEFE4] border border-[#4F6D7A]/15;
+    @apply bg-[#0F3A26] border border-[#23CE6B]/15;
   }
 
   /* ------------------------------------------------ */
@@ -124,7 +124,7 @@
     gap: 26px;
     padding: 24px;
     text-align: center;
-    background: radial-gradient(circle at 50% 38%, #d5f5e3 0%, #f0fdf4 30%, #f8fafc 70%, #f0f4f7 100%);
+    background: radial-gradient(circle at 50% 38%, #0F3A26 0%, #0A2B1C 50%, #06180E 100%);
     overflow: hidden;
   }
   .book-overlay::before {
@@ -255,7 +255,7 @@
     font-size: clamp(20px, 4vw, 34px);
     font-weight: 800;
     line-height: 1.2;
-    color: #0A122A;
+    color: #EAFBF1;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -264,7 +264,7 @@
   .book-caption-authors {
     margin-top: 10px;
     font-size: 14px;
-    color: #4F6D7A;
+    color: #9FEBBF;
     font-weight: 500;
   }
   .book-caption-meta {
@@ -272,7 +272,7 @@
     font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #4F6D7A;
+    color: #9FEBBF;
   }
 
   @keyframes book-in {

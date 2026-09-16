@@ -44,33 +44,33 @@ export default function AdminResearch() {
       </div>
 
       <Tabs value={filter} onValueChange={setFilter} className="space-y-6">
-        <TabsList className="bg-[#CFE7DA] border border-[#4F6D7A]/20 shadow-sm">
+        <TabsList className="bg-[#123F29] border border-[#23CE6B]/20 shadow-sm">
           <TabsTrigger value="all" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">All</TabsTrigger>
           <TabsTrigger value="pending" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Pending</TabsTrigger>
           <TabsTrigger value="approved" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Approved</TabsTrigger>
           <TabsTrigger value="rejected" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Rejected</TabsTrigger>
         </TabsList>
 
-        <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#DCEFE4]">
+        <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10 bg-[#0F3A26]">
           <CardContent className="p-6">
             <div className="flex gap-2 mb-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search research..." value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchData()} className="pl-9 border-[#4F6D7A]/30 ring-[#23CE6B]" />
+                <Input placeholder="Search research..." value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchData()} className="pl-9 border-[#23CE6B]/30 ring-[#23CE6B]" />
               </div>
               <Button className="gradient-btn" onClick={fetchData}>Search</Button>
             </div>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#4F6D7A]/50 hover:bg-[#4F6D7A]">
+                  <TableRow className="bg-[#23CE6B]/50 hover:bg-[#4F6D7A]">
                     <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Authors</TableHead><TableHead>Type</TableHead><TableHead>Year</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {research.map(r => (
                     <TableRow key={r.id}>
-                      <TableCell className="font-semibold text-[#243010]">{r.code}</TableCell>
+                      <TableCell className="font-semibold text-[#EAFBF1]">{r.code}</TableCell>
                        <TableCell><Link to={`/research/${r.id}`} className="font-medium hover:text-[#23CE6B] hover:underline">{r.title}</Link></TableCell>
                       <TableCell className="text-muted-foreground">{r.authors}</TableCell>
                       <TableCell>{r.research_type}</TableCell>
@@ -81,7 +81,7 @@ export default function AdminResearch() {
                           {r.status !== 'approved' && <Button size="sm" className="bg-[#23CE6B] hover:bg-[#1CB85C] text-[#0A122A]" onClick={() => updateStatus(r.id, 'approved')}><CheckCircle2 className="h-3.5 w-3.5" /> Approve</Button>}
                           {r.status !== 'rejected' && <Button size="sm" variant="destructive" onClick={() => updateStatus(r.id, 'rejected')}><XCircle className="h-3.5 w-3.5" /></Button>}
                           {r.status !== 'pending' && <Button size="sm" variant="outline" className="border-amber-300/30 text-amber-400 hover:bg-amber-500/10" onClick={() => updateStatus(r.id, 'pending')}><RotateCcw className="h-3.5 w-3.5" /></Button>}
-                          <Link to={`/edit-research/${r.id}`}><Button size="sm" variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10"><Pencil className="h-3.5 w-3.5" /></Button></Link>
+                          <Link to={`/edit-research/${r.id}`}><Button size="sm" variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10"><Pencil className="h-3.5 w-3.5" /></Button></Link>
                           <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(r.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                         </div>
                       </TableCell>

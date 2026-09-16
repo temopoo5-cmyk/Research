@@ -31,31 +31,31 @@ export default function Login() {
       <Navbar />
       <div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)] relative">
         <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-[#23CE6B]/20 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-[#4F6D7A]/20 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-[#23CE6B]/20 blur-3xl" />
         <div className="relative grid md:grid-cols-2 gap-8 max-w-5xl w-full items-center">
         <div className="hidden md:block">
           <div className="inline-flex h-14 w-14 rounded-2xl gradient-btn items-center justify-center mb-5 shadow-lg shadow-[#23CE6B]/25">
-            <GraduationCap className="h-7 w-7 text-[#0A122A]" />
+            <GraduationCap className="h-7 w-7 text-[#EAFBF1]" />
           </div>
           <h1 className="text-4xl font-bold leading-tight mb-3">
             <span className="gradient-text">ResearchHub</span>
           </h1>
-          <p className="text-[#243010] text-lg mb-8 max-w-md">
+          <p className="text-[#EAFBF1] text-lg mb-8 max-w-md">
             Centralized repository for research papers, theses, and capstone projects.
           </p>
           <div className="space-y-4">
             {[['BookOpen', 'Research Repository', 'Organize papers, theses & capstones'], ['FolderOpen', 'Unique Cataloging', 'Auto-assigned codes for every work'], ['Search', 'Smart Search', 'Filter by program, year, category, keywords']].map(([icon, title, desc]) => {
               const Icon = icon === 'BookOpen' ? BookOpen : icon === 'FolderOpen' ? FolderOpen : Search;
               return (
-                <div key={title} className="flex items-start gap-4 p-4 rounded-xl bg-[#DCEFE4]/70 backdrop-blur border border-[#4F6D7A]/20 shadow-sm">
+                <div key={title} className="flex items-start gap-4 p-4 rounded-xl bg-[#0F3A26]/70 backdrop-blur border border-[#23CE6B]/20 shadow-sm">
                   <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
-                  <div><p className="font-semibold text-sm text-[#0A122A]">{title}</p><p className="text-sm text-[#4F6D7A]/80">{desc}</p></div>
+                  <div><p className="font-semibold text-sm text-[#EAFBF1]">{title}</p><p className="text-sm text-[#EAFBF1]/60">{desc}</p></div>
                 </div>
               );
             })}
           </div>
         </div>
-        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#4F6D7A]/15 border-[#4F6D7A]/20 bg-[#DCEFE4]/95 backdrop-blur">
+        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#23CE6B]/15 border-[#23CE6B]/20 bg-[#0F3A26]/95 backdrop-blur">
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-2 md:hidden mb-2">
               <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#0A122A]" /></div>
@@ -69,19 +69,19 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
-                <Input id="username" value={username} onChange={e => setUsername(e.target.value)} required placeholder="Enter your username" className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
+                <Input id="username" value={username} onChange={e => setUsername(e.target.value)} required placeholder="Enter your username" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Enter your password" className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
+                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Enter your password" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
               </div>
               <Button type="submit" disabled={loading} className="w-full gradient-btn">{loading ? 'Signing in...' : 'Sign In'}</Button>
             </form>
             <div className="mt-5 text-center text-sm text-muted-foreground">
               Don't have an account? <a href="/register" className="font-medium text-[#23CE6B] hover:text-[#1CB85C] hover:underline">Register</a>
             </div>
-            <div className="mt-4 text-center text-xs text-muted-foreground bg-[#4F6D7A]/50 rounded-lg py-2 border border-[#4F6D7A]/20">
-              Demo admin: <strong className="text-[#0A122A]">admin</strong> / <strong className="text-[#0A122A]">admin123</strong>
+            <div className="mt-4 text-center text-xs text-muted-foreground bg-[#23CE6B]/50 rounded-lg py-2 border border-[#23CE6B]/20">
+              Demo admin: <strong className="text-[#EAFBF1]">admin</strong> / <strong className="text-[#EAFBF1]">admin123</strong>
             </div>
           </CardContent>
         </Card>
