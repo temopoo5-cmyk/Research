@@ -12,7 +12,7 @@ const links = [
 export default function Footer() {
   const navigate = useNavigate();
   return (
-    <footer className="relative mt-16 overflow-hidden border-t border-[#4F6D7A]/20 bg-[#F6F4EE]/80 backdrop-blur">
+    <footer className="relative mt-16 overflow-hidden border-t border-[#4F6D7A]/20 bg-[#EAF7F0]/80 backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
         <div className="float-book" style={{ top: '20%', right: '4%', left: 'auto', animationDuration: '12s', ['--tilt']: '-6deg' }}>
           <BookOpen className="h-8 w-8 text-[#4F6D7A]/30" strokeWidth={1.3} />

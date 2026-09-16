@@ -112,7 +112,7 @@ export default function ResearchDetail() {
               <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> Authors</p>
               <div className="flex flex-wrap gap-2">
                 {authors.map((a, i) => (
-                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EEF1E8] border border-[#4F6D7A]/20 shadow-sm text-sm font-medium text-[#0A122A]">
+                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#DCEFE4] border border-[#4F6D7A]/20 shadow-sm text-sm font-medium text-[#0A122A]">
                     <span className="h-5 w-5 rounded-full bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center text-[10px] font-bold">{a.charAt(0).toUpperCase()}</span>
                     {a}
                   </span>
@@ -135,7 +135,7 @@ export default function ResearchDetail() {
               <div>
                 <Separator className="bg-[#23CE6B]/15 mb-4" />
                 <p className="text-sm font-semibold text-[#23CE6B] mb-2 flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Abstract</p>
-                <div className="relative rounded-xl border border-[#4F6D7A]/20 bg-[#EEF1E8] p-5 sm:p-6 overflow-hidden">
+                <div className="relative rounded-xl border border-[#4F6D7A]/20 bg-[#DCEFE4] p-5 sm:p-6 overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#23CE6B]" />
                   <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground font-serif first-letter:text-4xl first-letter:font-bold first-letter:text-[#23CE6B] first-letter:float-left first-letter:mr-2 first-letter:leading-none">
                     {research.abstract}

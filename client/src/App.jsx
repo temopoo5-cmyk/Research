@@ -20,7 +20,7 @@ import { GraduationCap, Menu } from 'lucide-react';
 
 function FullPageLoader() {
   return (
-    <div className="min-h-screen bg-[#F6F4EE] flex items-center justify-center">
+    <div className="min-h-screen bg-[#EAF7F0] flex items-center justify-center">
       <div className="text-lg font-semibold text-[#23CE6B]">Loading...</div>
     </div>
   );
@@ -40,7 +40,7 @@ function AdminRoute({ children }) {
 
 function PublicLayout({ children }) {
   return (
-    <div className="min-h-screen bg-[#F6F4EE] flex flex-col">
+    <div className="min-h-screen bg-[#EAF7F0] flex flex-col">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
@@ -51,9 +51,9 @@ function PublicLayout({ children }) {
 function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-[#F6F4EE]">
+    <div className="min-h-screen bg-[#EAF7F0]">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 h-14 bg-[#EEF1E8] backdrop-blur-md border-b border-[#4F6D7A]/20">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 h-14 bg-[#DCEFE4] backdrop-blur-md border-b border-[#4F6D7A]/20">
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-lg bg-[#23CE6B] flex items-center justify-center shrink-0">
             <GraduationCap className="h-4 w-4 text-[#0A122A]" />

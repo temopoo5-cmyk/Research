@@ -49,7 +49,7 @@ export default function AdminCategories() {
         <Button className="gradient-btn" onClick={openNew}><Tags className="h-4 w-4" /> Add Category</Button>
       </div>
 
-      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#EEF1E8]">
+      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#DCEFE4]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -78,7 +78,7 @@ export default function AdminCategories() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="border-[#4F6D7A]/20 bg-[#EEF1E8]">
+        <DialogContent className="border-[#4F6D7A]/20 bg-[#DCEFE4]">
           <DialogHeader>
             <DialogTitle className="gradient-text">{editing ? 'Edit Category' : 'Add Category'}</DialogTitle>
             <DialogDescription>{editing ? 'Update category details' : 'Create a new research category'}</DialogDescription>

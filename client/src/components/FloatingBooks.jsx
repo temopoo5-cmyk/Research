@@ -59,7 +59,7 @@ export function BookPile() {
             RP
           </div>
         </div>
-        <div className="rounded-lg bg-[#F6F4EE] p-4 text-[#0A122A] shadow-2xl shadow-[#0A122A]/40 ring-1 ring-white/10">
+        <div className="rounded-lg bg-[#EAF7F0] p-4 text-[#0A122A] shadow-2xl shadow-[#0A122A]/40 ring-1 ring-white/10">
           <p className="text-[10px] uppercase tracking-[0.3em] text-[#23CE6B]">ResearchHub</p>
           <p className="mt-1 text-xl font-bold leading-snug">A Library of<br />Ideas</p>
           <div className="mt-3 flex items-center gap-1.5 text-[10px] text-[#4F6D7A]">

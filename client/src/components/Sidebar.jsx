@@ -30,7 +30,7 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
   };
 
   const inner = (
-    <div className="flex h-full w-64 flex-col bg-[#E8EBE3] backdrop-blur-md border-r border-[#4F6D7A]/20 shadow-lg shadow-[#4F6D7A]/15">
+    <div className="flex h-full w-64 flex-col bg-[#CFE7DA] backdrop-blur-md border-r border-[#4F6D7A]/20 shadow-lg shadow-[#4F6D7A]/15">
       <div className="flex items-center justify-between p-5">
         <button onClick={handleLogout} className="flex items-center gap-2.5">
           <div className="h-10 w-10 rounded-xl gradient-btn flex items-center justify-center shrink-0">

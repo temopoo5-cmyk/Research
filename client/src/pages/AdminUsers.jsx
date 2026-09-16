@@ -58,7 +58,7 @@ export default function AdminUsers() {
         <Button className="gradient-btn" onClick={openNew}><UserPlus className="h-4 w-4" /> Add User</Button>
       </div>
 
-      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#EEF1E8]">
+      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#DCEFE4]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -91,7 +91,7 @@ export default function AdminUsers() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="border-[#4F6D7A]/20 bg-[#EEF1E8]">
+        <DialogContent className="border-[#4F6D7A]/20 bg-[#DCEFE4]">
           <DialogHeader>
             <DialogTitle className="gradient-text">{editing ? 'Edit User' : 'Add User'}</DialogTitle>
             <DialogDescription>{editing ? 'Update user account details' : 'Create a new system user'}</DialogDescription>

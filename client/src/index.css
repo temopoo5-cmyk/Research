@@ -4,32 +4,32 @@
 
 @layer base {
   :root {
-    --background: 45 20% 95%;
+    --background: 145 45% 95%;
     --foreground: 220 50% 12%;
 
-    --card: 60 18% 96%;
+    --card: 145 42% 92%;
     --card-foreground: 220 50% 12%;
 
-    --popover: 60 18% 96%;
+    --popover: 145 42% 92%;
     --popover-foreground: 220 50% 12%;
 
     --primary: 146 71% 47%;
     --primary-foreground: 224 62% 10%;
 
-    --secondary: 45 15% 92%;
-    --secondary-foreground: 220 30% 30%;
+    --secondary: 145 35% 90%;
+    --secondary-foreground: 150 40% 18%;
 
-    --muted: 45 15% 92%;
-    --muted-foreground: 215 15% 42%;
+    --muted: 145 35% 90%;
+    --muted-foreground: 215 18% 40%;
 
-    --accent: 146 30% 93%;
-    --accent-foreground: 220 40% 20%;
+    --accent: 146 38% 88%;
+    --accent-foreground: 150 45% 15%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 15% 86%;
-    --input: 215 15% 82%;
+    --border: 150 22% 84%;
+    --input: 150 22% 80%;
     --ring: 146 71% 47%;
 
     --radius: 0.75rem;
@@ -76,7 +76,7 @@
 @layer components {
   .gradient-bg {
     @apply min-h-screen;
-    background: linear-gradient(160deg, #F6F4EE 0%, #EEF1E8 50%, #F0EDE6 100%);
+    background: linear-gradient(160deg, #EAF7F0 0%, #DCEFE4 50%, #E4F2EA 100%);
   }
   .gradient-text {
     @apply text-[#243010];
@@ -85,7 +85,7 @@
     @apply bg-[#23CE6B] text-[#0A122A] font-semibold hover:bg-[#1CB85C] transition-colors;
   }
   .gradient-card {
-    @apply bg-[#EEF1E8] border border-[#4F6D7A]/15;
+    @apply bg-[#DCEFE4] border border-[#4F6D7A]/15;
   }
 
   /* ------------------------------------------------ */

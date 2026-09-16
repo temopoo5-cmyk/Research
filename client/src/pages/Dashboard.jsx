@@ -43,7 +43,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
         {statCards.map(s => (
-          <Card key={s.label} className="border-[#4F6D7A]/20 transition-all hover:shadow-lg hover:shadow-[#23CE6B]/10 hover:-translate-y-0.5 bg-[#EEF1E8]">
+          <Card key={s.label} className="border-[#4F6D7A]/20 transition-all hover:shadow-lg hover:shadow-[#23CE6B]/10 hover:-translate-y-0.5 bg-[#DCEFE4]">
             <CardContent className="p-5">
               <div className={`h-9 w-9 rounded-lg flex items-center justify-center mb-3 ${s.color}`}><s.icon className="h-4 w-4" /></div>
               <p className="text-2xl font-bold text-[#0A122A]">{s.value}</p>
@@ -54,7 +54,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <Card className="md:col-span-2 border-[#4F6D7A]/20 bg-[#EEF1E8]">
+        <Card className="md:col-span-2 border-[#4F6D7A]/20 bg-[#DCEFE4]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-[#23CE6B]" /> Recent Submissions</CardTitle>
             <Link to="/research">
@@ -94,7 +94,7 @@ export default function Dashboard() {
         </Card>
 
         <div className="space-y-6">
-          <Card className="border-[#4F6D7A]/20 bg-[#EEF1E8]">
+          <Card className="border-[#4F6D7A]/20 bg-[#DCEFE4]">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2"><Award className="h-5 w-5 text-[#23CE6B]" /> By Type</CardTitle>
             </CardHeader>
@@ -110,7 +110,7 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-[#4F6D7A]/20 bg-[#EEF1E8]">
+          <Card className="border-[#4F6D7A]/20 bg-[#DCEFE4]">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-[#23CE6B]" /> By Year</CardTitle>
             </CardHeader>

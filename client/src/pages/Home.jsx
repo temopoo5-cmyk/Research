@@ -52,7 +52,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <section className="relative overflow-hidden border-b border-[#4F6D7A]/20 bg-[#F6F4EE]">
+      <section className="relative overflow-hidden border-b border-[#4F6D7A]/20 bg-[#EAF7F0]">
         <FloatingBooks />
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
           <div className="grid lg:grid-cols-[1fr_auto] gap-10 items-center">
@@ -72,7 +72,7 @@ export default function Home() {
                     { label: 'Research Works', value: stats.total, icon: FileText },
                     { label: 'Programs', value: stats.programs, icon: FolderOpen },
                   ].map(s => (
-                    <div key={s.label} className="flex items-center gap-3 rounded-xl bg-[#EEF1E8]/80 backdrop-blur border border-[#4F6D7A]/20 px-4 py-3 shadow-sm">
+                    <div key={s.label} className="flex items-center gap-3 rounded-xl bg-[#DCEFE4]/80 backdrop-blur border border-[#4F6D7A]/20 px-4 py-3 shadow-sm">
                       <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
                       <div>
                         <p className="text-xl font-bold text-[#0A122A] leading-none">{s.value}</p>
@@ -92,7 +92,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
-        <Card className="border-[#4F6D7A]/20 shadow-lg shadow-[#4F6D7A]/10 -mt-2 bg-[#EEF1E8]">
+        <Card className="border-[#4F6D7A]/20 shadow-lg shadow-[#4F6D7A]/10 -mt-2 bg-[#DCEFE4]">
           <CardContent className="p-6">
             <form onSubmit={handleSearch}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-end">
@@ -162,11 +162,11 @@ export default function Home() {
         {loading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <Card key={i} className="border-[#4F6D7A]/20 bg-[#EEF1E8]"><CardContent className="p-6 space-y-3"><div className="h-4 w-20 bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-5 w-full bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-4 w-2/3 bg-[#23CE6B]/15 rounded animate-pulse" /></CardContent></Card>
+              <Card key={i} className="border-[#4F6D7A]/20 bg-[#DCEFE4]"><CardContent className="p-6 space-y-3"><div className="h-4 w-20 bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-5 w-full bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-4 w-2/3 bg-[#23CE6B]/15 rounded animate-pulse" /></CardContent></Card>
             ))}
           </div>
         ) : research.length === 0 ? (
-          <Card className="border-[#4F6D7A]/20 bg-[#EEF1E8]">
+          <Card className="border-[#4F6D7A]/20 bg-[#DCEFE4]">
             <CardContent className="py-16 text-center">
               <BookOpenIcon className="h-12 w-12 mx-auto mb-3 text-[#23CE6B]/50" />
               <h3 className="font-semibold text-lg mb-1">No research found</h3>
@@ -180,7 +180,7 @@ export default function Home() {
                 const meta = typeMeta[r.research_type] || { icon: FileText, bar: 'bg-[#23CE6B]', chip: 'bg-[#23CE6B]/10 text-[#23CE6B] border-[#23CE6B]/20', hover: 'group-hover:text-[#23CE6B]' };
                 const Icon = meta.icon;
                 return (
-                  <Card key={r.id} className="border-[#4F6D7A]/20 transition-all hover:shadow-xl hover:shadow-[#23CE6B]/10 hover:-translate-y-1 cursor-pointer overflow-hidden group bg-[#EEF1E8]"
+                  <Card key={r.id} className="border-[#4F6D7A]/20 transition-all hover:shadow-xl hover:shadow-[#23CE6B]/10 hover:-translate-y-1 cursor-pointer overflow-hidden group bg-[#DCEFE4]"
                     onClick={() => navigate(`/research/${r.id}`)}>
                     <div className={`h-1.5 ${meta.bar}`} />
                     <CardContent className="p-6">

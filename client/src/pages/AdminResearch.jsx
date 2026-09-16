@@ -44,14 +44,14 @@ export default function AdminResearch() {
       </div>
 
       <Tabs value={filter} onValueChange={setFilter} className="space-y-6">
-        <TabsList className="bg-white border border-[#4F6D7A]/20 shadow-sm">
+        <TabsList className="bg-[#CFE7DA] border border-[#4F6D7A]/20 shadow-sm">
           <TabsTrigger value="all" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">All</TabsTrigger>
           <TabsTrigger value="pending" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Pending</TabsTrigger>
           <TabsTrigger value="approved" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Approved</TabsTrigger>
           <TabsTrigger value="rejected" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Rejected</TabsTrigger>
         </TabsList>
 
-        <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#EEF1E8]">
+        <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#DCEFE4]">
           <CardContent className="p-6">
             <div className="flex gap-2 mb-4">
               <div className="relative flex-1">
