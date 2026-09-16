@@ -35,7 +35,7 @@ export default function Login() {
         <div className="relative grid md:grid-cols-2 gap-8 max-w-5xl w-full items-center">
         <div className="hidden md:block">
           <div className="inline-flex h-14 w-14 rounded-2xl gradient-btn items-center justify-center mb-5 shadow-lg shadow-[#23CE6B]/25">
-            <GraduationCap className="h-7 w-7 text-white" />
+            <GraduationCap className="h-7 w-7 text-[#0A122A]" />
           </div>
           <h1 className="text-4xl font-bold leading-tight mb-3">
             <span className="gradient-text">ResearchHub</span>
@@ -47,18 +47,18 @@ export default function Login() {
             {[['BookOpen', 'Research Repository', 'Organize papers, theses & capstones'], ['FolderOpen', 'Unique Cataloging', 'Auto-assigned codes for every work'], ['Search', 'Smart Search', 'Filter by program, year, category, keywords']].map(([icon, title, desc]) => {
               const Icon = icon === 'BookOpen' ? BookOpen : icon === 'FolderOpen' ? FolderOpen : Search;
               return (
-                <div key={title} className="flex items-start gap-4 p-4 rounded-xl bg-[#0f1a36]/70 backdrop-blur border border-[#4F6D7A]/20 shadow-sm">
+                <div key={title} className="flex items-start gap-4 p-4 rounded-xl bg-[#EEF1E8]/70 backdrop-blur border border-[#4F6D7A]/20 shadow-sm">
                   <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
-                  <div><p className="font-semibold text-sm text-white">{title}</p><p className="text-sm text-white/50">{desc}</p></div>
+                  <div><p className="font-semibold text-sm text-[#0A122A]">{title}</p><p className="text-sm text-[#4F6D7A]/80">{desc}</p></div>
                 </div>
               );
             })}
           </div>
         </div>
-        <Card className="w-full max-w-md mx-auto shadow-xl shadow-black/30 border-[#4F6D7A]/20 bg-[#0f1a36]/95 backdrop-blur">
+        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#4F6D7A]/15 border-[#4F6D7A]/20 bg-[#EEF1E8]/95 backdrop-blur">
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-2 md:hidden mb-2">
-              <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-white" /></div>
+              <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#0A122A]" /></div>
               <span className="font-bold text-lg gradient-text">ResearchHub</span>
             </div>
             <CardTitle className="text-2xl gradient-text">Welcome back</CardTitle>
@@ -81,7 +81,7 @@ export default function Login() {
               Don't have an account? <a href="/register" className="font-medium text-[#23CE6B] hover:text-[#1CB85C] hover:underline">Register</a>
             </div>
             <div className="mt-4 text-center text-xs text-muted-foreground bg-[#4F6D7A]/50 rounded-lg py-2 border border-[#4F6D7A]/20">
-              Demo admin: <strong className="text-white">admin</strong> / <strong className="text-white">admin123</strong>
+              Demo admin: <strong className="text-[#0A122A]">admin</strong> / <strong className="text-[#0A122A]">admin123</strong>
             </div>
           </CardContent>
         </Card>

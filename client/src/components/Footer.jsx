@@ -12,7 +12,7 @@ const links = [
 export default function Footer() {
   const navigate = useNavigate();
   return (
-    <footer className="relative mt-16 overflow-hidden border-t border-[#4F6D7A]/20 bg-[#0A122A]/80 backdrop-blur">
+    <footer className="relative mt-16 overflow-hidden border-t border-[#4F6D7A]/20 bg-[#F6F4EE]/80 backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-60" aria-hidden="true">
         <div className="float-book" style={{ top: '20%', right: '4%', left: 'auto', animationDuration: '12s', ['--tilt']: '-6deg' }}>
           <BookOpen className="h-8 w-8 text-[#4F6D7A]/30" strokeWidth={1.3} />
@@ -26,20 +26,20 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2.5">
               <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center shrink-0">
-                <GraduationCap className="h-5 w-5 text-white" />
+                <GraduationCap className="h-5 w-5 text-[#0A122A]" />
               </div>
-              <span className="font-bold text-lg text-white">ResearchHub</span>
+              <span className="font-bold text-lg text-[#0A122A]">ResearchHub</span>
             </div>
-            <p className="mt-3 text-sm text-white/50 max-w-xs">
+            <p className="mt-3 text-sm text-[#4F6D7A]/80 max-w-xs">
               The central institutional repository for research papers, theses, and capstone projects.
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">Explore</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#4F6D7A]/60 mb-3">Explore</p>
             <ul className="space-y-2">
               {links.map(l => (
                 <li key={l.to}>
-                  <button onClick={() => navigate(l.to)} className="text-sm text-white/60 hover:text-white transition-colors">
+                  <button onClick={() => navigate(l.to)} className="text-sm text-white/60 hover:text-[#0A122A] transition-colors">
                     {l.label}
                   </button>
                 </li>
@@ -47,14 +47,14 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">Repository</p>
-            <div className="space-y-2 text-sm text-white/50">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#4F6D7A]/60 mb-3">Repository</p>
+            <div className="space-y-2 text-sm text-[#4F6D7A]/80">
               <p className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-[#23CE6B]" /> Research Paper · Thesis · Capstone</p>
               <p className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-[#23CE6B]" /> Auto-cataloged codes (RP / TH / CP)</p>
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-5 border-t border-[#4F6D7A]/20 text-center text-xs text-white/30">
+        <div className="mt-8 pt-5 border-t border-[#4F6D7A]/20 text-center text-xs text-[#4F6D7A]/50">
           &copy; {new Date().getFullYear()} ResearchHub — Institutional Research Management System
         </div>
       </div>

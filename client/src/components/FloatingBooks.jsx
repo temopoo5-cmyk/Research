@@ -42,27 +42,27 @@ export function BookPile() {
         className="float-book"
         style={{ left: 'auto', right: '-14px', top: '-34px', animationDuration: '8s', ['--tilt']: '8deg' }}
       >
-        <div className="flex items-center gap-2 rounded-md bg-gradient-to-r from-orange-500 to-amber-500 px-3 py-1.5 text-white shadow-lg shadow-orange-200 font-semibold text-xs">
+        <div className="flex items-center gap-2 rounded-md bg-gradient-to-r from-orange-500 to-amber-500 px-3 py-1.5 text-[#0A122A] shadow-lg shadow-orange-200 font-semibold text-xs">
           <Book className="h-4 w-4" /> Repository Guide
         </div>
       </div>
 
       <div className="relative">
         <div className="mb-3 flex items-end gap-3">
-          <div className="flex h-9 w-7 rotate-6 items-center justify-center rounded-sm bg-gradient-to-b from-violet-600 to-purple-600 text-[9px] font-bold text-white shadow-lg shadow-violet-200">
+          <div className="flex h-9 w-7 rotate-6 items-center justify-center rounded-sm bg-gradient-to-b from-violet-600 to-purple-600 text-[9px] font-bold text-[#0A122A] shadow-lg shadow-violet-200">
             AI
           </div>
-          <div className="flex h-10 w-8 -rotate-3 items-center justify-center rounded-sm bg-gradient-to-b from-amber-600 to-orange-500 text-[9px] font-bold text-white shadow-lg shadow-amber-200">
+          <div className="flex h-10 w-8 -rotate-3 items-center justify-center rounded-sm bg-gradient-to-b from-amber-600 to-orange-500 text-[9px] font-bold text-[#0A122A] shadow-lg shadow-amber-200">
             TH
           </div>
           <div className="flex h-8 w-6 rotate-3 items-center justify-center rounded-sm bg-[#23CE6B] text-[9px] font-bold text-[#0A122A] shadow-lg shadow-[#23CE6B]/30">
             RP
           </div>
         </div>
-        <div className="rounded-lg bg-[#0A122A] p-4 text-white shadow-2xl shadow-[#0A122A]/40 ring-1 ring-white/10">
+        <div className="rounded-lg bg-[#F6F4EE] p-4 text-[#0A122A] shadow-2xl shadow-[#0A122A]/40 ring-1 ring-white/10">
           <p className="text-[10px] uppercase tracking-[0.3em] text-[#23CE6B]">ResearchHub</p>
           <p className="mt-1 text-xl font-bold leading-snug">A Library of<br />Ideas</p>
-          <div className="mt-3 flex items-center gap-1.5 text-[10px] text-white/70">
+          <div className="mt-3 flex items-center gap-1.5 text-[10px] text-[#4F6D7A]">
             <BookOpen className="h-3.5 w-3.5 text-[#23CE6B]" /> Theses, Capstones &amp; Papers
           </div>
         </div>

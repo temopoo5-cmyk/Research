@@ -53,12 +53,12 @@ export default function AdminUsers() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold mb-1"><span className="gradient-text">Manage Users</span></h1>
-          <p className="text-white/50">Add, edit, or remove system users</p>
+          <p className="text-[#4F6D7A]/80">Add, edit, or remove system users</p>
         </div>
         <Button className="gradient-btn" onClick={openNew}><UserPlus className="h-4 w-4" /> Add User</Button>
       </div>
 
-      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-black/20 bg-[#0f1a36]">
+      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#EEF1E8]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -77,7 +77,7 @@ export default function AdminUsers() {
                     <TableCell className="text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30" onClick={() => openEdit(u)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
+                        <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10" onClick={() => openEdit(u)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
                         <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleDelete(u.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
                       </div>
                     </TableCell>
@@ -91,7 +91,7 @@ export default function AdminUsers() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="border-[#4F6D7A]/20 bg-[#0f1a36]">
+        <DialogContent className="border-[#4F6D7A]/20 bg-[#EEF1E8]">
           <DialogHeader>
             <DialogTitle className="gradient-text">{editing ? 'Edit User' : 'Add User'}</DialogTitle>
             <DialogDescription>{editing ? 'Update user account details' : 'Create a new system user'}</DialogDescription>
@@ -119,7 +119,7 @@ export default function AdminUsers() {
               </Select>
             </div>
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button type="button" variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10" onClick={() => setShowModal(false)}>Cancel</Button>
               <Button type="submit" className="gradient-btn">{editing ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>

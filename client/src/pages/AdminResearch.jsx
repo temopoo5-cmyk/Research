@@ -51,7 +51,7 @@ export default function AdminResearch() {
           <TabsTrigger value="rejected" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Rejected</TabsTrigger>
         </TabsList>
 
-        <Card className="border-[#4F6D7A]/20 shadow-xl shadow-black/20 bg-[#0f1a36]">
+        <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/10 bg-[#EEF1E8]">
           <CardContent className="p-6">
             <div className="flex gap-2 mb-4">
               <div className="relative flex-1">
@@ -81,7 +81,7 @@ export default function AdminResearch() {
                           {r.status !== 'approved' && <Button size="sm" className="bg-[#23CE6B] hover:bg-[#1CB85C] text-[#0A122A]" onClick={() => updateStatus(r.id, 'approved')}><CheckCircle2 className="h-3.5 w-3.5" /> Approve</Button>}
                           {r.status !== 'rejected' && <Button size="sm" variant="destructive" onClick={() => updateStatus(r.id, 'rejected')}><XCircle className="h-3.5 w-3.5" /></Button>}
                           {r.status !== 'pending' && <Button size="sm" variant="outline" className="border-amber-300/30 text-amber-400 hover:bg-amber-500/10" onClick={() => updateStatus(r.id, 'pending')}><RotateCcw className="h-3.5 w-3.5" /></Button>}
-                          <Link to={`/edit-research/${r.id}`}><Button size="sm" variant="outline" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30"><Pencil className="h-3.5 w-3.5" /></Button></Link>
+                          <Link to={`/edit-research/${r.id}`}><Button size="sm" variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10"><Pencil className="h-3.5 w-3.5" /></Button></Link>
                           <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(r.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                         </div>
                       </TableCell>

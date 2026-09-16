@@ -22,8 +22,8 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.error) {
       return (
-        <div className="min-h-screen bg-[#0A122A] flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-[#0f1a36] rounded-2xl border border-[#4F6D7A]/20 shadow-xl shadow-black/30 p-8 text-center">
+        <div className="min-h-screen bg-[#F6F4EE] flex items-center justify-center p-6">
+          <div className="max-w-md w-full bg-[#EEF1E8] rounded-2xl border border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/15 p-8 text-center">
             <div className="text-4xl font-bold text-[#23CE6B] mb-2">Oops!</div>
             <p className="text-muted-foreground text-sm mb-6">Something went wrong while loading this page.</p>
             <pre className="text-left text-xs bg-red-50 border border-red-100 rounded-lg p-4 mb-6 text-red-700 overflow-auto max-h-40 whitespace-pre-wrap">{String(this.state.error.message || this.state.error)}</pre>

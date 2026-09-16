@@ -24,8 +24,8 @@ const adminItems = [
 const linkClass = ({ isActive }) =>
   `px-3 py-2 rounded-lg text-sm font-medium transition-all ${
     isActive
-      ? 'bg-[#23CE6B]/20 text-white font-semibold'
-      : 'text-white/70 hover:bg-[#4F6D7A]/20 hover:text-white'
+      ? 'bg-[#23CE6B]/20 text-[#0A122A] font-semibold'
+      : 'text-[#4F6D7A] hover:bg-[#4F6D7A]/20 hover:text-[#0A122A]'
   }`;
 
 export default function Navbar() {
@@ -44,7 +44,7 @@ export default function Navbar() {
   const rightSide = token ? (
     <div className="flex items-center gap-2">
       <div className="hidden sm:flex items-center gap-2.5">
-        <div className="h-8 w-8 rounded-full gradient-btn flex items-center justify-center text-white text-xs font-bold">
+        <div className="h-8 w-8 rounded-full gradient-btn flex items-center justify-center text-[#0A122A] text-xs font-bold">
           {(user?.full_name || 'U').charAt(0).toUpperCase()}
         </div>
         <div className="leading-tight">
@@ -52,13 +52,13 @@ export default function Navbar() {
           <p className="text-[10px] text-muted-foreground">{isAdmin ? 'Administrator' : 'User'}</p>
         </div>
       </div>
-      <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/20 hover:text-white" onClick={handleLogout}>
+      <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/20 hover:text-[#0A122A]" onClick={handleLogout}>
         <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign Out</span>
       </Button>
     </div>
   ) : (
     <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/20 hover:text-white" onClick={() => navigate('/login')}>
+      <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/20 hover:text-[#0A122A]" onClick={() => navigate('/login')}>
         Sign In
       </Button>
       <Button size="sm" className="gradient-btn" onClick={() => navigate('/register')}>
@@ -81,7 +81,7 @@ export default function Navbar() {
               {item.label}
             </NavLink>
           ))}
-          <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wider text-white/40">Administration</p>
+          <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wider text-[#4F6D7A]/60">Administration</p>
           {adminItems.map(item => (
             <NavLink key={item.to} to={item.to} onClick={close} className={linkClass}>
               {item.label}
@@ -93,14 +93,14 @@ export default function Navbar() {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#4F6D7A]/20 bg-[#0A122A]/90 backdrop-blur-md shadow-sm shadow-black/20">
+    <header className="sticky top-0 z-40 border-b border-[#4F6D7A]/20 bg-[#F6F4EE]/90 backdrop-blur-md shadow-sm shadow-[#4F6D7A]/10">
       <div className="mx-auto max-w-7xl flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-3">
           <button onClick={() => { close(); navigate('/'); }} className="flex items-center gap-2.5">
             <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center shrink-0">
-              <GraduationCap className="h-5 w-5 text-white" />
+              <GraduationCap className="h-5 w-5 text-[#0A122A]" />
             </div>
-            <span className="font-bold text-lg text-white">ResearchHub</span>
+            <span className="font-bold text-lg text-[#0A122A]">ResearchHub</span>
           </button>
         </div>
 
@@ -117,7 +117,7 @@ export default function Navbar() {
                   {item.label}
                 </NavLink>
               ))}
-              <span className="hidden xl:inline-flex items-center px-3 text-[11px] font-semibold uppercase tracking-wider text-white/40">Administration</span>
+              <span className="hidden xl:inline-flex items-center px-3 text-[11px] font-semibold uppercase tracking-wider text-[#4F6D7A]/60">Administration</span>
               {adminItems.map(item => (
                 <NavLink key={item.to} to={item.to} className={linkClass}>
                   {item.label}
@@ -129,19 +129,19 @@ export default function Navbar() {
 
         <div className="hidden xl:flex items-center">{rightSide}</div>
 
-        <button onClick={() => setOpen(!open)} className="xl:hidden rounded-lg p-2 text-white hover:bg-[#4F6D7A]/20">
+        <button onClick={() => setOpen(!open)} className="xl:hidden rounded-lg p-2 text-[#0A122A] hover:bg-[#4F6D7A]/20">
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="xl:hidden border-t border-[#4F6D7A]/20 bg-[#0A122A]/95 backdrop-blur-md px-4 py-3">
+        <div className="xl:hidden border-t border-[#4F6D7A]/20 bg-[#F6F4EE]/95 backdrop-blur-md px-4 py-3">
           <nav className="flex flex-col gap-1 pb-3">{mobileLinks}</nav>
           <div className="border-t border-[#4F6D7A]/20 pt-3">
             {token ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="h-8 w-8 rounded-full gradient-btn flex items-center justify-center text-white text-xs font-bold">
+                  <div className="h-8 w-8 rounded-full gradient-btn flex items-center justify-center text-[#0A122A] text-xs font-bold">
                     {(user?.full_name || 'U').charAt(0).toUpperCase()}
                   </div>
                   <div className="leading-tight">
@@ -155,7 +155,7 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/20 hover:text-white" onClick={() => { close(); navigate('/login'); }}>
+                <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/20 hover:text-[#0A122A]" onClick={() => { close(); navigate('/login'); }}>
                   Sign In
                 </Button>
                 <Button size="sm" className="gradient-btn" onClick={() => { close(); navigate('/register'); }}>
