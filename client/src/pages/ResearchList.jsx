@@ -10,7 +10,14 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight } from 'lucide-react';
+import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight, GraduationCap, Cpu, Quote } from 'lucide-react';
+import FloatingBooks from '../components/FloatingBooks';
+
+const typeMeta = {
+  'Research Paper': { icon: FileText, accent: 'from-orange-500 to-amber-400', chip: 'bg-orange-50 text-orange-600 border-orange-100' },
+  'Thesis': { icon: GraduationCap, accent: 'from-blue-600 to-indigo-500', chip: 'bg-blue-50 text-blue-600 border-blue-100' },
+  'Capstone Project': { icon: Cpu, accent: 'from-violet-600 to-purple-500', chip: 'bg-violet-50 text-violet-600 border-violet-100' },
+};
 
 export default function ResearchList() {
   const navigate = useNavigate();
@@ -45,11 +52,10 @@ export default function ResearchList() {
   const handleSearch = (e) => { if (e) e.preventDefault(); setPage(1); fetchData(); };
   const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
 
-  const typeIcons = { 'Research Paper': FileText, 'Thesis': FileText, 'Capstone Project': FileText };
-
   return (
     <div className="min-h-screen">
-      <section className="border-b border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+      <section className="relative overflow-hidden border-b border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+        <FloatingBooks />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100/70 border border-emerald-200 px-3 py-1 text-xs font-medium text-emerald-700 mb-5">
@@ -174,19 +180,27 @@ export default function ResearchList() {
         <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {research.map(r => {
-              const Icon = typeIcons[r.research_type] || FileText;
+              const meta = typeMeta[r.research_type] || { icon: FileText, accent: 'from-emerald-500 to-teal-500', chip: 'bg-emerald-50 text-emerald-600 border-emerald-100' };
+              const Icon = meta.icon;
               return (
                 <Card key={r.id} className="border-emerald-100 transition-all hover:shadow-xl hover:shadow-emerald-100/60 hover:-translate-y-1 cursor-pointer overflow-hidden group"
                   onClick={() => navigate(`/research/${r.id}`)}>
+                  <div className={`h-1.5 bg-gradient-to-r ${meta.accent}`} />
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-xs font-bold text-emerald-700 tracking-wide bg-emerald-50 px-2.5 py-1 rounded-md">{r.code}</span>
-                      <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <Icon className="h-3.5 w-3.5" />{r.research_type}
+                      <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${meta.chip}`}>
+                        <Icon className="h-3 w-3" />{r.research_type}
                       </span>
                     </div>
                     <h3 className="font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors">{r.title}</h3>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3"><Users className="h-3.5 w-3.5" />{r.authors}</p>
+                    <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-2.5"><Users className="h-3.5 w-3.5 text-emerald-500" />{r.authors}</p>
+                    {r.abstract && (
+                      <p className="text-xs text-muted-foreground/90 line-clamp-2 mb-3 flex items-start gap-1.5">
+                        <Quote className="h-3 w-3 rotate-180 shrink-0 mt-0.5 text-emerald-300" />
+                        <span className="italic">{r.abstract}</span>
+                      </p>
+                    )}
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-emerald-50">
                       {r.program_name && <span>{r.program_name}</span>}
                       <span>{r.year}</span>

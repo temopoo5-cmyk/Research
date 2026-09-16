@@ -8,7 +8,14 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, GraduationCap, Sparkles, FolderOpen, ArrowRight } from 'lucide-react';
+import FloatingBooks, { BookPile } from '../components/FloatingBooks';
+import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, GraduationCap, Sparkles, FolderOpen, ArrowRight, Cpu, Quote } from 'lucide-react';
+
+const typeMeta = {
+  'Research Paper': { icon: FileText, accent: 'from-orange-500 to-amber-400', chip: 'bg-orange-50 text-orange-600 border-orange-100', hover: 'group-hover:text-orange-600' },
+  'Thesis': { icon: GraduationCap, accent: 'from-blue-600 to-indigo-500', chip: 'bg-blue-50 text-blue-600 border-blue-100', hover: 'group-hover:text-blue-600' },
+  'Capstone Project': { icon: Cpu, accent: 'from-violet-600 to-purple-500', chip: 'bg-violet-50 text-violet-600 border-violet-100', hover: 'group-hover:text-violet-600' },
+};
 
 export default function Home() {
   const navigate = useNavigate();
@@ -43,41 +50,43 @@ export default function Home() {
   const handleSearch = (e) => { if (e) e.preventDefault(); setPage(1); fetchData(); };
   const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
 
-  const typeIcons = { 'Research Paper': FileText, 'Thesis': FileText, 'Capstone Project': FileText };
-
   return (
     <div className="min-h-screen">
-      <section className="border-b border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100/70 border border-emerald-200 px-3 py-1 text-xs font-medium text-emerald-700 mb-5">
-              <Sparkles className="h-3.5 w-3.5" /> Central research repository
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-4">
-              <span className="gradient-text">Discover research</span> papers, theses &amp; capstones
-            </h1>
-            <p className="text-emerald-900/70 text-lg mb-8 max-w-2xl">
-              Browse and search the institutional repository. Submissions are automatically cataloged with unique codes.
-            </p>
-            {stats && (
-              <div className="flex flex-wrap gap-3">
-                {[
-                  { label: 'Research Works', value: stats.total, icon: FileText },
-                  { label: 'Programs', value: stats.programs, icon: FolderOpen },
-                ].map(s => (
-                  <div key={s.label} className="flex items-center gap-3 rounded-xl bg-white/80 backdrop-blur border border-emerald-100 px-4 py-3 shadow-sm">
-                    <div className="h-9 w-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
-                    <div>
-                      <p className="text-xl font-bold text-emerald-800 leading-none">{s.value}</p>
-                      <p className="text-xs text-muted-foreground">{s.label}</p>
-                    </div>
-                  </div>
-                ))}
-                <Button className="gradient-btn" onClick={() => navigate('/register')}>
-                  Join the Repository <ArrowRight className="h-4 w-4" />
-                </Button>
+      <section className="relative overflow-hidden border-b border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+        <FloatingBooks />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
+          <div className="grid lg:grid-cols-[1fr_auto] gap-10 items-center">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100/70 border border-emerald-200 px-3 py-1 text-xs font-medium text-emerald-700 mb-5">
+                <Sparkles className="h-3.5 w-3.5" /> Central research repository
               </div>
-            )}
+              <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-4">
+                <span className="gradient-text">Discover research</span> papers, theses &amp; capstones
+              </h1>
+              <p className="text-emerald-900/70 text-lg mb-8 max-w-2xl">
+                Browse and search the institutional repository. Submissions are automatically cataloged with unique codes.
+              </p>
+              {stats && (
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { label: 'Research Works', value: stats.total, icon: FileText },
+                    { label: 'Programs', value: stats.programs, icon: FolderOpen },
+                  ].map(s => (
+                    <div key={s.label} className="flex items-center gap-3 rounded-xl bg-white/80 backdrop-blur border border-emerald-100 px-4 py-3 shadow-sm">
+                      <div className="h-9 w-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
+                      <div>
+                        <p className="text-xl font-bold text-emerald-800 leading-none">{s.value}</p>
+                        <p className="text-xs text-muted-foreground">{s.label}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <Button className="gradient-btn" onClick={() => navigate('/register')}>
+                    Join the Repository <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+            <BookPile />
           </div>
         </div>
       </section>
@@ -168,19 +177,27 @@ export default function Home() {
           <>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {research.map(r => {
-                const Icon = typeIcons[r.research_type] || FileText;
+                const meta = typeMeta[r.research_type] || { icon: FileText, accent: 'from-emerald-500 to-teal-500', chip: 'bg-emerald-50 text-emerald-600 border-emerald-100', hover: 'group-hover:text-emerald-700' };
+                const Icon = meta.icon;
                 return (
                   <Card key={r.id} className="border-emerald-100 transition-all hover:shadow-xl hover:shadow-emerald-100/60 hover:-translate-y-1 cursor-pointer overflow-hidden group"
                     onClick={() => navigate(`/research/${r.id}`)}>
+                    <div className={`h-1.5 bg-gradient-to-r ${meta.accent}`} />
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-xs font-bold text-emerald-700 tracking-wide bg-emerald-50 px-2.5 py-1 rounded-md">{r.code}</span>
-                        <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                          <Icon className="h-3.5 w-3.5" />{r.research_type}
+                        <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${meta.chip}`}>
+                          <Icon className="h-3 w-3" />{r.research_type}
                         </span>
                       </div>
-                      <h3 className="font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors">{r.title}</h3>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3"><Users className="h-3.5 w-3.5" />{r.authors}</p>
+                      <h3 className={`font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors ${meta.hover}`}>{r.title}</h3>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-2.5"><Users className="h-3.5 w-3.5 text-emerald-500" />{r.authors}</p>
+                      {r.abstract && (
+                        <p className="text-xs text-muted-foreground/90 line-clamp-2 mb-3 flex items-start gap-1.5">
+                          <Quote className="h-3 w-3 rotate-180 shrink-0 mt-0.5 text-emerald-300" />
+                          <span className="italic">{r.abstract}</span>
+                        </p>
+                      )}
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-emerald-50">
                         {r.program_name && <span>{r.program_name}</span>}
                         <span>{r.year}</span>

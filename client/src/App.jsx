@@ -14,6 +14,7 @@ import AdminPrograms from './pages/AdminPrograms';
 import AdminCategories from './pages/AdminCategories';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 import { GraduationCap, Menu } from 'lucide-react';
 
@@ -39,9 +40,10 @@ function AdminRoute({ children }) {
 
 function PublicLayout({ children }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 flex flex-col">
       <Navbar />
-      {children}
+      <main className="flex-1">{children}</main>
+      <Footer />
     </div>
   );
 }

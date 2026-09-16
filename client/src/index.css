@@ -87,4 +87,225 @@
   .gradient-card {
     @apply bg-gradient-to-br from-white to-emerald-50 border border-emerald-100;
   }
+
+  /* ------------------------------------------------ */
+  /* Floating books (background decoration)            */
+  /* ------------------------------------------------ */
+  .float-book {
+    position: absolute;
+    animation: float-book 10s ease-in-out infinite;
+    will-change: transform;
+  }
+  @keyframes float-book {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-18px) rotate(var(--tilt, 0deg)); }
+  }
+
+  /* Gentle pop-in used for section reveals */
+  .fade-in-up {
+    animation: fade-in-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ------------------------------------------------ */
+  /* Book opening overlay                              */
+  /* ------------------------------------------------ */
+  .book-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    padding: 24px;
+    text-align: center;
+    background: radial-gradient(circle at 50% 38%, #d1fae5 0%, #ecfdf5 32%, #f8fafc 70%, #e6fffa 100%);
+    overflow: hidden;
+  }
+  .book-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px);
+    background-size: 22px 22px;
+    animation: book-out 0.6s ease 2s forwards;
+  }
+  .book-overlay::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: 480px;
+    height: 480px;
+    transform: translate(-50%, -50%);
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(52, 211, 153, 0.28) 0%, rgba(52, 211, 153, 0) 65%);
+    animation: book-glow 1.4s ease 0.5s both;
+  }
+  .book-overlay.book-leaving {
+    animation: book-out 0.6s ease both;
+  }
+
+  .book-scene {
+    position: relative;
+    z-index: 1;
+    perspective: 1400px;
+  }
+
+  .book-wrap {
+    position: relative;
+    width: clamp(240px, 58vw, 400px);
+    height: clamp(180px, 42vh, 270px);
+    transform-style: preserve-3d;
+    animation: book-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .book-leaf {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    transform-style: preserve-3d;
+    will-change: transform;
+    overflow: hidden;
+  }
+  .book-leaf-left { left: 0; transform-origin: 100% 50%; }
+  .book-leaf-right { right: 0; transform-origin: 0 50%; }
+
+  .book-cover {
+    background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+    box-shadow: 0 14px 34px rgba(13, 148, 136, 0.35);
+    color: #fff;
+    z-index: 2;
+  }
+  .book-leaf-left.book-cover { border-radius: 5px 0 0 5px; }
+  .book-leaf-right.book-cover { border-radius: 0 5px 5px 0; }
+  .book-cover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .book-leaf-left.book-cover::after { right: 0; }
+  .book-leaf-right.book-cover::after { left: 0; }
+  .book-cover-text {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+  }
+  .book-cover-brand {
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    font-weight: 600;
+  }
+
+  .book-page {
+    background: linear-gradient(180deg, #fdfaf1 0%, #f3e7d1 100%);
+    z-index: 1;
+    box-shadow: inset 0 0 0 1px rgba(120, 113, 108, 0.08);
+  }
+  .book-page::before {
+    content: '';
+    position: absolute;
+    left: 16%;
+    right: 16%;
+    top: 30%;
+    height: 42%;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0 10px,
+      rgba(120, 113, 108, 0.22) 10px 11px
+    );
+    -webkit-mask-image: radial-gradient(ellipse at center, black 55%, transparent 80%);
+    mask-image: radial-gradient(ellipse at center, black 55%, transparent 80%);
+  }
+  .book-leaf-left.book-page { animation: page-left-open 0.9s cubic-bezier(0.33, 1, 0.68, 1) 0.5s forwards; }
+  .book-leaf-right.book-page { animation: page-right-open 0.9s cubic-bezier(0.33, 1, 0.68, 1) 0.5s forwards; }
+  .book-leaf-left.book-cover { animation: cover-left-open 0.9s cubic-bezier(0.33, 1, 0.68, 1) 0.5s forwards; }
+  .book-leaf-right.book-cover { animation: cover-right-open 0.9s cubic-bezier(0.33, 1, 0.68, 1) 0.5s forwards; }
+
+  .book-caption {
+    position: relative;
+    z-index: 2;
+    max-width: min(620px, 90vw);
+    animation: reveal-page 1s cubic-bezier(0.22, 1, 0.36, 1) 0.95s both;
+  }
+  .book-caption-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #059669;
+    margin-bottom: 10px;
+  }
+  .book-caption-title {
+    font-size: clamp(20px, 4vw, 34px);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #064e3b;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .book-caption-authors {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #0f766e;
+    font-weight: 500;
+  }
+  .book-caption-meta {
+    margin-top: 6px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #0d9488;
+  }
+
+  @keyframes book-in {
+    from { opacity: 0; transform: scale(0.55) translateY(26px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes book-out {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.94) translateY(-14px); }
+  }
+  @keyframes book-glow {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+    30% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
+  }
+  @keyframes cover-left-open {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(-36deg); }
+  }
+  @keyframes cover-right-open {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(36deg); }
+  }
+  @keyframes page-left-open {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(-20deg); }
+  }
+  @keyframes page-right-open {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(20deg); }
+  }
+  @keyframes reveal-page {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 }
