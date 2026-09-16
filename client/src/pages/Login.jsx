@@ -30,17 +30,17 @@ export default function Login() {
     <div className="min-h-screen gradient-bg relative overflow-hidden">
       <Navbar />
       <div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)] relative">
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-emerald-200/40 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-teal-200/40 blur-3xl" />
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-[#23CE6B]/40 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-[#4F6D7A]/40 blur-3xl" />
         <div className="relative grid md:grid-cols-2 gap-8 max-w-5xl w-full items-center">
         <div className="hidden md:block">
-          <div className="inline-flex h-14 w-14 rounded-2xl gradient-btn items-center justify-center mb-5 shadow-lg shadow-emerald-200">
+          <div className="inline-flex h-14 w-14 rounded-2xl gradient-btn items-center justify-center mb-5 shadow-lg shadow-[#23CE6B]/25">
             <GraduationCap className="h-7 w-7 text-white" />
           </div>
           <h1 className="text-4xl font-bold leading-tight mb-3">
             <span className="gradient-text">ResearchHub</span>
           </h1>
-          <p className="text-emerald-900/70 text-lg mb-8 max-w-md">
+          <p className="text-[#243010] text-lg mb-8 max-w-md">
             Centralized repository for research papers, theses, and capstone projects.
           </p>
           <div className="space-y-4">
@@ -48,14 +48,14 @@ export default function Login() {
               const Icon = icon === 'BookOpen' ? BookOpen : icon === 'FolderOpen' ? FolderOpen : Search;
               return (
                 <div key={title} className="flex items-start gap-4 p-4 rounded-xl bg-white/70 backdrop-blur border border-white/60 shadow-sm">
-                  <div className="h-9 w-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
-                  <div><p className="font-semibold text-sm text-emerald-900">{title}</p><p className="text-sm text-muted-foreground">{desc}</p></div>
+                  <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#243010] flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
+                  <div><p className="font-semibold text-sm text-[#243010]">{title}</p><p className="text-sm text-muted-foreground">{desc}</p></div>
                 </div>
               );
             })}
           </div>
         </div>
-        <Card className="w-full max-w-md mx-auto shadow-xl shadow-emerald-200/40 border-emerald-100 bg-white/95 backdrop-blur">
+        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#23CE6B]/40 border-[#4F6D7A]/20 bg-white/95 backdrop-blur">
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-2 md:hidden mb-2">
               <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-white" /></div>
@@ -69,19 +69,19 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
-                <Input id="username" value={username} onChange={e => setUsername(e.target.value)} required placeholder="Enter your username" className="border-emerald-200 focus-visible:ring-emerald-500" />
+                <Input id="username" value={username} onChange={e => setUsername(e.target.value)} required placeholder="Enter your username" className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Enter your password" className="border-emerald-200 focus-visible:ring-emerald-500" />
+                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Enter your password" className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
               </div>
               <Button type="submit" disabled={loading} className="w-full gradient-btn">{loading ? 'Signing in...' : 'Sign In'}</Button>
             </form>
             <div className="mt-5 text-center text-sm text-muted-foreground">
-              Don't have an account? <a href="/register" className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline">Register</a>
+              Don't have an account? <a href="/register" className="font-medium text-[#23CE6B] hover:text-[#243010] hover:underline">Register</a>
             </div>
-            <div className="mt-4 text-center text-xs text-muted-foreground bg-emerald-50/50 rounded-lg py-2 border border-emerald-100">
-              Demo admin: <strong className="text-emerald-700">admin</strong> / <strong className="text-emerald-700">admin123</strong>
+            <div className="mt-4 text-center text-xs text-muted-foreground bg-[#4F6D7A]/50 rounded-lg py-2 border border-[#4F6D7A]/20">
+              Demo admin: <strong className="text-[#243010]">admin</strong> / <strong className="text-[#243010]">admin123</strong>
             </div>
           </CardContent>
         </Card>

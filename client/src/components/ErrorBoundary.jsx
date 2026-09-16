@@ -22,14 +22,14 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.error) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-white rounded-2xl border border-emerald-100 shadow-xl shadow-emerald-100/40 p-8 text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent mb-2">Oops!</div>
+        <div className="min-h-screen bg-gradient-to-br from-white via-[#f8fdf9] to-[#f0f4f7] flex items-center justify-center p-6">
+          <div className="max-w-md w-full bg-white rounded-2xl border border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/15 p-8 text-center">
+            <div className="text-4xl font-bold text-[#243010] mb-2">Oops!</div>
             <p className="text-muted-foreground text-sm mb-6">Something went wrong while loading this page.</p>
             <pre className="text-left text-xs bg-red-50 border border-red-100 rounded-lg p-4 mb-6 text-red-700 overflow-auto max-h-40 whitespace-pre-wrap">{String(this.state.error.message || this.state.error)}</pre>
             <button
               onClick={this.handleReload}
-              className="w-full rounded-lg bg-gradient-to-r from-emerald-600 to-teal-500 text-white py-2.5 font-medium hover:opacity-90 transition-opacity"
+              className="w-full rounded-lg bg-[#23CE6B] text-[#0A122A] py-2.5 font-semibold hover:bg-[#1CB85C] transition-colors"
             >
               Reload page
             </button>

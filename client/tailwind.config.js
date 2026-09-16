@@ -42,6 +42,14 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))"
+        },
+        brand: {
+          DEFAULT: "#23CE6B",
+          hover: "#1CB85C",
+          dark: "#0A122A",
+          slate: "#4F6D7A",
+          olive: "#243010",
+          burgundy: "#2B061E"
         }
       },
       borderRadius: {

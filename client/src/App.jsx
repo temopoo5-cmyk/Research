@@ -20,8 +20,8 @@ import { GraduationCap, Menu } from 'lucide-react';
 
 function FullPageLoader() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 flex items-center justify-center">
-      <div className="text-lg font-semibold bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent">Loading...</div>
+    <div className="min-h-screen bg-gradient-to-br from-[#F2FAF5] via-white to-[#EAF1F5] flex items-center justify-center">
+      <div className="text-lg font-semibold text-[#243010]">Loading...</div>
     </div>
   );
 }
@@ -40,7 +40,7 @@ function AdminRoute({ children }) {
 
 function PublicLayout({ children }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-[#F2FAF5] via-white to-[#EAF1F5] flex flex-col">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
@@ -51,16 +51,16 @@ function PublicLayout({ children }) {
 function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+    <div className="min-h-screen bg-gradient-to-br from-[#F2FAF5] via-white to-[#EAF1F5]">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 h-14 bg-white/90 backdrop-blur-md border-b border-emerald-100">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 h-14 bg-white/90 backdrop-blur-md border-b border-[#4F6D7A]/20">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-500 flex items-center justify-center shrink-0">
-            <GraduationCap className="h-4 w-4 text-white" />
+          <div className="h-8 w-8 rounded-lg bg-[#23CE6B] flex items-center justify-center shrink-0">
+            <GraduationCap className="h-4 w-4 text-[#0A122A]" />
           </div>
-          <span className="font-bold bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent">ResearchHub</span>
+          <span className="font-bold text-[#243010]">ResearchHub</span>
         </div>
-        <button onClick={() => setSidebarOpen(true)} className="rounded-lg p-2 text-emerald-700 hover:bg-emerald-50">
+        <button onClick={() => setSidebarOpen(true)} className="rounded-lg p-2 text-[#243010] hover:bg-[#4F6D7A]">
           <Menu className="h-5 w-5" />
         </button>
       </div>

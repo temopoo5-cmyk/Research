@@ -58,12 +58,12 @@ export default function AdminUsers() {
         <Button className="gradient-btn" onClick={openNew}><UserPlus className="h-4 w-4" /> Add User</Button>
       </div>
 
-      <Card className="border-emerald-100 shadow-xl shadow-emerald-100/50">
+      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/50">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-emerald-50/50 hover:bg-emerald-50/50">
+                <TableRow className="bg-[#4F6D7A]/50 hover:bg-[#4F6D7A]">
                   <TableHead>ID</TableHead><TableHead>Username</TableHead><TableHead>Full Name</TableHead><TableHead>Role</TableHead><TableHead>Created</TableHead><TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -77,7 +77,7 @@ export default function AdminUsers() {
                     <TableCell className="text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => openEdit(u)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
+                        <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]" onClick={() => openEdit(u)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
                         <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(u.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
                       </div>
                     </TableCell>
@@ -91,7 +91,7 @@ export default function AdminUsers() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="border-emerald-100 bg-white">
+        <DialogContent className="border-[#4F6D7A]/20 bg-white">
           <DialogHeader>
             <DialogTitle className="gradient-text">{editing ? 'Edit User' : 'Add User'}</DialogTitle>
             <DialogDescription>{editing ? 'Update user account details' : 'Create a new system user'}</DialogDescription>
@@ -100,26 +100,26 @@ export default function AdminUsers() {
             {!editing && (
               <div className="space-y-2">
                 <Label>Username</Label>
-                <Input value={form.username} onChange={e => setForm({...form, username: e.target.value})} required className="border-emerald-200 focus-visible:ring-emerald-500" />
+                <Input value={form.username} onChange={e => setForm({...form, username: e.target.value})} required className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
               </div>
             )}
             <div className="space-y-2">
               <Label>Full Name</Label>
-              <Input value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required className="border-emerald-200 focus-visible:ring-emerald-500" />
+              <Input value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
             </div>
             <div className="space-y-2">
               <Label>{editing ? 'New Password (leave blank to keep)' : 'Password'}</Label>
-              <Input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required={!editing} className="border-emerald-200 focus-visible:ring-emerald-500" />
+              <Input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required={!editing} className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
             </div>
             <div className="space-y-2">
               <Label>Role</Label>
               <Select value={form.role} onValueChange={v => setForm({...form, role: v})}>
-                <SelectTrigger className="border-emerald-200 focus:ring-emerald-500"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="border-[#4F6D7A]/30 ring-[#23CE6B]"><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="user">User</SelectItem><SelectItem value="admin">Admin</SelectItem></SelectContent>
               </Select>
             </div>
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button type="button" variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]" onClick={() => setShowModal(false)}>Cancel</Button>
               <Button type="submit" className="gradient-btn">{editing ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>

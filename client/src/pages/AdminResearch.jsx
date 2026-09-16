@@ -44,44 +44,44 @@ export default function AdminResearch() {
       </div>
 
       <Tabs value={filter} onValueChange={setFilter} className="space-y-6">
-        <TabsList className="bg-white border border-emerald-100 shadow-sm">
-          <TabsTrigger value="all" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-500 data-[state=active]:text-white">All</TabsTrigger>
-          <TabsTrigger value="pending" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-500 data-[state=active]:text-white">Pending</TabsTrigger>
-          <TabsTrigger value="approved" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-500 data-[state=active]:text-white">Approved</TabsTrigger>
-          <TabsTrigger value="rejected" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-teal-500 data-[state=active]:text-white">Rejected</TabsTrigger>
+        <TabsList className="bg-white border border-[#4F6D7A]/20 shadow-sm">
+          <TabsTrigger value="all" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">All</TabsTrigger>
+          <TabsTrigger value="pending" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Pending</TabsTrigger>
+          <TabsTrigger value="approved" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Approved</TabsTrigger>
+          <TabsTrigger value="rejected" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Rejected</TabsTrigger>
         </TabsList>
 
-        <Card className="border-emerald-100 shadow-xl shadow-emerald-100/50">
+        <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/50">
           <CardContent className="p-6">
             <div className="flex gap-2 mb-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search research..." value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchData()} className="pl-9 border-emerald-200 focus-visible:ring-emerald-500" />
+                <Input placeholder="Search research..." value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchData()} className="pl-9 border-[#4F6D7A]/30 ring-[#23CE6B]" />
               </div>
               <Button className="gradient-btn" onClick={fetchData}>Search</Button>
             </div>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-emerald-50/50 hover:bg-emerald-50/50">
+                  <TableRow className="bg-[#4F6D7A]/50 hover:bg-[#4F6D7A]">
                     <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Authors</TableHead><TableHead>Type</TableHead><TableHead>Year</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {research.map(r => (
                     <TableRow key={r.id}>
-                      <TableCell className="font-semibold text-emerald-700">{r.code}</TableCell>
-                      <TableCell><Link to={`/research/${r.id}`} className="font-medium hover:text-emerald-700 hover:underline">{r.title}</Link></TableCell>
+                      <TableCell className="font-semibold text-[#243010]">{r.code}</TableCell>
+                      <TableCell><Link to={`/research/${r.id}`} className="font-medium hover:text-[#243010] hover:underline">{r.title}</Link></TableCell>
                       <TableCell className="text-muted-foreground">{r.authors}</TableCell>
                       <TableCell>{r.research_type}</TableCell>
                       <TableCell className="text-muted-foreground">{r.year}</TableCell>
                       <TableCell><Badge variant={r.status} className="capitalize">{r.status}</Badge></TableCell>
                       <TableCell>
                         <div className="flex justify-end gap-1.5 flex-wrap">
-                          {r.status !== 'approved' && <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => updateStatus(r.id, 'approved')}><CheckCircle2 className="h-3.5 w-3.5" /> Approve</Button>}
+                          {r.status !== 'approved' && <Button size="sm" className="bg-[#23CE6B] hover:bg-[#1CB85C]" onClick={() => updateStatus(r.id, 'approved')}><CheckCircle2 className="h-3.5 w-3.5" /> Approve</Button>}
                           {r.status !== 'rejected' && <Button size="sm" variant="destructive" onClick={() => updateStatus(r.id, 'rejected')}><XCircle className="h-3.5 w-3.5" /></Button>}
                           {r.status !== 'pending' && <Button size="sm" variant="outline" className="border-amber-300 text-amber-700 hover:bg-amber-50" onClick={() => updateStatus(r.id, 'pending')}><RotateCcw className="h-3.5 w-3.5" /></Button>}
-                          <Link to={`/edit-research/${r.id}`}><Button size="sm" variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"><Pencil className="h-3.5 w-3.5" /></Button></Link>
+                          <Link to={`/edit-research/${r.id}`}><Button size="sm" variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]"><Pencil className="h-3.5 w-3.5" /></Button></Link>
                           <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(r.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                         </div>
                       </TableCell>
