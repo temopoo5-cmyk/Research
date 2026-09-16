@@ -70,7 +70,7 @@ export default function SubmitResearch() {
           {error && <div className="mb-5 rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">{error}</div>}
           <div className="mb-6 flex items-center gap-3 text-sm text-[#EAFBF1]/60 p-3 rounded-lg bg-[#23CE6B]/10 border border-[#23CE6B]/20">
             <Info className="h-4 w-4 text-[#23CE6B] shrink-0" />
-            <span>A unique research code (e.g. <strong className="text-[#EAFBF1]">TH-2026-0001</strong>) will be automatically assigned when submitted.</span>
+            <span>A unique research code (e.g. <strong className="text-white">TH-2026-0001</strong>) will be automatically assigned when submitted.</span>
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
@@ -148,7 +148,7 @@ export default function SubmitResearch() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="submit" disabled={loading} className="gradient-btn min-w-40">{loading ? 'Submitting...' : isEdit ? 'Update Research' : 'Submit Research'}</Button>
-              <Button type="button" variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => navigate(-1)}>Cancel</Button>
+              <Button type="button" variant="outline" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10" onClick={() => navigate(-1)}>Cancel</Button>
             </div>
           </form>
         </CardContent>

@@ -79,7 +79,7 @@
     background: linear-gradient(160deg, #0A2B1C 0%, #0F3A26 50%, #0A2418 100%);
   }
   .gradient-text {
-    @apply text-[#9FEBBF];
+    @apply text-white;
   }
   .gradient-btn {
     @apply bg-[#23CE6B] text-[#0A122A] font-semibold hover:bg-[#1CB85C] transition-colors;

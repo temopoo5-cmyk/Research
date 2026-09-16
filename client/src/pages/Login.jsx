@@ -35,7 +35,7 @@ export default function Login() {
         <div className="relative grid md:grid-cols-2 gap-8 max-w-5xl w-full items-center">
         <div className="hidden md:block">
           <div className="inline-flex h-14 w-14 rounded-2xl gradient-btn items-center justify-center mb-5 shadow-lg shadow-[#23CE6B]/25">
-            <GraduationCap className="h-7 w-7 text-[#EAFBF1]" />
+            <GraduationCap className="h-7 w-7 text-white" />
           </div>
           <h1 className="text-4xl font-bold leading-tight mb-3">
             <span className="gradient-text">ResearchHub</span>
@@ -81,7 +81,7 @@ export default function Login() {
               Don't have an account? <a href="/register" className="font-medium text-[#23CE6B] hover:text-[#1CB85C] hover:underline">Register</a>
             </div>
             <div className="mt-4 text-center text-xs text-muted-foreground bg-[#23CE6B]/50 rounded-lg py-2 border border-[#23CE6B]/20">
-              Demo admin: <strong className="text-[#EAFBF1]">admin</strong> / <strong className="text-[#EAFBF1]">admin123</strong>
+              Demo admin: <strong className="text-white">admin</strong> / <strong className="text-white">admin123</strong>
             </div>
           </CardContent>
         </Card>

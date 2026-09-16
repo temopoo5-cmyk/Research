@@ -70,7 +70,7 @@ export default function AdminResearch() {
                 <TableBody>
                   {research.map(r => (
                     <TableRow key={r.id}>
-                      <TableCell className="font-semibold text-[#EAFBF1]">{r.code}</TableCell>
+                      <TableCell className="font-semibold text-white">{r.code}</TableCell>
                        <TableCell><Link to={`/research/${r.id}`} className="font-medium hover:text-[#23CE6B] hover:underline">{r.title}</Link></TableCell>
                       <TableCell className="text-muted-foreground">{r.authors}</TableCell>
                       <TableCell>{r.research_type}</TableCell>
@@ -81,7 +81,7 @@ export default function AdminResearch() {
                           {r.status !== 'approved' && <Button size="sm" className="bg-[#23CE6B] hover:bg-[#1CB85C] text-[#0A122A]" onClick={() => updateStatus(r.id, 'approved')}><CheckCircle2 className="h-3.5 w-3.5" /> Approve</Button>}
                           {r.status !== 'rejected' && <Button size="sm" variant="destructive" onClick={() => updateStatus(r.id, 'rejected')}><XCircle className="h-3.5 w-3.5" /></Button>}
                           {r.status !== 'pending' && <Button size="sm" variant="outline" className="border-amber-300/30 text-amber-400 hover:bg-amber-500/10" onClick={() => updateStatus(r.id, 'pending')}><RotateCcw className="h-3.5 w-3.5" /></Button>}
-                          <Link to={`/edit-research/${r.id}`}><Button size="sm" variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10"><Pencil className="h-3.5 w-3.5" /></Button></Link>
+                          <Link to={`/edit-research/${r.id}`}><Button size="sm" variant="outline" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10"><Pencil className="h-3.5 w-3.5" /></Button></Link>
                           <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(r.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                         </div>
                       </TableCell>

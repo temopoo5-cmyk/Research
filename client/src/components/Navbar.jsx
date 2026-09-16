@@ -24,8 +24,8 @@ const adminItems = [
 const linkClass = ({ isActive }) =>
   `px-3 py-2 rounded-lg text-sm font-medium transition-all ${
     isActive
-      ? 'bg-[#23CE6B]/20 text-[#EAFBF1] font-semibold'
-      : 'text-[#EAFBF1]/70 hover:bg-[#23CE6B]/20 hover:text-[#EAFBF1]'
+      ? 'bg-[#23CE6B]/20 text-white font-semibold'
+      : 'text-[#EAFBF1]/70 hover:bg-[#23CE6B]/20 hover:text-white'
   }`;
 
 export default function Navbar() {
@@ -52,13 +52,13 @@ export default function Navbar() {
           <p className="text-[10px] text-muted-foreground">{isAdmin ? 'Administrator' : 'User'}</p>
         </div>
       </div>
-      <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/20 hover:text-[#EAFBF1]" onClick={handleLogout}>
+      <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/20 hover:text-white" onClick={handleLogout}>
         <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign Out</span>
       </Button>
     </div>
   ) : (
     <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/20 hover:text-[#EAFBF1]" onClick={() => navigate('/login')}>
+      <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/20 hover:text-white" onClick={() => navigate('/login')}>
         Sign In
       </Button>
       <Button size="sm" className="gradient-btn" onClick={() => navigate('/register')}>
@@ -98,9 +98,9 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <button onClick={() => { close(); navigate('/'); }} className="flex items-center gap-2.5">
             <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center shrink-0">
-              <GraduationCap className="h-5 w-5 text-[#EAFBF1]" />
+              <GraduationCap className="h-5 w-5 text-white" />
             </div>
-            <span className="font-bold text-lg text-[#EAFBF1]">ResearchHub</span>
+            <span className="font-bold text-lg text-white">ResearchHub</span>
           </button>
         </div>
 
@@ -155,7 +155,7 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/20 hover:text-[#EAFBF1]" onClick={() => { close(); navigate('/login'); }}>
+                <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/20 hover:text-white" onClick={() => { close(); navigate('/login'); }}>
                   Sign In
                 </Button>
                 <Button size="sm" className="gradient-btn" onClick={() => { close(); navigate('/register'); }}>

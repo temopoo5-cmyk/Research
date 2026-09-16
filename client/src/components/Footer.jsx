@@ -26,9 +26,9 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2.5">
               <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center shrink-0">
-                <GraduationCap className="h-5 w-5 text-[#EAFBF1]" />
+                <GraduationCap className="h-5 w-5 text-white" />
               </div>
-              <span className="font-bold text-lg text-[#EAFBF1]">ResearchHub</span>
+              <span className="font-bold text-lg text-white">ResearchHub</span>
             </div>
             <p className="mt-3 text-sm text-[#EAFBF1]/60 max-w-xs">
               The central institutional repository for research papers, theses, and capstone projects.
@@ -39,7 +39,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {links.map(l => (
                 <li key={l.to}>
-                  <button onClick={() => navigate(l.to)} className="text-sm text-white/60 hover:text-[#EAFBF1] transition-colors">
+                  <button onClick={() => navigate(l.to)} className="text-sm text-white/60 hover:text-white transition-colors">
                     {l.label}
                   </button>
                 </li>

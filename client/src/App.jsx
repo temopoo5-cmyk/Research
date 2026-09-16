@@ -58,7 +58,7 @@ function AdminLayout({ children }) {
           <div className="h-8 w-8 rounded-lg bg-[#23CE6B] flex items-center justify-center shrink-0">
             <GraduationCap className="h-4 w-4 text-[#0A122A]" />
           </div>
-          <span className="font-bold text-[#EAFBF1]">ResearchHub</span>
+          <span className="font-bold text-white">ResearchHub</span>
         </div>
         <button onClick={() => setSidebarOpen(true)} className="rounded-lg p-2 text-[#EAFBF1] hover:bg-[#23CE6B]/10">
           <Menu className="h-5 w-5" />

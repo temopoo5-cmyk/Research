@@ -65,7 +65,7 @@ export default function ResearchDetail() {
         }}
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Button variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4" /> Back</Button>
+          <Button variant="outline" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4" /> Back</Button>
           {isAdmin && (
             <div className="flex gap-2">
               {research.status !== 'approved' && (
@@ -87,7 +87,7 @@ export default function ResearchDetail() {
           <CardHeader className="pb-4">
             <div className="flex flex-wrap items-center gap-3 mb-3">
               <Badge variant={research.status} className="capitalize">{research.status}</Badge>
-              <span className="text-sm font-bold text-[#EAFBF1] tracking-wide bg-[#23CE6B]/10 px-3 py-1 rounded-md">{research.code}</span>
+              <span className="text-sm font-bold text-white tracking-wide bg-[#23CE6B]/10 px-3 py-1 rounded-md">{research.code}</span>
             </div>
             <CardTitle className="text-2xl leading-snug">{research.title}</CardTitle>
           </CardHeader>
@@ -152,7 +152,7 @@ export default function ResearchDetail() {
                     <Button className="gradient-btn"><Download className="h-4 w-4" /> Download Document</Button>
                   </a>
                   <a href={`${API}/research/download/${research.id}`} target="_blank" rel="noreferrer">
-                    <Button variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10"><Eye className="h-4 w-4" /> Open Preview</Button>
+                    <Button variant="outline" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10"><Eye className="h-4 w-4" /> Open Preview</Button>
                   </a>
                 </div>
               </div>

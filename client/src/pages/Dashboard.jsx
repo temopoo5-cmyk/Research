@@ -46,7 +46,7 @@ export default function Dashboard() {
           <Card key={s.label} className="border-[#23CE6B]/20 transition-all hover:shadow-lg hover:shadow-[#23CE6B]/10 hover:-translate-y-0.5 bg-[#0F3A26]">
             <CardContent className="p-5">
               <div className={`h-9 w-9 rounded-lg flex items-center justify-center mb-3 ${s.color}`}><s.icon className="h-4 w-4" /></div>
-              <p className="text-2xl font-bold text-[#EAFBF1]">{s.value}</p>
+              <p className="text-2xl font-bold text-white">{s.value}</p>
               <p className="text-xs text-muted-foreground">{s.label}</p>
             </CardContent>
           </Card>
@@ -78,7 +78,7 @@ export default function Dashboard() {
                   <TableBody>
                     {recent.map(r => (
                       <TableRow key={r.id} className="cursor-pointer hover:bg-[#4F6D7A]" onClick={() => window.location.href = `/research/${r.id}`}>
-                        <TableCell className="font-semibold text-[#EAFBF1]">{r.code}</TableCell>
+                        <TableCell className="font-semibold text-white">{r.code}</TableCell>
                         <TableCell className="font-medium">{r.title}</TableCell>
                         <TableCell>{r.research_type}</TableCell>
                         <TableCell>
@@ -103,7 +103,7 @@ export default function Dashboard() {
                 {stats.byType.length === 0 && <p className="text-sm text-muted-foreground">No data yet</p>}
                 {stats.byType.map(t => (
                   <div key={t.research_type} className="flex items-center justify-between py-2 border-b border-[#23CE6B]/35 last:border-0">
-                    <span className="text-sm text-[#EAFBF1]">{t.research_type}</span>
+                    <span className="text-sm text-white">{t.research_type}</span>
                     <Badge variant="secondary" className="bg-[#23CE6B]/15 text-[#EAFBF1] hover:bg-[#1CB85C]">{t.count}</Badge>
                   </div>
                 ))}
@@ -119,7 +119,7 @@ export default function Dashboard() {
                 {stats.byYear.length === 0 && <p className="text-sm text-muted-foreground">No data yet</p>}
                 {stats.byYear.slice(0, 5).map(y => (
                   <div key={y.year} className="flex items-center justify-between py-2 border-b border-[#23CE6B]/35 last:border-0">
-                    <span className="text-sm text-[#EAFBF1]">{y.year}</span>
+                    <span className="text-sm text-white">{y.year}</span>
                     <Badge variant="secondary" className="bg-[#23CE6B]/15 text-[#EAFBF1] hover:bg-[#1CB85C]">{y.count}</Badge>
                   </div>
                 ))}

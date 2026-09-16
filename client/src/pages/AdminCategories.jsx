@@ -65,7 +65,7 @@ export default function AdminCategories() {
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => openEdit(c)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
+                        <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10" onClick={() => openEdit(c)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
                         <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleDelete(c.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
                       </div>
                     </TableCell>
@@ -89,7 +89,7 @@ export default function AdminCategories() {
               <Input value={name} onChange={e => setName(e.target.value)} required className="border-[#23CE6B]/30 ring-[#23CE6B]" />
             </div>
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button type="button" variant="outline" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10" onClick={() => setShowModal(false)}>Cancel</Button>
               <Button type="submit" className="gradient-btn">{editing ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>

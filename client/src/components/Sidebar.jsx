@@ -34,14 +34,14 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
       <div className="flex items-center justify-between p-5">
         <button onClick={handleLogout} className="flex items-center gap-2.5">
           <div className="h-10 w-10 rounded-xl gradient-btn flex items-center justify-center shrink-0">
-            <GraduationCap className="h-5 w-5 text-[#EAFBF1]" />
+            <GraduationCap className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h2 className="font-bold text-lg leading-tight text-[#EAFBF1]">ResearchHub</h2>
+            <h2 className="font-bold text-lg leading-tight text-white">ResearchHub</h2>
             <p className="text-xs text-muted-foreground mt-0.5">Admin Panel</p>
           </div>
         </button>
-        <button onClick={onClose} className="md:hidden rounded-lg p-1.5 text-[#EAFBF1]/60 hover:bg-[#23CE6B]/20 hover:text-[#EAFBF1]">
+        <button onClick={onClose} className="md:hidden rounded-lg p-1.5 text-[#EAFBF1]/60 hover:bg-[#23CE6B]/20 hover:text-white">
           <X className="h-5 w-5" />
         </button>
       </div>
@@ -52,7 +52,7 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
             key={item.to}
             to={item.to}
             onClick={handleNav}
-            className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive ? 'bg-[#23CE6B] text-[#0A122A] font-semibold shadow-md shadow-[#23CE6B]/30' : 'text-white/60 hover:bg-[#23CE6B]/20 hover:text-[#EAFBF1]'}`}
+            className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive ? 'bg-[#23CE6B] text-[#0A122A] font-semibold shadow-md shadow-[#23CE6B]/30' : 'text-white/60 hover:bg-[#23CE6B]/20 hover:text-white'}`}
           >
             <item.icon className="h-4 w-4" />{item.label}
           </NavLink>
@@ -62,7 +62,7 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
             key={item.to}
             to={item.to}
             onClick={handleNav}
-            className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive ? 'bg-[#23CE6B] text-[#0A122A] font-semibold shadow-md shadow-[#23CE6B]/30' : 'text-white/60 hover:bg-[#23CE6B]/20 hover:text-[#EAFBF1]'}`}
+            className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive ? 'bg-[#23CE6B] text-[#0A122A] font-semibold shadow-md shadow-[#23CE6B]/30' : 'text-white/60 hover:bg-[#23CE6B]/20 hover:text-white'}`}
           >
             <item.icon className="h-4 w-4" />{item.label}
           </NavLink>
@@ -75,11 +75,11 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
             {(user?.full_name || 'U').charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold truncate text-[#EAFBF1]">{user?.full_name || 'User'}</p>
+            <p className="text-sm font-semibold truncate text-white">{user?.full_name || 'User'}</p>
             <p className="text-xs text-muted-foreground">Administrator</p>
           </div>
         </div>
-        <Button variant="outline" className="w-full border-[#23CE6B]/30 text-white/60 hover:text-[#EAFBF1] hover:border-[#23CE6B]/50" onClick={handleLogout}>
+        <Button variant="outline" className="w-full border-[#23CE6B]/30 text-white/60 hover:text-white hover:border-[#23CE6B]/50" onClick={handleLogout}>
           <LogOut className="h-4 w-4" /> Sign Out
         </Button>
       </div>

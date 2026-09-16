@@ -62,11 +62,11 @@ export default function AdminPrograms() {
                 {programs.map(p => (
                   <TableRow key={p.id}>
                     <TableCell className="text-muted-foreground">{p.id}</TableCell>
-                    <TableCell className="font-semibold text-[#EAFBF1]">{p.code}</TableCell>
+                    <TableCell className="font-semibold text-white">{p.code}</TableCell>
                     <TableCell>{p.name}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => openEdit(p)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
+                        <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10" onClick={() => openEdit(p)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
                         <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleDelete(p.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
                       </div>
                     </TableCell>
@@ -94,7 +94,7 @@ export default function AdminPrograms() {
               <Input value={form.code} onChange={e => setForm({...form, code: e.target.value})} required placeholder="e.g. CS" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
             </div>
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" className="border-[#23CE6B]/30 text-[#EAFBF1] hover:bg-[#23CE6B]/10" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button type="button" variant="outline" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10" onClick={() => setShowModal(false)}>Cancel</Button>
               <Button type="submit" className="gradient-btn">{editing ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>
