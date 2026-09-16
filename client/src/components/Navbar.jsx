@@ -24,8 +24,8 @@ const adminItems = [
 const linkClass = ({ isActive }) =>
   `px-3 py-2 rounded-lg text-sm font-medium transition-all ${
     isActive
-      ? 'bg-[#23CE6B]/15 text-[#243010] font-semibold'
-      : 'text-muted-foreground hover:bg-[#4F6D7A]/10 hover:text-[#243010]'
+      ? 'bg-[#23CE6B]/20 text-white font-semibold'
+      : 'text-white/70 hover:bg-[#4F6D7A]/20 hover:text-white'
   }`;
 
 export default function Navbar() {
@@ -52,13 +52,13 @@ export default function Navbar() {
           <p className="text-[10px] text-muted-foreground">{isAdmin ? 'Administrator' : 'User'}</p>
         </div>
       </div>
-      <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10" onClick={handleLogout}>
+      <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/20 hover:text-white" onClick={handleLogout}>
         <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign Out</span>
       </Button>
     </div>
   ) : (
     <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10" onClick={() => navigate('/login')}>
+      <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/20 hover:text-white" onClick={() => navigate('/login')}>
         Sign In
       </Button>
       <Button size="sm" className="gradient-btn" onClick={() => navigate('/register')}>
@@ -81,7 +81,7 @@ export default function Navbar() {
               {item.label}
             </NavLink>
           ))}
-          <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Administration</p>
+          <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wider text-white/40">Administration</p>
           {adminItems.map(item => (
             <NavLink key={item.to} to={item.to} onClick={close} className={linkClass}>
               {item.label}
@@ -93,14 +93,14 @@ export default function Navbar() {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#4F6D7A]/20 bg-white/90 backdrop-blur-md shadow-sm shadow-[#4F6D7A]/10">
+    <header className="sticky top-0 z-40 border-b border-[#4F6D7A]/20 bg-[#0A122A]/90 backdrop-blur-md shadow-sm shadow-black/20">
       <div className="mx-auto max-w-7xl flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-3">
           <button onClick={() => { close(); navigate('/'); }} className="flex items-center gap-2.5">
             <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center shrink-0">
               <GraduationCap className="h-5 w-5 text-white" />
             </div>
-            <span className="font-bold text-lg text-[#243010]">ResearchHub</span>
+            <span className="font-bold text-lg text-white">ResearchHub</span>
           </button>
         </div>
 
@@ -117,7 +117,7 @@ export default function Navbar() {
                   {item.label}
                 </NavLink>
               ))}
-              <span className="hidden xl:inline-flex items-center px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Administration</span>
+              <span className="hidden xl:inline-flex items-center px-3 text-[11px] font-semibold uppercase tracking-wider text-white/40">Administration</span>
               {adminItems.map(item => (
                 <NavLink key={item.to} to={item.to} className={linkClass}>
                   {item.label}
@@ -129,13 +129,13 @@ export default function Navbar() {
 
         <div className="hidden xl:flex items-center">{rightSide}</div>
 
-        <button onClick={() => setOpen(!open)} className="xl:hidden rounded-lg p-2 text-[#243010] hover:bg-[#4F6D7A]/10">
+        <button onClick={() => setOpen(!open)} className="xl:hidden rounded-lg p-2 text-white hover:bg-[#4F6D7A]/20">
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="xl:hidden border-t border-[#4F6D7A]/20 bg-white/95 backdrop-blur-md px-4 py-3">
+        <div className="xl:hidden border-t border-[#4F6D7A]/20 bg-[#0A122A]/95 backdrop-blur-md px-4 py-3">
           <nav className="flex flex-col gap-1 pb-3">{mobileLinks}</nav>
           <div className="border-t border-[#4F6D7A]/20 pt-3">
             {token ? (
@@ -149,13 +149,13 @@ export default function Navbar() {
                     <p className="text-[10px] text-muted-foreground">{isAdmin ? 'Administrator' : 'User'}</p>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-red-600 hover:bg-red-50" onClick={handleLogout}>
+                <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-red-400 hover:bg-red-500/10" onClick={handleLogout}>
                   <LogOut className="h-4 w-4" /><span className="hidden">Sign Out</span>
                 </Button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]/10" onClick={() => { close(); navigate('/login'); }}>
+                <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/20 hover:text-white" onClick={() => { close(); navigate('/login'); }}>
                   Sign In
                 </Button>
                 <Button size="sm" className="gradient-btn" onClick={() => { close(); navigate('/register'); }}>

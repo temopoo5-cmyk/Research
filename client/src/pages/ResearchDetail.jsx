@@ -65,7 +65,7 @@ export default function ResearchDetail() {
         }}
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Button variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4" /> Back</Button>
+          <Button variant="outline" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30" onClick={() => navigate(-1)}><ArrowLeft className="h-4 w-4" /> Back</Button>
           {isAdmin && (
             <div className="flex gap-2">
               {research.status !== 'approved' && (
@@ -97,7 +97,7 @@ export default function ResearchDetail() {
                 const meta = rowMeta[row.key] || { icon: FileText, tint: 'bg-[#23CE6B]/15 text-[#243010]' };
                 const Icon = meta.icon;
                 return (
-                  <div key={row.key} className="flex items-start gap-3 p-3 rounded-lg bg-[#4F6D7A]/50 border border-[#4F6D7A]/20">
+                  <div key={row.key} className="flex items-start gap-3 p-3 rounded-lg bg-[#4F6D7A]/10 border border-[#4F6D7A]/20">
                     <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${meta.tint}`}><Icon className="h-4 w-4" /></div>
                     <div>
                       <p className="text-xs text-muted-foreground">{row.label}</p>
@@ -112,8 +112,8 @@ export default function ResearchDetail() {
               <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> Authors</p>
               <div className="flex flex-wrap gap-2">
                 {authors.map((a, i) => (
-                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#4F6D7A]/20 shadow-sm text-sm font-medium text-[#243010]">
-                    <span className="h-5 w-5 rounded-full bg-[#23CE6B]/15 text-[#243010] flex items-center justify-center text-[10px] font-bold">{a.charAt(0).toUpperCase()}</span>
+                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f1a36] border border-[#4F6D7A]/20 shadow-sm text-sm font-medium text-white">
+                    <span className="h-5 w-5 rounded-full bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center text-[10px] font-bold">{a.charAt(0).toUpperCase()}</span>
                     {a}
                   </span>
                 ))}
@@ -125,7 +125,7 @@ export default function ResearchDetail() {
                 <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5"><Tags className="h-3.5 w-3.5" /> Keywords</p>
                 <div className="flex flex-wrap gap-2">
                   {keywords.map((k, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-[#23CE6B]/15 text-[#243010] text-xs font-medium">{k}</span>
+                    <span key={i} className="px-3 py-1 rounded-full bg-[#23CE6B]/10 text-[#23CE6B] text-xs font-medium">{k}</span>
                   ))}
                 </div>
               </div>
@@ -134,8 +134,8 @@ export default function ResearchDetail() {
             {research.abstract && (
               <div>
                 <Separator className="bg-[#23CE6B]/15 mb-4" />
-                <p className="text-sm font-semibold text-[#243010] mb-2 flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Abstract</p>
-                <div className="relative rounded-xl border border-[#4F6D7A]/20 bg-[#4F6D7A]/40 p-5 sm:p-6 overflow-hidden">
+                <p className="text-sm font-semibold text-[#23CE6B] mb-2 flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Abstract</p>
+                <div className="relative rounded-xl border border-[#4F6D7A]/20 bg-[#0f1a36] p-5 sm:p-6 overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#23CE6B]" />
                   <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground font-serif first-letter:text-4xl first-letter:font-bold first-letter:text-[#23CE6B] first-letter:float-left first-letter:mr-2 first-letter:leading-none">
                     {research.abstract}
@@ -152,12 +152,12 @@ export default function ResearchDetail() {
                     <Button className="gradient-btn"><Download className="h-4 w-4" /> Download Document</Button>
                   </a>
                   <a href={`${API}/research/download/${research.id}`} target="_blank" rel="noreferrer">
-                    <Button variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]"><Eye className="h-4 w-4" /> Open Preview</Button>
+                    <Button variant="outline" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30"><Eye className="h-4 w-4" /> Open Preview</Button>
                   </a>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 rounded-lg bg-muted/50">
+              <div className="flex items-center gap-2 text-sm text-white/50 p-3 rounded-lg bg-[#4F6D7A]/10">
                 <Inbox className="h-4 w-4" /> No digital document attached for this research.
               </div>
             )}

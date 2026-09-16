@@ -52,7 +52,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <section className="relative overflow-hidden border-b border-[#4F6D7A]/20 bg-gradient-to-br from-[#F2FAF5] via-white to-[#EAF1F5]">
+      <section className="relative overflow-hidden border-b border-[#4F6D7A]/20 bg-[#0A122A]">
         <FloatingBooks />
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
           <div className="grid lg:grid-cols-[1fr_auto] gap-10 items-center">
@@ -63,7 +63,7 @@ export default function Home() {
               <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-4">
                 <span className="gradient-text">Discover research</span> papers, theses &amp; capstones
               </h1>
-              <p className="text-[#243010] text-lg mb-8 max-w-2xl">
+              <p className="text-white/70 text-lg mb-8 max-w-2xl">
                 Browse and search the institutional repository. Submissions are automatically cataloged with unique codes.
               </p>
               {stats && (
@@ -72,10 +72,10 @@ export default function Home() {
                     { label: 'Research Works', value: stats.total, icon: FileText },
                     { label: 'Programs', value: stats.programs, icon: FolderOpen },
                   ].map(s => (
-                    <div key={s.label} className="flex items-center gap-3 rounded-xl bg-white/80 backdrop-blur border border-[#4F6D7A]/20 px-4 py-3 shadow-sm">
-                      <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#243010] flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
+                    <div key={s.label} className="flex items-center gap-3 rounded-xl bg-[#0f1a36]/80 backdrop-blur border border-[#4F6D7A]/20 px-4 py-3 shadow-sm">
+                      <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
                       <div>
-                        <p className="text-xl font-bold text-[#243010] leading-none">{s.value}</p>
+                        <p className="text-xl font-bold text-white leading-none">{s.value}</p>
                         <p className="text-xs text-muted-foreground">{s.label}</p>
                       </div>
                     </div>
@@ -92,7 +92,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
-        <Card className="border-[#4F6D7A]/20 shadow-lg shadow-[#4F6D7A]/40 -mt-2">
+        <Card className="border-[#4F6D7A]/20 shadow-lg shadow-black/20 -mt-2 bg-[#0f1a36]">
           <CardContent className="p-6">
             <form onSubmit={handleSearch}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-end">
@@ -162,13 +162,13 @@ export default function Home() {
         {loading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <Card key={i} className="border-[#4F6D7A]/20"><CardContent className="p-6 space-y-3"><div className="h-4 w-20 bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-5 w-full bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-4 w-2/3 bg-[#23CE6B]/15 rounded animate-pulse" /></CardContent></Card>
+              <Card key={i} className="border-[#4F6D7A]/20 bg-[#0f1a36]"><CardContent className="p-6 space-y-3"><div className="h-4 w-20 bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-5 w-full bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-4 w-2/3 bg-[#23CE6B]/15 rounded animate-pulse" /></CardContent></Card>
             ))}
           </div>
         ) : research.length === 0 ? (
-          <Card className="border-[#4F6D7A]/20">
+          <Card className="border-[#4F6D7A]/20 bg-[#0f1a36]">
             <CardContent className="py-16 text-center">
-              <BookOpenIcon className="h-12 w-12 mx-auto mb-3 text-[#23CE6B]/70" />
+              <BookOpenIcon className="h-12 w-12 mx-auto mb-3 text-[#23CE6B]/50" />
               <h3 className="font-semibold text-lg mb-1">No research found</h3>
               <p className="text-muted-foreground">Try adjusting your search filters</p>
             </CardContent>
@@ -177,21 +177,21 @@ export default function Home() {
           <>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {research.map(r => {
-                const meta = typeMeta[r.research_type] || { icon: FileText, bar: 'bg-[#23CE6B]', chip: 'bg-[#4F6D7A]/10 text-[#23CE6B] border-[#4F6D7A]/20', hover: 'group-hover:text-[#243010]' };
+                const meta = typeMeta[r.research_type] || { icon: FileText, bar: 'bg-[#23CE6B]', chip: 'bg-[#23CE6B]/10 text-[#23CE6B] border-[#23CE6B]/20', hover: 'group-hover:text-[#23CE6B]' };
                 const Icon = meta.icon;
                 return (
-                  <Card key={r.id} className="border-[#4F6D7A]/20 transition-all hover:shadow-xl hover:shadow-[#23CE6B]/25 hover:-translate-y-1 cursor-pointer overflow-hidden group"
+                  <Card key={r.id} className="border-[#4F6D7A]/20 transition-all hover:shadow-xl hover:shadow-[#23CE6B]/10 hover:-translate-y-1 cursor-pointer overflow-hidden group bg-[#0f1a36]"
                     onClick={() => navigate(`/research/${r.id}`)}>
                     <div className={`h-1.5 ${meta.bar}`} />
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs font-bold text-[#243010] tracking-wide bg-[#4F6D7A]/10 px-2.5 py-1 rounded-md">{r.code}</span>
+                        <span className="text-xs font-bold text-white tracking-wide bg-[#4F6D7A]/30 px-2.5 py-1 rounded-md">{r.code}</span>
                         <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${meta.chip}`}>
                           <Icon className="h-3 w-3" />{r.research_type}
                         </span>
                       </div>
-                      <h3 className={`font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-[#243010] transition-colors ${meta.hover}`}>{r.title}</h3>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-2.5"><Users className="h-3.5 w-3.5 text-[#23CE6B]" />{r.authors}</p>
+                      <h3 className={`font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-white transition-colors ${meta.hover}`}>{r.title}</h3>
+                      <p className="text-sm text-white/50 flex items-center gap-1.5 mb-2.5"><Users className="h-3.5 w-3.5 text-[#23CE6B]" />{r.authors}</p>
                       {r.abstract && (
                         <p className="text-xs text-muted-foreground/90 line-clamp-2 mb-3 flex items-start gap-1.5">
                           <Quote className="h-3 w-3 rotate-180 shrink-0 mt-0.5 text-[#23CE6B]/70" />
@@ -201,7 +201,7 @@ export default function Home() {
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-[#4F6D7A]/35">
                         {r.program_name && <span>{r.program_name}</span>}
                         <span>{r.year}</span>
-                        {r.category_name && <span className="text-[#243010]">{r.category_name}</span>}
+                        {r.category_name && <span className="text-[#23CE6B]">{r.category_name}</span>}
                       </div>
                     </CardContent>
                   </Card>
@@ -210,11 +210,11 @@ export default function Home() {
             </div>
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 pt-4">
-                <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)} className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]"><ChevronLeft className="h-4 w-4" /> Prev</Button>
+                <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)} className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30"><ChevronLeft className="h-4 w-4" /> Prev</Button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 7).map(p => (
-                  <Button key={p} size="sm" variant={p === page ? 'default' : 'outline'} onClick={() => setPage(p)} className={p === page ? 'gradient-btn' : 'border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]'}>{p}</Button>
+                  <Button key={p} size="sm" variant={p === page ? 'default' : 'outline'} onClick={() => setPage(p)} className={p === page ? 'gradient-btn' : 'border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30'}>{p}</Button>
                 ))}
-                <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)} className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]">Next <ChevronRight className="h-4 w-4" /></Button>
+                <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)} className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30">Next <ChevronRight className="h-4 w-4" /></Button>
               </div>
             )}
           </>

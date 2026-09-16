@@ -64,13 +64,13 @@ export default function SubmitResearch() {
         <p className="text-muted-foreground">{isEdit ? 'Update the research record' : 'Submit a new research paper, thesis, or capstone project'}</p>
       </div>
 
-      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/50 overflow-hidden">
+      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-black/20 overflow-hidden bg-[#0f1a36]">
         <div className="h-1.5 bg-[#23CE6B]" />
         <CardContent className="p-6 md:p-8">
           {error && <div className="mb-5 rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">{error}</div>}
-          <div className="mb-6 flex items-center gap-3 text-sm text-muted-foreground p-3 rounded-lg bg-[#4F6D7A]/60 border border-[#4F6D7A]/20">
+          <div className="mb-6 flex items-center gap-3 text-sm text-white/50 p-3 rounded-lg bg-[#4F6D7A]/10 border border-[#4F6D7A]/20">
             <Info className="h-4 w-4 text-[#23CE6B] shrink-0" />
-            <span>A unique research code (e.g. <strong className="text-[#243010]">TH-2026-0001</strong>) will be automatically assigned when submitted.</span>
+            <span>A unique research code (e.g. <strong className="text-white">TH-2026-0001</strong>) will be automatically assigned when submitted.</span>
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
@@ -148,7 +148,7 @@ export default function SubmitResearch() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="submit" disabled={loading} className="gradient-btn min-w-40">{loading ? 'Submitting...' : isEdit ? 'Update Research' : 'Submit Research'}</Button>
-              <Button type="button" variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]" onClick={() => navigate(-1)}>Cancel</Button>
+              <Button type="button" variant="outline" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30" onClick={() => navigate(-1)}>Cancel</Button>
             </div>
           </form>
         </CardContent>

@@ -44,17 +44,17 @@ export default function AdminCategories() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold mb-1"><span className="gradient-text">Manage Categories</span></h1>
-          <p className="text-muted-foreground">Research categories for classification</p>
+          <p className="text-white/50">Research categories for classification</p>
         </div>
         <Button className="gradient-btn" onClick={openNew}><Tags className="h-4 w-4" /> Add Category</Button>
       </div>
 
-      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-[#4F6D7A]/50">
+      <Card className="border-[#4F6D7A]/20 shadow-xl shadow-black/20 bg-[#0f1a36]">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-[#4F6D7A]/50 hover:bg-[#4F6D7A]">
+                <TableRow className="bg-[#4F6D7A]/30 hover:bg-[#4F6D7A]/50">
                   <TableHead>ID</TableHead><TableHead>Name</TableHead><TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -65,8 +65,8 @@ export default function AdminCategories() {
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]" onClick={() => openEdit(c)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
-                        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(c.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
+                        <Button variant="outline" size="sm" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30" onClick={() => openEdit(c)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
+                        <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleDelete(c.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -78,7 +78,7 @@ export default function AdminCategories() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="border-[#4F6D7A]/20 bg-white">
+        <DialogContent className="border-[#4F6D7A]/20 bg-[#0f1a36]">
           <DialogHeader>
             <DialogTitle className="gradient-text">{editing ? 'Edit Category' : 'Add Category'}</DialogTitle>
             <DialogDescription>{editing ? 'Update category details' : 'Create a new research category'}</DialogDescription>
@@ -89,7 +89,7 @@ export default function AdminCategories() {
               <Input value={name} onChange={e => setName(e.target.value)} required className="border-[#4F6D7A]/30 ring-[#23CE6B]" />
             </div>
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" className="border-[#4F6D7A]/30 text-[#243010] hover:bg-[#4F6D7A]" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button type="button" variant="outline" className="border-[#4F6D7A]/30 text-white/80 hover:bg-[#4F6D7A]/30" onClick={() => setShowModal(false)}>Cancel</Button>
               <Button type="submit" className="gradient-btn">{editing ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>
