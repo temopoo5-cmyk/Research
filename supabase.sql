@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS research (
   year          INTEGER NOT NULL,
   abstract      TEXT NOT NULL DEFAULT '',
   keywords      TEXT NOT NULL DEFAULT '',        -- comma-separated keywords
-  file_path     TEXT,                            -- UUID + extension, stored in the app's uploads storage
   submitted_by  BIGINT REFERENCES users(id),
   status        TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('approved', 'pending', 'rejected')),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -66,55 +65,55 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- Sample / demo research works (all approved so they show in the public repository)
-INSERT INTO research (id, code, title, authors, adviser, program_id, year, abstract, keywords, file_path, submitted_by, status, created_at) OVERRIDING SYSTEM VALUE
+INSERT INTO research (id, code, title, authors, adviser, program_id, year, abstract, keywords, submitted_by, status, created_at) OVERRIDING SYSTEM VALUE
 VALUES
   (1, 'RS-2026-0001', 'A Machine Learning Approach for Predicting Student Academic Performance Using Ensemble Methods',
       'Maria Santos, Juan Dela Cruz, Anna Reyes', 'Prof. Ricardo Lim', 1, 2026,
       'Predicting academic performance early allows institutions to provide timely intervention. This study evaluates the effectiveness of ensemble machine learning models, including Random Forest, Gradient Boosting, and XGBoost, in forecasting student outcomes using demographic, attendance, and assessment data collected over two academic years. Experimental results show that the Gradient Boosting ensemble achieved the highest accuracy of 94.2%, outperforming individual base learners. The findings highlight the practical utility of ensemble methods as a decision-support tool for academic advisers and administrators.',
       'machine learning, ensemble methods, academic performance, predictive analytics, student retention',
-      NULL, 1, 'approved', '2026-01-12 09:20:11+00'),
+      1, 'approved', '2026-01-12 09:20:11+00'),
 
   (2, 'RS-2026-0002', 'Security Analysis of Phishing Detection Techniques in Web Applications',
       'Karl Mendoza, Patricia Ocampo, Ramon Bautista', 'Engr. Feliza Gomez', 2, 2026,
       'Phishing remains one of the most pervasive threats targeting web application users. This research analyzes and compares URL-based heuristics, blacklist matching, and content-based machine learning classifiers for phishing detection. A dataset of 10,000 labeled websites was used to evaluate detection accuracy and false positive rates. The content-based Random Forest classifier demonstrated the best trade-off, achieving 96.8% precision while maintaining a low processing latency, making it suitable for real-time browser extension deployment.',
       'cybersecurity, phishing detection, machine learning, web security, URL classification',
-      NULL, 1, 'approved', '2026-01-28 14:05:32+00'),
+      1, 'approved', '2026-01-28 14:05:32+00'),
 
   (3, 'RS-2026-0003', 'Predictive Analytics for Crop Yield Forecasting Using Time Series Models',
       'Liza Fernandez, Diego Ramos, Nina Villanueva', 'Dr. Samuel Aquino', 1, 2026,
       'Accurate crop yield forecasting supports food security planning and farm-level decision making. This study applies ARIMA, Exponential Smoothing, and LSTM neural networks to historical yield records and climate data from regional weather stations. The LSTM model produced the lowest mean absolute percentage error at 7.3%, significantly outperforming statistical models under conditions of irregular seasonal variation. The proposed forecasting pipeline offers a practical baseline for agricultural extension programs.',
       'data science, crop yield, time series, LSTM, forecasting',
-      NULL, 1, 'approved', '2026-02-05 10:12:47+00'),
+      1, 'approved', '2026-02-05 10:12:47+00'),
 
   (4, 'RS-2026-0004', 'Design and Development of an IoT-Based Smart Irrigation System',
       'Miguel Torres, Bianca Salazar, Alexis Domingo', 'Engr. Carlo Javier', 4, 2026,
       'Water scarcity poses a serious challenge to small-scale agriculture. This thesis presents the design and development of an IoT-based smart irrigation system that monitors soil moisture, temperature, and humidity using low-cost sensors and an ESP32 microcontroller. The system automates watering schedules and sends real-time telemetry to a web dashboard. Field trials over a two-month period showed a 38% reduction in water consumption while maintaining comparable crop growth to conventional manual irrigation.',
       'IoT, smart irrigation, ESP32, soil moisture, automation',
-      NULL, 1, 'approved', '2025-11-18 08:40:55+00'),
+      1, 'approved', '2025-11-18 08:40:55+00'),
 
   (5, 'RS-2026-0005', 'A Mobile-Based Nutrition Tracking Application for Geriatric Patients',
       'Sophia Reyes, Lance Tan, Kyla Mercado', 'Prof. Helen Soriano', 2, 2026,
       'Proper nutrition is critical for the elderly, yet most nutrition tools are not tailored to their needs. This thesis develops a mobile application that simplifies meal logging, medication reminders, and dietary recommendations for geriatric users, with a caregiver dashboard for observation. Usability testing with 30 participants aged 60 and above reported high satisfaction scores, with a System Usability Scale average of 81.4. The study demonstrates how inclusive design can improve adherence to dietary plans among older adults.',
       'mobile development, geriatrics, nutrition, health app, usability',
-      NULL, 1, 'approved', '2026-01-05 16:22:09+00'),
+      1, 'approved', '2026-01-05 16:22:09+00'),
 
   (6, 'RS-2026-0006', 'Developing a Blockchain-Based Academic Credential Verification System',
       'Nathan Cruz, Elaine Reyes, Marco Silva', 'Dr. Anton Dela Pena', 3, 2026,
       'Academic credential fraud remains a concern for employers and institutions. This thesis proposes a decentralized credential verification system built on a permissioned blockchain ledger, storing cryptographic hashes of issued diplomas and transcripts. Verification requests are resolved within seconds without reliance on a central authority. A comparative evaluation against traditional verification approaches showed lower verification latency and reduced administrative overhead, while preserving data privacy and tamper-resistance.',
       'blockchain, credentials, verification, security, distributed ledger',
-      NULL, 1, 'approved', '2025-12-02 11:58:23+00'),
+      1, 'approved', '2025-12-02 11:58:23+00'),
 
   (7, 'RS-2026-0007', 'Automated Library Management System with RFID Integration',
       'Cj Navarro, Precious Lim, Rafael Santos', 'Engr. Marissa Tolentino', 3, 2026,
       'Manual library processes are time-consuming and prone to error. This capstone project implements an automated library management system that integrates RFID readers for self-checkout, returns, and inventory audits. The system includes a web-based catalog, automated overdue notifications, and a dashboard for librarians. Performance testing indicated that the RFID-based borrowing transaction completes in under two seconds, reducing average processing time per patron by 65% compared to manual methods.',
       'RFID, library automation, information systems, inventory, web application',
-      NULL, 1, 'approved', '2026-02-14 13:36:40+00'),
+      1, 'approved', '2026-02-14 13:36:40+00'),
 
   (8, 'RS-2026-0008', 'Network Traffic Monitoring Using a Deep Packet Inspection Dashboard',
       'Andrea Castillo, Paolo Fernandez, Janice Yu', 'Prof. Vener Medina', 2, 2026,
       'Visibility into network traffic is essential for detecting anomalies and enforcing policies. This project builds a network monitoring dashboard that performs deep packet inspection to classify traffic by application and protocol, and to flag suspicious activity in real time. Built on open-source components with a React front end and a Node.js analysis backend, the system was validated on a campus network segment, successfully identifying 97% of tested application flows with a false-positive rate under 2%.',
       'networking, packet inspection, monitoring, cybersecurity dashboard, real-time analytics',
-      NULL, 1, 'approved', '2026-02-20 09:04:16+00')
+      1, 'approved', '2026-02-20 09:04:16+00')
 ON CONFLICT (id) DO NOTHING;
 
 -- Keep identity sequences in sync with the seeded ids

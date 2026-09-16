@@ -7,7 +7,7 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Separator } from '../components/ui/separator';
 import BookOpening from '../components/BookOpening';
-import { ArrowLeft, Download, Eye, Users, Award, FolderTree, Calendar, FileText, Tags, CheckCircle2, XCircle, Inbox, BookOpen } from 'lucide-react';
+import { ArrowLeft, Users, Award, FolderTree, Calendar, FileText, Tags, CheckCircle2, XCircle, BookOpen } from 'lucide-react';
 
 const rowMeta = {
   adviser: { icon: Award, tint: 'bg-amber-100 text-amber-700' },
@@ -137,24 +137,6 @@ export default function ResearchDetail() {
                     {research.abstract}
                   </p>
                 </div>
-              </div>
-            )}
-
-            {research.file_path ? (
-              <div>
-                <Separator className="bg-[#23CE6B]/15 mb-4" />
-                <div className="flex flex-wrap gap-2">
-                  <a href={`${API}/research/download/${research.id}`} download>
-                    <Button className="gradient-btn"><Download className="h-4 w-4" /> Download Document</Button>
-                  </a>
-                  <a href={`${API}/research/download/${research.id}`} target="_blank" rel="noreferrer">
-                    <Button variant="outline" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10"><Eye className="h-4 w-4" /> Open Preview</Button>
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-sm text-[#EAFBF1]/60 p-3 rounded-lg bg-[#23CE6B]/10">
-                <Inbox className="h-4 w-4" /> No digital document attached for this research.
               </div>
             )}
           </CardContent>

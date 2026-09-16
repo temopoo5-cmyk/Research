@@ -24,7 +24,7 @@ export default function BookOpening({ title, authors, type }) {
   }, []);
 
   return (
-    <div className={`book-overlay${leaving ? ' book-leaving' : ''}`} role="status" aria-label="Opening document">
+    <div className={`book-overlay${leaving ? ' book-leaving' : ''}`} role="status" aria-label="Opening research">
       <div className="book-scene">
         <div className="book-wrap">
           <BookHalf side="left" />
@@ -33,7 +33,7 @@ export default function BookOpening({ title, authors, type }) {
       </div>
       <div className="book-caption">
         <p className="book-caption-label">Now Opening</p>
-        <p className="book-caption-title">{title || 'Research Document'}</p>
+        <p className="book-caption-title">{title || 'Research Work'}</p>
         {authors && <p className="book-caption-authors">{authors}</p>}
         {type && <p className="book-caption-meta">{type}</p>}
       </div>

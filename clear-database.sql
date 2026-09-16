@@ -13,11 +13,6 @@ SELECT setval(pg_get_serial_sequence('programs', 'id'), 1, false);
 SELECT setval(pg_get_serial_sequence('research', 'id'), 1, false);
 
 -- ============================================================
--- OPTIONAL: If you want to also remove uploaded documents from
--- Supabase Storage, delete the files / the bucket in the Storage UI.
--- ============================================================
-
--- ============================================================
 -- OPTIONAL: DROP TABLES ENTIRELY
 -- Use this instead if you want to remove the schema too.
 -- ============================================================

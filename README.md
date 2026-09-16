@@ -8,13 +8,12 @@ A full-stack web application for managing research works, built with **React.js*
 2. **Research Cataloging** – Each work is auto-assigned a unique code (e.g., `RS-2026-0001`)
 3. **Search and Filtering** – Search by code, title, author, program, year, and keywords
 4. **Research Information** – Displays title, author, adviser, program, year, abstract, and keywords
-5. **Digital Document Access** – Authorized users can view and download approved PDF/DOC documents
-6. **Administrator Management** – Admins manage users, research records, programs, submissions, and approval status
+5. **Administrator Management** – Admins manage users, research records, programs, submissions, and approval status
 
 ## Tech Stack
 
 - **Frontend:** React 18, React Router, Axios (Create React App)
-- **Backend:** Node.js, Express, JWT auth, Multer (file uploads)
+- **Backend:** Node.js, Express, JWT auth
 - **Database:** JSON file storage (zero-config, portable)
 
 ## Setup & Run
@@ -62,7 +61,6 @@ server/
   db.js              # JSON file-based database
   routes/            # auth, research, users, programs, stats
   middleware/auth.js # JWT + admin middleware
-  uploads/           # uploaded documents
 client/
   src/
     App.js           # Routing
@@ -72,4 +70,4 @@ client/
                      # SubmitResearch, AdminUsers, AdminResearch, AdminPrograms
 ```
 
-Data persists in `server/data/*.json`. Uploaded files go to `server/uploads/`.
+Data persists in `server/data/*.json`.

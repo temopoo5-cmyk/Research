@@ -10,7 +10,7 @@ import { Textarea } from '../components/ui/textarea';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
-import { UploadCloud, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 export default function SubmitResearch() {
   const { id } = useParams();
@@ -18,7 +18,6 @@ export default function SubmitResearch() {
   const { isAdmin } = useAuth();
   const [programs, setPrograms] = useState([]);
   const [form, setForm] = useState({ title: '', authors: '', adviser: '', program_id: '', year: new Date().getFullYear(), abstract: '', keywords: '' });
-  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const isEdit = !!id;
@@ -38,13 +37,10 @@ export default function SubmitResearch() {
     setLoading(true);
     setError('');
     try {
-      const fd = new FormData();
-      Object.keys(form).forEach(k => fd.append(k, form[k]));
-      if (file) fd.append('file', file);
       if (isEdit) {
-        await axios.put(`${API}/research/${id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await axios.put(`${API}/research/${id}`, form);
       } else {
-        await axios.post(`${API}/research/`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await axios.post(`${API}/research/`, form);
       }
       navigate(isAdmin ? '/admin/research' : '/research');
     } catch (err) {
@@ -113,13 +109,6 @@ export default function SubmitResearch() {
             <div className="space-y-2">
               <Label htmlFor="abstract">Abstract</Label>
               <Textarea id="abstract" rows={5} value={form.abstract} onChange={e => setForm({...form, abstract: e.target.value})} placeholder="Enter the research abstract..." className="border-[#23CE6B]/30 ring-[#23CE6B]" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="file">Document File {isEdit && <span className="text-muted-foreground font-normal">(leave empty to keep current)</span>}</Label>
-              <div className="flex items-center gap-3 rounded-lg border border-dashed border-[#23CE6B]/40 bg-[#23CE6B]/40 p-4">
-                <UploadCloud className="h-5 w-5 text-[#23CE6B] shrink-0" />
-                <Input id="file" type="file" accept=".pdf,.doc,.docx" onChange={e => setFile(e.target.files[0])} className="border-0 focus-visible:ring-0 file:px-3 file:py-2 file:rounded-md file:bg-[#23CE6B]/20 file:text-[#EAFBF1] file:border-0 file:font-medium" />
-              </div>
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="submit" disabled={loading} className="gradient-btn min-w-40">{loading ? 'Submitting...' : isEdit ? 'Update Research' : 'Submit Research'}</Button>
