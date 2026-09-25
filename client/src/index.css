@@ -84,7 +84,7 @@
 @layer components {
   .gradient-bg {
     @apply min-h-screen;
-    background: linear-gradient(160deg, #CDE7CE 0%, #94BE98 45%, #FFFFFF 100%);
+    background: linear-gradient(160deg, #A8CFA9 0%, #6DA673 50%, #F8FBF6 100%);
   }
   .gradient-text {
     @apply text-transparent bg-clip-text;
