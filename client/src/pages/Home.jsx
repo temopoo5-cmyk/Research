@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from '../components/ui/badge';
 import FloatingBooks, { BookPile } from '../components/FloatingBooks';
 import LockedAbstract from '../components/LockedAbstract';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight } from 'lucide-react';
+import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen } from 'lucide-react';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -78,11 +78,6 @@ export default function Home() {
                   ))}
                 </div>
               )}
-              <div className="mt-7 flex justify-center">
-                <Button className="gradient-btn-invert" onClick={() => navigate('/register')}>
-                  Join the Repository <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
             </div>
             <div><BookPile /></div>
           </div>

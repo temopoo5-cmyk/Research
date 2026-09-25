@@ -10,7 +10,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight, Lock, MapPin } from 'lucide-react';
+import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowLeft, Lock, MapPin } from 'lucide-react';
 import FloatingBooks from '../components/FloatingBooks';
 import LockedAbstract from '../components/LockedAbstract';
 
@@ -50,6 +50,13 @@ export default function ResearchList() {
       <section className="relative overflow-hidden border-b border-[#23CE6B]/25 bg-gradient-to-br from-[#0A2B1C] via-[#0E3A24] to-[#0A2418]">
         <div className="pointer-events-none absolute inset-0 grid-lines opacity-20" aria-hidden="true" />
         <FloatingBooks />
+        <Button
+          size="sm"
+          className="absolute right-4 top-4 z-20 gradient-btn-invert sm:right-6 sm:top-6"
+          onClick={() => navigate('/')}
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to Home
+        </Button>
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
           <div className="grid gap-12 lg:grid-cols-[1fr_auto] items-center">
           <div className="max-w-3xl">
@@ -79,11 +86,7 @@ export default function ResearchList() {
                   ))}
                 </div>
               )}
-              <div className="mt-7 flex justify-center">
-                <Button className="gradient-btn-invert" onClick={() => navigate('/')}>
-                  Back to Home <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
+
           </div>
             <aside className="w-full lg:w-[23rem]">
               <div className="quirk-a glass-green p-6 float-slow">
