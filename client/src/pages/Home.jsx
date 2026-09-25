@@ -82,7 +82,7 @@ export default function Home() {
             <div><BookPile /></div>
           </div>
         </div>
-        <div className="relative z-10 h-4 bg-[#E3EFE0] [clip-path:polygon(0_70%,8%_55%,18%_78%,30%_52%,42%_76%,56%_48%,70%_74%,84%_54%,100%_72%,100%_100%,0_100%)]" aria-hidden="true" />
+        <div className="relative z-10 h-4 bg-[#D2E3CE] [clip-path:polygon(0_70%,8%_55%,18%_78%,30%_52%,42%_76%,56%_48%,70%_74%,84%_54%,100%_72%,100%_100%,0_100%)]" aria-hidden="true" />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">

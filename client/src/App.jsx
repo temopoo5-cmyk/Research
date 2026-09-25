@@ -64,16 +64,20 @@ function AdminLayout({ children }) {
     <div className="min-h-screen">
       <PageBackdrop />
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 h-14 bg-gradient-to-r from-[#0A2B1C] to-[#0F3A26] border-b border-[#23CE6B]/25">
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-2xl gradient-btn-invert flex items-center justify-center shrink-0 tilt-r-sm">
-            <GraduationCap className="h-4 w-4 text-[#062514]" />
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 h-14 overflow-hidden bg-gradient-to-r from-[#0A2B1C] to-[#0F3A26] border-b border-[#23CE6B]/25">
+        <div className="pointer-events-none absolute -right-5 -top-10 h-24 w-24 rounded-full border border-[#23CE6B]/30" />
+        <div className="pointer-events-none absolute right-16 top-2 h-8 w-8 rotate-45 rounded-lg border border-[#9FEBBF]/20" />
+        <div className="relative z-10 flex h-full items-center justify-between px-4">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-2xl gradient-btn-invert flex items-center justify-center shrink-0 tilt-r-sm">
+              <GraduationCap className="h-4 w-4 text-[#062514]" />
+            </div>
+            <span className="font-display font-semibold text-white">Research<span className="text-[#23CE6B]">Hub</span></span>
           </div>
-          <span className="font-display font-semibold text-white">Research<span className="text-[#23CE6B]">Hub</span></span>
+          <button onClick={() => setSidebarOpen(true)} className="rounded-full p-2 text-[#EAFBF1] hover:bg-white/10">
+            <Menu className="h-5 w-5" />
+          </button>
         </div>
-        <button onClick={() => setSidebarOpen(true)} className="rounded-full p-2 text-[#EAFBF1] hover:bg-white/10">
-          <Menu className="h-5 w-5" />
-        </button>
       </div>
       <div className="pt-14 md:pt-8 p-4 md:pl-64 md:p-8">
         <div className="md:ml-8">{children}</div>

@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 140 30% 92%;
+    --background: 140 30% 89%;
     --foreground: 158 52% 10%;
 
     --card: 0 0% 100%;
@@ -84,7 +84,7 @@
 @layer components {
   .gradient-bg {
     @apply min-h-screen;
-    background: linear-gradient(160deg, #A8CFA9 0%, #6DA673 50%, #E3EFE0 100%);
+    background: linear-gradient(160deg, #91BE94 0%, #5B9462 50%, #D2E3CE 100%);
   }
   .gradient-text {
     @apply text-transparent bg-clip-text;
@@ -262,7 +262,7 @@
     z-index: -1;
     pointer-events: none;
     overflow: hidden;
-    background: linear-gradient(160deg, #B7D5B7 0%, #D5E7D3 52%, #E6F0E3 100%);
+    background: linear-gradient(160deg, #9FC59F 0%, #C1DCC0 52%, #D2E3CE 100%);
   }
   .backdrop-blob {
     position: absolute;
