@@ -7,6 +7,7 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Separator } from '../components/ui/separator';
 import BookOpening from '../components/BookOpening';
+import LockedAbstract from '../components/LockedAbstract';
 import { ArrowLeft, Users, Award, FolderTree, Calendar, FileText, Tags, CheckCircle2, XCircle, BookOpen } from 'lucide-react';
 
 const rowMeta = {
@@ -132,12 +133,7 @@ export default function ResearchDetail() {
               <div>
                 <Separator className="mb-4" />
                 <p className="text-sm font-semibold text-[#12854A] mb-2 flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Abstract</p>
-                <div className="relative rounded-2xl rounded-br-sm border border-border bg-white/70 p-5 sm:p-6 overflow-hidden">
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#23CE6B]" />
-                  <p className="text-sm sm:text-[15px] leading-relaxed text-muted-foreground font-display first-letter:text-4xl first-letter:font-semibold first-letter:text-[#12854A] first-letter:float-left first-letter:mr-2 first-letter:leading-none">
-                    {research.abstract}
-                  </p>
-                </div>
+                <LockedAbstract text={research.abstract} />
               </div>
             )}
           </CardContent>

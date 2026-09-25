@@ -10,8 +10,9 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight, Quote } from 'lucide-react';
+import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight } from 'lucide-react';
 import FloatingBooks from '../components/FloatingBooks';
+import LockedAbstract from '../components/LockedAbstract';
 
 export default function ResearchList() {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ export default function ResearchList() {
             )}
           </div>
         </div>
-        <div className="relative z-10 h-4 bg-[#FBFDF8] [clip-path:polygon(0_70%,10%_50%,22%_76%,36%_54%,50%_78%,64%_50%,78%_74%,90%_52%,100%_70%,100%_100%,0_100%)]" aria-hidden="true" />
+        <div className="relative z-10 h-4 bg-[#E3EFE0] [clip-path:polygon(0_70%,10%_50%,22%_76%,36%_54%,50%_78%,64%_50%,78%_74%,90%_52%,100%_70%,100%_100%,0_100%)]" aria-hidden="true" />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
@@ -163,10 +164,9 @@ export default function ResearchList() {
                       <h3 className="font-display text-lg font-semibold leading-snug mb-2 line-clamp-2">{r.title}</h3>
                       <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3"><Users className="h-3.5 w-3.5 text-[#12854A]" />{r.authors}</p>
                     {r.abstract && (
-                      <p className="text-xs text-muted-foreground/90 line-clamp-2 mb-4 flex items-start gap-1.5">
-                        <Quote className="h-3 w-3 rotate-180 shrink-0 mt-0.5 text-[#23CE6B]" />
-                        <span className="italic">{r.abstract}</span>
-                      </p>
+                      <div className="mb-4">
+                        <LockedAbstract text={r.abstract} compact />
+                      </div>
                     )}
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-border">
                       {r.program_name && <span className="font-medium text-[#12854A]">{r.program_name}</span>}

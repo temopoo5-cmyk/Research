@@ -9,7 +9,8 @@ import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
 import FloatingBooks, { BookPile } from '../components/FloatingBooks';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight, Quote } from 'lucide-react';
+import LockedAbstract from '../components/LockedAbstract';
+import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight } from 'lucide-react';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -84,7 +85,7 @@ export default function Home() {
             <div><BookPile /></div>
           </div>
         </div>
-        <div className="relative z-10 h-4 bg-[#FBFDF8] [clip-path:polygon(0_70%,8%_55%,18%_78%,30%_52%,42%_76%,56%_48%,70%_74%,84%_54%,100%_72%,100%_100%,0_100%)]" aria-hidden="true" />
+        <div className="relative z-10 h-4 bg-[#E3EFE0] [clip-path:polygon(0_70%,8%_55%,18%_78%,30%_52%,42%_76%,56%_48%,70%_74%,84%_54%,100%_72%,100%_100%,0_100%)]" aria-hidden="true" />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
@@ -165,10 +166,9 @@ export default function Home() {
                       <h3 className="font-display text-lg font-semibold leading-snug mb-2 line-clamp-2 transition-colors group-hover:text-[#12854A]">{r.title}</h3>
                       <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3"><Users className="h-3.5 w-3.5 text-[#12854A]" />{r.authors}</p>
                       {r.abstract && (
-                        <p className="text-xs text-muted-foreground/90 line-clamp-2 mb-4 flex items-start gap-1.5">
-                          <Quote className="h-3 w-3 rotate-180 shrink-0 mt-0.5 text-[#23CE6B]" />
-                          <span className="italic">{r.abstract}</span>
-                        </p>
+                        <div className="mb-4">
+                          <LockedAbstract text={r.abstract} compact />
+                        </div>
                       )}
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-border">
                         {r.program_name && <span className="font-medium text-[#12854A]">{r.program_name}</span>}
