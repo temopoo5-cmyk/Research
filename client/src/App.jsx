@@ -37,9 +37,20 @@ function AdminRoute({ children }) {
   return token && isAdmin ? children : <Navigate to="/" />;
 }
 
+function PageBackdrop() {
+  return (
+    <div className="page-backdrop" aria-hidden="true">
+      <div className="backdrop-blob backdrop-blob-1" />
+      <div className="backdrop-blob backdrop-blob-2" />
+      <div className="backdrop-blob backdrop-blob-3" />
+    </div>
+  );
+}
+
 function PublicLayout({ children }) {
   return (
-    <div className="min-h-screen bg-[#0A2B1C] flex flex-col">
+    <div className="min-h-screen flex flex-col">
+      <PageBackdrop />
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
@@ -50,9 +61,10 @@ function PublicLayout({ children }) {
 function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-[#0A2B1C]">
+    <div className="min-h-screen">
+      <PageBackdrop />
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 h-14 bg-[#0F3A26] backdrop-blur-md border-b border-[#23CE6B]/20">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 h-14 glass-strong border-b border-[#23CE6B]/20">
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-lg bg-[#23CE6B] flex items-center justify-center shrink-0">
             <GraduationCap className="h-4 w-4 text-[#0A122A]" />

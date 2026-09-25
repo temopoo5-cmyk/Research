@@ -47,7 +47,7 @@ export default function Login() {
             {[['BookOpen', 'Research Repository', 'Browse the campus research collection'], ['FolderOpen', 'Unique Cataloging', 'Auto-assigned RS codes for every work'], ['Search', 'Smart Search', 'Filter by program, year, or keywords']].map(([icon, title, desc]) => {
               const Icon = icon === 'BookOpen' ? BookOpen : icon === 'FolderOpen' ? FolderOpen : Search;
               return (
-                <div key={title} className="flex items-start gap-4 p-4 rounded-xl bg-[#0F3A26]/70 backdrop-blur border border-[#23CE6B]/20 shadow-sm">
+                <div key={title} className="flex items-start gap-4 p-4 rounded-xl glass border border-[#23CE6B]/20 shadow-sm">
                   <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
                   <div><p className="font-semibold text-sm text-[#EAFBF1]">{title}</p><p className="text-sm text-[#EAFBF1]/60">{desc}</p></div>
                 </div>
@@ -55,7 +55,7 @@ export default function Login() {
             })}
           </div>
         </div>
-        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#23CE6B]/15 border-[#23CE6B]/20 bg-[#0F3A26]/95 backdrop-blur">
+        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#23CE6B]/15 border-[#23CE6B]/20 glass-strong">
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-2 md:hidden mb-2">
               <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#0A122A]" /></div>

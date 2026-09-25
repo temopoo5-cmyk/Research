@@ -51,7 +51,7 @@ export default function AdminResearch() {
           <TabsTrigger value="rejected" className="data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#0A122A]">Rejected</TabsTrigger>
         </TabsList>
 
-        <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10 bg-[#0F3A26]">
+        <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10">
           <CardContent className="p-6">
             <div className="flex gap-2 mb-4">
               <div className="relative flex-1">

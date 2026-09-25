@@ -92,7 +92,7 @@ export default function Navbar() {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#23CE6B]/20 bg-[#0A2B1C]/90 backdrop-blur-md shadow-sm shadow-[#23CE6B]/10">
+    <header className="sticky top-0 z-40 border-b border-[#23CE6B]/20 glass-strong">
       <div className="mx-auto max-w-7xl flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-3">
           <button onClick={() => { close(); navigate('/'); }} className="flex items-center gap-2.5">
@@ -134,7 +134,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="xl:hidden border-t border-[#23CE6B]/20 bg-[#0A2B1C]/95 backdrop-blur-md px-4 py-3">
+        <div className="xl:hidden border-t border-[#23CE6B]/20 glass-strong px-4 py-3">
           <nav className="flex flex-col gap-1 pb-3">{mobileLinks}</nav>
           <div className="border-t border-[#23CE6B]/20 pt-3">
             {token ? (

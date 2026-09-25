@@ -58,7 +58,7 @@ export default function SubmitResearch() {
         <p className="text-muted-foreground">{isEdit ? 'Update the research record' : 'Submit a new research work to the institutional repository'}</p>
       </div>
 
-      <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10 overflow-hidden bg-[#0F3A26]">
+      <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10 overflow-hidden">
         <div className="h-1.5 bg-[#23CE6B]" />
         <CardContent className="p-6 md:p-8">
           {error && <div className="mb-5 rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">{error}</div>}

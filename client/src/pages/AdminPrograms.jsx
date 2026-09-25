@@ -49,7 +49,7 @@ export default function AdminPrograms() {
         <Button className="gradient-btn" onClick={openNew}><FolderTree className="h-4 w-4" /> Add Program</Button>
       </div>
 
-      <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10 bg-[#0F3A26]">
+      <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -79,7 +79,7 @@ export default function AdminPrograms() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="border-[#23CE6B]/20 bg-[#0F3A26]">
+        <DialogContent className="border-[#23CE6B]/20">
           <DialogHeader>
             <DialogTitle className="gradient-text">{editing ? 'Edit Program' : 'Add Program'}</DialogTitle>
             <DialogDescription>{editing ? 'Update program details' : 'Create a new academic program'}</DialogDescription>
