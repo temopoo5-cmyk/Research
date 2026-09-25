@@ -5,8 +5,6 @@ import { GraduationCap, BookOpen, FileText, Sparkles } from 'lucide-react';
 const links = [
   { to: '/', label: 'Home' },
   { to: '/research', label: 'Browse Research' },
-  { to: '/login', label: 'Sign In' },
-  { to: '/register', label: 'Register' },
 ];
 
 export default function Footer() {

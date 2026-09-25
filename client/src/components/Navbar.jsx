@@ -64,16 +64,7 @@ export default function Navbar() {
         <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign Out</span>
       </Button>
     </div>
-  ) : (
-    <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" className="rounded-full border-white/30 text-white hover:bg-white/15 hover:text-white" onClick={() => navigate('/login')}>
-        Sign In
-      </Button>
-      <Button size="sm" className="gradient-btn-invert" onClick={() => navigate('/register')}>
-        Register
-      </Button>
-    </div>
-  );
+  ) : null;
 
   const mobileLinks = (
     <>
@@ -137,7 +128,7 @@ export default function Navbar() {
           )}
         </nav>
 
-        <div className="hidden xl:flex items-center">{rightSide}</div>
+        {rightSide && <div className="hidden xl:flex items-center">{rightSide}</div>}
 
         <button onClick={() => setOpen(!open)} className="xl:hidden rounded-full p-2 text-[#EAFBF1] hover:bg-white/10">
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -155,33 +146,11 @@ export default function Navbar() {
       {open && (
         <div className="xl:hidden border-t border-[#23CE6B]/20 bg-[#0A2B1C]/98 px-4 py-3">
           <nav className="flex flex-col gap-1 pb-3">{mobileLinks}</nav>
-          <div className="border-t border-[#23CE6B]/20 pt-3">
-            {token ? (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-8 w-8 rounded-full gradient-btn-invert flex items-center justify-center text-xs font-bold font-mono">
-                    {(user?.full_name || 'U').charAt(0).toUpperCase()}
-                  </div>
-                  <div className="leading-tight">
-                    <p className="text-xs font-semibold text-white truncate max-w-[160px]">{user?.full_name || 'User'}</p>
-                    <p className="text-[10px] text-[#9FEBBF]">{isAdmin ? 'Administrator' : 'User'}</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="rounded-full border-red-300/40 text-red-200 hover:bg-red-500/15" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4" /><span className="hidden">Sign Out</span>
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="rounded-full border-white/30 text-white hover:bg-white/15 hover:text-white" onClick={() => { close(); navigate('/login'); }}>
-                  Sign In
-                </Button>
-                <Button size="sm" className="gradient-btn-invert" onClick={() => { close(); navigate('/register'); }}>
-                  Register
-                </Button>
-              </div>
-            )}
-          </div>
+          {token && (
+            <div className="border-t border-[#23CE6B]/20 pt-3">
+              {rightSide}
+            </div>
+          )}
         </div>
       )}
     </header>
