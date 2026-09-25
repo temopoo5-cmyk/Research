@@ -30,38 +30,41 @@ export default function Login() {
     <div className="min-h-screen gradient-bg relative overflow-hidden">
       <Navbar />
       <div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)] relative">
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-[#23CE6B]/20 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-[#23CE6B]/20 blur-3xl" />
+        <div className="absolute -top-32 -left-32 h-96 w-96 blob-shape bg-[#23CE6B]/25 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 blob-shape-alt bg-[#7DD3FC]/25 blur-3xl" />
+        <div className="absolute inset-0 dot-grid opacity-50" aria-hidden="true" />
         <div className="relative grid md:grid-cols-2 gap-8 max-w-5xl w-full items-center">
         <div className="hidden md:block">
-          <div className="inline-flex h-14 w-14 rounded-2xl gradient-btn items-center justify-center mb-5 shadow-lg shadow-[#23CE6B]/25">
-            <GraduationCap className="h-7 w-7 text-white" />
+          <div className="inline-flex h-14 w-14 rounded-2xl quirk-a gradient-btn items-center justify-center mb-5 tilt-l-sm">
+            <GraduationCap className="h-7 w-7 text-[#062514]" />
           </div>
-          <h1 className="text-4xl font-bold leading-tight mb-3">
-            <span className="gradient-text">ResearchHub</span>
+          <p className="eyebrow mb-3">Sign in</p>
+          <h1 className="headline-xl text-5xl mb-4">
+            Welcome to the <span className="gradient-text italic">archive.</span>
           </h1>
-          <p className="text-[#EAFBF1] text-lg mb-8 max-w-md">
+          <p className="text-muted-foreground text-lg mb-8 max-w-md">
             Centralized repository for the campus research works.
           </p>
           <div className="space-y-4">
-            {[['BookOpen', 'Research Repository', 'Browse the campus research collection'], ['FolderOpen', 'Unique Cataloging', 'Auto-assigned RS codes for every work'], ['Search', 'Smart Search', 'Filter by program, year, or keywords']].map(([icon, title, desc]) => {
+            {[['BookOpen', 'Research Repository', 'Browse the campus research collection'], ['FolderOpen', 'Unique Cataloging', 'Auto-assigned RS codes for every work'], ['Search', 'Smart Search', 'Filter by program, year, or keywords']].map(([icon, title, desc], i) => {
               const Icon = icon === 'BookOpen' ? BookOpen : icon === 'FolderOpen' ? FolderOpen : Search;
               return (
-                <div key={title} className="flex items-start gap-4 p-4 rounded-xl glass border border-[#23CE6B]/20 shadow-sm">
-                  <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
-                  <div><p className="font-semibold text-sm text-[#EAFBF1]">{title}</p><p className="text-sm text-[#EAFBF1]/60">{desc}</p></div>
+                <div key={title} className={`flex items-start gap-4 p-4 rounded-2xl ${i % 2 ? 'quirk-b' : 'quirk-a'} glass card-lift`}>
+                  <div className="h-9 w-9 rounded-xl bg-[#23CE6B]/15 text-[#12854A] flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
+                  <div><p className="font-display font-semibold text-base">{title}</p><p className="text-sm text-muted-foreground">{desc}</p></div>
                 </div>
               );
             })}
           </div>
         </div>
-        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#23CE6B]/15 border-[#23CE6B]/20 glass-strong">
+        <Card className="w-full max-w-md mx-auto quirk-c card-lift">
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-2 md:hidden mb-2">
-              <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#0A122A]" /></div>
-              <span className="font-bold text-lg gradient-text">ResearchHub</span>
+              <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#062514]" /></div>
+              <span className="font-display font-semibold text-lg gradient-text">ResearchHub</span>
             </div>
-            <CardTitle className="text-2xl gradient-text">Welcome back</CardTitle>
+            <p className="eyebrow">Member access</p>
+            <CardTitle className="font-display text-2xl">Welcome <span className="gradient-text italic">back</span></CardTitle>
             <CardDescription>Sign in to access the research repository</CardDescription>
           </CardHeader>
           <CardContent>
@@ -69,19 +72,19 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
-                <Input id="username" value={username} onChange={e => setUsername(e.target.value)} required placeholder="Enter your username" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
+                <Input id="username" value={username} onChange={e => setUsername(e.target.value)} required placeholder="Enter your username" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Enter your password" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
+                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Enter your password" />
               </div>
               <Button type="submit" disabled={loading} className="w-full gradient-btn">{loading ? 'Signing in...' : 'Sign In'}</Button>
             </form>
             <div className="mt-5 text-center text-sm text-muted-foreground">
-              Don't have an account? <a href="/register" className="font-medium text-[#23CE6B] hover:text-[#1CB85C] hover:underline">Register</a>
+              Don't have an account? <a href="/register" className="font-semibold text-[#12854A] hover:underline">Register</a>
             </div>
-            <div className="mt-4 text-center text-xs text-muted-foreground bg-[#23CE6B]/50 rounded-lg py-2 border border-[#23CE6B]/20">
-              Demo admin: <strong className="text-white">admin</strong> / <strong className="text-white">admin123</strong>
+            <div className="mt-4 text-center text-xs text-muted-foreground bg-white/70 rounded-2xl quirk-b py-2.5 border border-border font-mono">
+              Demo admin: <strong className="text-[#12854A]">admin</strong> / <strong className="text-[#12854A]">admin123</strong>
             </div>
           </CardContent>
         </Card>

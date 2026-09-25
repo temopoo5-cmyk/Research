@@ -7,7 +7,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "Segoe UI", "system-ui", "sans-serif"]
+        sans: ["'Space Grotesk'", "Inter", "'Segoe UI'", "system-ui", "sans-serif"],
+        display: ["Fraunces", "Georgia", "'Times New Roman'", "serif"],
+        mono: ["'Space Mono'", "ui-monospace", "SFMono-Regular", "monospace"]
       },
       colors: {
         border: "hsl(var(--border))",
@@ -49,7 +51,11 @@ export default {
           dark: "#0A122A",
           slate: "#4F6D7A",
           olive: "#243010",
-          burgundy: "#2B061E"
+          burgundy: "#2B061E",
+          ink: "#0B2E1B",
+          paper: "#FBFDF8",
+          moss: "#1B7A45",
+          deep: "#0A2B1C"
         }
       },
       borderRadius: {

@@ -44,61 +44,65 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <section className="relative overflow-hidden border-b border-[#23CE6B]/20 bg-[#0A2B1C]">
+      <section className="relative overflow-hidden border-b border-[#23CE6B]/25 bg-gradient-to-br from-[#0A2B1C] via-[#0E3A24] to-[#0A2418]">
+        <div className="pointer-events-none absolute inset-0 grid-lines opacity-20" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0A2418] to-transparent" aria-hidden="true" />
         <FloatingBooks />
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
-          <div className="grid lg:grid-cols-[1fr_auto] gap-10 items-center">
+          <div className="grid lg:grid-cols-[1fr_auto] gap-12 items-center">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-[#23CE6B]/70 border border-[#23CE6B]/30 px-3 py-1 text-xs font-medium text-white mb-5">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[#23CE6B]/15 border border-[#23CE6B]/40 px-3.5 py-1.5 text-xs font-medium font-mono uppercase tracking-[0.18em] text-[#9FEBBF] mb-6">
                 <Sparkles className="h-3.5 w-3.5" /> Central research repository
               </div>
-              <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-4">
-                <span className="gradient-text">Discover research</span> works
+              <h1 className="headline-xl text-white text-5xl lg:text-[4.4rem] mb-5">
+                Discover research
+                <span className="block text-[#23CE6B] italic font-normal">works worth keeping.</span>
               </h1>
-              <p className="text-[#EAFBF1]/70 text-lg mb-8 max-w-2xl">
+              <p className="text-[#9FEBBF]/85 text-lg mb-8 max-w-2xl">
                 Browse and search the institutional repository. Submissions are automatically cataloged with unique codes.
               </p>
               {stats && (
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   {[
                     { label: 'Research Works', value: stats.total, icon: FileText },
                     { label: 'Programs', value: stats.programs, icon: FolderOpen },
-                  ].map(s => (
-                    <div key={s.label} className="flex items-center gap-3 rounded-xl glass border border-[#23CE6B]/20 px-4 py-3">
-                      <div className="h-9 w-9 rounded-lg bg-[#23CE6B]/15 text-[#23CE6B] flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
+                  ].map((s, i) => (
+                    <div key={s.label} className={`flex items-center gap-3 rounded-2xl ${i === 0 ? 'quirk-a' : 'quirk-b'} glass-green px-4 py-3 float-slow`} style={{ animationDelay: `${i * 0.6}s` }}>
+                      <div className="h-9 w-9 rounded-xl bg-[#23CE6B]/20 text-[#9FEBBF] flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
                       <div>
-                        <p className="text-xl font-bold text-white leading-none">{s.value}</p>
-                        <p className="text-xs text-muted-foreground">{s.label}</p>
+                        <p className="font-display text-2xl font-semibold text-white leading-none">{s.value}</p>
+                        <p className="text-xs text-[#9FEBBF]/70">{s.label}</p>
                       </div>
                     </div>
                   ))}
-                  <Button className="gradient-btn" onClick={() => navigate('/register')}>
+                  <Button className="gradient-btn-invert" onClick={() => navigate('/register')}>
                     Join the Repository <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
               )}
             </div>
-            <BookPile />
+            <div className="lg:pt-16"><BookPile /></div>
           </div>
         </div>
+        <div className="relative z-10 h-4 bg-[#FBFDF8] [clip-path:polygon(0_70%,8%_55%,18%_78%,30%_52%,42%_76%,56%_48%,70%_74%,84%_54%,100%_72%,100%_100%,0_100%)]" aria-hidden="true" />
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
-        <Card className="border-[#23CE6B]/20 shadow-lg shadow-[#23CE6B]/10 -mt-2">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+        <Card className="quirk-c -mt-1 card-lift">
           <CardContent className="p-6">
             <form onSubmit={handleSearch}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-end">
                 <div className="space-y-2 xl:col-span-2">
-                  <Label className="text-xs text-muted-foreground">Search</Label>
+                  <Label className="eyebrow">Search</Label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Title, author, code, keywords..." value={filters.search} onChange={e => setFilters({...filters, search: e.target.value})} className="pl-9 border-[#23CE6B]/30 ring-[#23CE6B]" />
+                    <Input placeholder="Title, author, code, keywords..." value={filters.search} onChange={e => setFilters({...filters, search: e.target.value})} className="pl-9" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Program</Label>
+                  <Label className="eyebrow">Program</Label>
                   <Select value={filters.program || 'all'} onValueChange={v => setFilters({...filters, program: v === 'all' ? '' : v})}>
-                    <SelectTrigger className="border-[#23CE6B]/30 ring-[#23CE6B]"><SelectValue placeholder="All Programs" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="All Programs" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Programs</SelectItem>
                       {programs.map(p => <SelectItem key={p.id} value={p.code}>{p.name}</SelectItem>)}
@@ -106,9 +110,9 @@ export default function Home() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Year</Label>
+                  <Label className="eyebrow">Year</Label>
                   <Select value={filters.year ? String(filters.year) : 'all'} onValueChange={v => setFilters({...filters, year: v === 'all' ? '' : v})}>
-                    <SelectTrigger className="border-[#23CE6B]/30 ring-[#23CE6B]"><SelectValue placeholder="All Years" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="All Years" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Years</SelectItem>
                       {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
@@ -116,7 +120,7 @@ export default function Home() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">&nbsp;</Label>
+                  <Label className="eyebrow opacity-0 pointer-events-none">Go</Label>
                   <Button type="submit" className="w-full gradient-btn"><Search className="h-4 w-4" /> Search</Button>
                 </div>
               </div>
@@ -124,59 +128,62 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        <div className="mt-10 mb-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-foreground">Latest Research</h2>
-          {research.length > 0 && <span className="text-sm text-muted-foreground">{research.length} result{research.length !== 1 ? 's' : ''}</span>}
+        <div className="mt-12 mb-6 flex items-end justify-between gap-4">
+          <div>
+            <p className="eyebrow mb-2">Fresh from the desk</p>
+            <h2 className="headline text-3xl lg:text-4xl">Latest <span className="gradient-text italic">Research</span></h2>
+          </div>
+          {research.length > 0 && <span className="code-tag sticker-mint bg-[#23CE6B]/20 text-[#12854A] shrink-0">{research.length} result{research.length !== 1 ? 's' : ''}</span>}
         </div>
 
         {loading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <Card key={i} className="border-[#23CE6B]/20"><CardContent className="p-6 space-y-3"><div className="h-4 w-20 bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-5 w-full bg-[#23CE6B]/15 rounded animate-pulse" /><div className="h-4 w-2/3 bg-[#23CE6B]/15 rounded animate-pulse" /></CardContent></Card>
+              <Card key={i}><CardContent className="p-6 space-y-3"><div className="h-4 w-20 bg-muted rounded animate-pulse" /><div className="h-5 w-full bg-muted rounded animate-pulse" /><div className="h-4 w-2/3 bg-muted rounded animate-pulse" /></CardContent></Card>
             ))}
           </div>
         ) : research.length === 0 ? (
-          <Card className="border-[#23CE6B]/20">
+          <Card className="quirk-a">
             <CardContent className="py-16 text-center">
-              <BookOpenIcon className="h-12 w-12 mx-auto mb-3 text-[#23CE6B]/50" />
-              <h3 className="font-semibold text-lg mb-1">No research found</h3>
+              <div className="h-14 w-14 mx-auto mb-4 rounded-2xl quirk-b bg-[#23CE6B]/15 text-[#12854A] flex items-center justify-center tilt-l-sm"><BookOpenIcon className="h-7 w-7" /></div>
+              <h3 className="font-display text-xl font-semibold mb-1">No research found</h3>
               <p className="text-muted-foreground">Try adjusting your search filters</p>
             </CardContent>
           </Card>
         ) : (
           <>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {research.map(r => (
-                  <Card key={r.id} className="border-[#23CE6B]/20 transition-all hover:shadow-xl hover:shadow-[#23CE6B]/10 hover:-translate-y-1 cursor-pointer overflow-hidden group"
+              {research.map((r, i) => (
+                  <Card key={r.id} className="card-lift cursor-pointer overflow-hidden"
                     onClick={() => navigate(`/research/${r.id}`)}>
-                    <div className="h-1.5 bg-[#23CE6B]" />
+                    <div className={`h-1.5 ${i % 3 === 0 ? 'bg-[#23CE6B]' : i % 3 === 1 ? 'bg-[#1B7A45]' : 'bg-[#7DD3FC]'}`} />
                     <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs font-bold text-white tracking-wide bg-[#23CE6B]/30 px-2.5 py-1 rounded-md">{r.code}</span>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="code-tag sticker bg-[#0B2E1B] text-[#9FEBBF] -rotate-2">{r.code}</span>
+                        <span className="text-[11px] font-mono text-muted-foreground">{r.year}</span>
                       </div>
-                      <h3 className={`font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-white transition-colors`}>{r.title}</h3>
-                      <p className="text-sm text-[#EAFBF1]/60 flex items-center gap-1.5 mb-2.5"><Users className="h-3.5 w-3.5 text-[#23CE6B]" />{r.authors}</p>
+                      <h3 className="font-display text-lg font-semibold leading-snug mb-2 line-clamp-2 transition-colors group-hover:text-[#12854A]">{r.title}</h3>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3"><Users className="h-3.5 w-3.5 text-[#12854A]" />{r.authors}</p>
                       {r.abstract && (
-                        <p className="text-xs text-muted-foreground/90 line-clamp-2 mb-3 flex items-start gap-1.5">
-                          <Quote className="h-3 w-3 rotate-180 shrink-0 mt-0.5 text-[#23CE6B]/70" />
+                        <p className="text-xs text-muted-foreground/90 line-clamp-2 mb-4 flex items-start gap-1.5">
+                          <Quote className="h-3 w-3 rotate-180 shrink-0 mt-0.5 text-[#23CE6B]" />
                           <span className="italic">{r.abstract}</span>
                         </p>
                       )}
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-[#23CE6B]/35">
-                        {r.program_name && <span>{r.program_name}</span>}
-                        <span>{r.year}</span>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-border">
+                        {r.program_name && <span className="font-medium text-[#12854A]">{r.program_name}</span>}
                       </div>
                     </CardContent>
                   </Card>
               ))}
             </div>
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-4">
-                <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)} className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10"><ChevronLeft className="h-4 w-4" /> Prev</Button>
+              <div className="flex items-center justify-center gap-2 pt-8">
+                <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}><ChevronLeft className="h-4 w-4" /> Prev</Button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 7).map(p => (
-                  <Button key={p} size="sm" variant={p === page ? 'default' : 'outline'} onClick={() => setPage(p)} className={p === page ? 'gradient-btn' : 'border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10'}>{p}</Button>
+                  <Button key={p} size="sm" variant={p === page ? 'default' : 'outline'} onClick={() => setPage(p)} className={p === page ? 'gradient-btn rounded-full' : 'rounded-full'}>{p}</Button>
                 ))}
-                <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)} className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10">Next <ChevronRight className="h-4 w-4" /></Button>
+                <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next <ChevronRight className="h-4 w-4" /></Button>
               </div>
             )}
           </>

@@ -50,35 +50,36 @@ export default function AdminUsers() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold mb-1"><span className="gradient-text">Manage Users</span></h1>
-          <p className="text-[#EAFBF1]/60">Add, edit, or remove system users</p>
+          <p className="eyebrow mb-2">People</p>
+          <h1 className="headline text-4xl">Manage <span className="gradient-text italic">Users</span></h1>
+          <p className="text-muted-foreground mt-1">Add, edit, or remove system users</p>
         </div>
-        <Button className="gradient-btn" onClick={openNew}><UserPlus className="h-4 w-4" /> Add User</Button>
+        <Button className="gradient-btn rounded-full" onClick={openNew}><UserPlus className="h-4 w-4" /> Add User</Button>
       </div>
 
-      <Card className="border-[#23CE6B]/20 shadow-xl shadow-[#23CE6B]/10">
+      <Card className="quirk-c overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-[#23CE6B]/30 hover:bg-[#23CE6B]/50">
+                <TableRow className="bg-[#23CE6B]/15 hover:bg-[#23CE6B]/20">
                   <TableHead>ID</TableHead><TableHead>Username</TableHead><TableHead>Full Name</TableHead><TableHead>Role</TableHead><TableHead>Created</TableHead><TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {users.map(u => (
                   <TableRow key={u.id}>
-                    <TableCell className="text-muted-foreground">{u.id}</TableCell>
+                    <TableCell className="text-muted-foreground font-mono">{u.id}</TableCell>
                     <TableCell className="font-semibold">{u.username}</TableCell>
                     <TableCell>{u.full_name}</TableCell>
                     <TableCell><Badge variant={u.role === 'admin' ? 'approved' : 'secondary'}>{u.role}</Badge></TableCell>
-                    <TableCell className="text-muted-foreground">{new Date(u.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-muted-foreground font-mono text-xs">{new Date(u.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10" onClick={() => openEdit(u)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
-                        <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleDelete(u.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
+                        <Button variant="outline" size="sm" className="rounded-full" onClick={() => openEdit(u)}><Pencil className="h-3.5 w-3.5" /> Edit</Button>
+                        <Button variant="ghost" size="sm" className="rounded-full text-red-600 hover:text-red-700 hover:bg-red-500/10" onClick={() => handleDelete(u.id)}><Trash2 className="h-3.5 w-3.5" /> Delete</Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -91,36 +92,36 @@ export default function AdminUsers() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="border-[#23CE6B]/20">
+        <DialogContent className="glass-strong">
           <DialogHeader>
-            <DialogTitle className="gradient-text">{editing ? 'Edit User' : 'Add User'}</DialogTitle>
+            <DialogTitle className="font-display text-2xl">{editing ? 'Edit User' : 'Add User'}</DialogTitle>
             <DialogDescription>{editing ? 'Update user account details' : 'Create a new system user'}</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!editing && (
               <div className="space-y-2">
                 <Label>Username</Label>
-                <Input value={form.username} onChange={e => setForm({...form, username: e.target.value})} required className="border-[#23CE6B]/30 ring-[#23CE6B]" />
+                <Input value={form.username} onChange={e => setForm({...form, username: e.target.value})} required />
               </div>
             )}
             <div className="space-y-2">
               <Label>Full Name</Label>
-              <Input value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required className="border-[#23CE6B]/30 ring-[#23CE6B]" />
+              <Input value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required />
             </div>
             <div className="space-y-2">
               <Label>{editing ? 'New Password (leave blank to keep)' : 'Password'}</Label>
-              <Input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required={!editing} className="border-[#23CE6B]/30 ring-[#23CE6B]" />
+              <Input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required={!editing} />
             </div>
             <div className="space-y-2">
               <Label>Role</Label>
               <Select value={form.role} onValueChange={v => setForm({...form, role: v})}>
-                <SelectTrigger className="border-[#23CE6B]/30 ring-[#23CE6B]"><SelectValue /></SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="user">User</SelectItem><SelectItem value="admin">Admin</SelectItem></SelectContent>
               </Select>
             </div>
             <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" className="border-[#23CE6B]/30 text-white hover:bg-[#23CE6B]/10" onClick={() => setShowModal(false)}>Cancel</Button>
-              <Button type="submit" className="gradient-btn">{editing ? 'Update' : 'Create'}</Button>
+              <Button type="button" variant="outline" className="rounded-full" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button type="submit" className="gradient-btn rounded-full">{editing ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>
         </DialogContent>

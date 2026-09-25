@@ -4,35 +4,35 @@
 
 @layer base {
   :root {
-    --background: 150 62% 10%;
-    --foreground: 144 68% 95%;
+    --background: 140 33% 98%;
+    --foreground: 158 52% 10%;
 
-    --card: 150 58% 14%;
-    --card-foreground: 144 68% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 158 52% 10%;
 
-    --popover: 150 58% 14%;
-    --popover-foreground: 144 68% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 158 52% 10%;
 
-    --primary: 146 71% 47%;
-    --primary-foreground: 224 62% 10%;
+    --primary: 146 64% 30%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 150 55% 16%;
-    --secondary-foreground: 144 68% 95%;
+    --secondary: 140 32% 93%;
+    --secondary-foreground: 158 52% 12%;
 
-    --muted: 150 55% 16%;
-    --muted-foreground: 153 30% 68%;
+    --muted: 140 26% 94%;
+    --muted-foreground: 156 14% 40%;
 
-    --accent: 150 50% 18%;
-    --accent-foreground: 144 68% 95%;
+    --accent: 146 48% 90%;
+    --accent-foreground: 158 56% 12%;
 
-    --destructive: 0 63% 50%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 35% 26%;
-    --input: 150 30% 24%;
-    --ring: 146 71% 47%;
+    --border: 145 24% 86%;
+    --input: 0 0% 100%;
+    --ring: 146 64% 32%;
 
-    --radius: 0.75rem;
+    --radius: 0.9rem;
   }
 
   .dark {
@@ -70,44 +70,183 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+  code, kbd, pre {
+    @apply font-mono;
   }
 }
 
 @layer components {
   .gradient-bg {
     @apply min-h-screen;
-    background: linear-gradient(160deg, #0A2B1C 0%, #0F3A26 50%, #0A2418 100%);
+    background: linear-gradient(160deg, #F7FBF3 0%, #EAF6EA 45%, #FBFDF8 100%);
   }
   .gradient-text {
-    @apply text-white;
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(120deg, #0B2E1B 0%, #12854A 55%, #23CE6B 100%);
   }
   .gradient-btn {
-    @apply bg-[#23CE6B] text-[#0A122A] font-semibold hover:bg-[#1CB85C] transition-colors;
+    @apply bg-[#23CE6B] text-[#062514] font-semibold hover:bg-[#1CB85C] transition-all;
+    box-shadow: 4px 4px 0 0 #0B2E1B;
+  }
+  .gradient-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 0 #0B2E1B;
+  }
+  .gradient-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 0 #0B2E1B;
+  }
+  .gradient-btn-invert {
+    @apply bg-[#23CE6B] text-[#062514] font-semibold hover:bg-[#1CB85C] transition-all;
+    box-shadow: 4px 4px 0 0 rgba(255, 255, 255, 0.4);
+  }
+  .gradient-btn-invert:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 0 rgba(255, 255, 255, 0.4);
+  }
+  .gradient-btn-invert:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 0 rgba(255, 255, 255, 0.4);
   }
   .gradient-card {
-    @apply bg-[#0F3A26] border border-[#23CE6B]/15;
+    @apply bg-white/80 border border-[#23CE6B]/40;
   }
 
   /* ------------------------------------------------ */
-  /* Glassmorphism                                     */
+  /* Typography                                         */
+  /* ------------------------------------------------ */
+  .headline {
+    @apply font-display font-semibold tracking-[-0.025em] leading-[0.95] text-foreground;
+    font-variation-settings: "SOFT" 40, "WONK" 1, "wght" 600;
+  }
+  .headline-xl {
+    @apply font-display font-semibold tracking-[-0.035em] leading-[0.9] text-foreground;
+    font-variation-settings: "SOFT" 60, "WONK" 1, "wght" 700;
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#12854A];
+  }
+  .eyebrow::before {
+    content: '';
+    width: 1.75rem;
+    height: 2px;
+    background: #23CE6B;
+    border-radius: 2px;
+  }
+  .code-tag {
+    @apply font-mono text-[11px] font-bold uppercase tracking-[0.12em] rounded-full px-2.5 py-1;
+  }
+
+  /* ------------------------------------------------ */
+  /* Glassmorphism (light scheme)                       */
   /* ------------------------------------------------ */
   .glass {
-    background: linear-gradient(155deg, rgba(21, 75, 47, 0.42) 0%, rgba(10, 42, 28, 0.5) 100%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    backdrop-filter: blur(16px) saturate(160%);
-    box-shadow: 0 10px 34px rgba(6, 26, 17, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+    background: linear-gradient(158deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.62) 100%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(18, 133, 74, 0.14);
+    box-shadow: 0 18px 44px -18px rgba(11, 61, 36, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 
-  /* Frosted panels that sit on top of the aurora backdrop */
+  /* Heavier frost for dialogs and focused panels */
   .glass-strong {
-    background: linear-gradient(155deg, rgba(18, 66, 41, 0.6) 0%, rgba(8, 32, 21, 0.62) 100%);
-    -webkit-backdrop-filter: blur(22px) saturate(170%);
-    backdrop-filter: blur(22px) saturate(170%);
-    box-shadow: 0 10px 34px rgba(6, 26, 17, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    background: linear-gradient(158deg, rgba(255, 255, 255, 0.96) 0%, rgba(247, 252, 246, 0.9) 100%);
+    -webkit-backdrop-filter: blur(26px) saturate(190%);
+    backdrop-filter: blur(26px) saturate(190%);
+    border: 1px solid rgba(18, 133, 74, 0.16);
+    box-shadow: 0 26px 60px -20px rgba(11, 61, 36, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+
+  /* Frosted panel that sits on the deep-green chrome */
+  .glass-green {
+    background: linear-gradient(158deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.07) 100%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
   }
 
   /* ------------------------------------------------ */
-  /* Aurora background blobs (render behind glass)     */
+  /* Eccentric / asymmetric toolkit                     */
+  /* ------------------------------------------------ */
+  .quirk-a { border-radius: 2.4rem 0.7rem 2.4rem 0.7rem; }
+  .quirk-b { border-radius: 0.7rem 2.4rem 0.7rem 2.4rem; }
+  .quirk-c { border-radius: 2.8rem 2.8rem 0.7rem 0.7rem; }
+
+  .sticker {
+    box-shadow: 4px 4px 0 0 #0B2E1B;
+  }
+  .sticker-mint {
+    box-shadow: 4px 4px 0 0 #23CE6B;
+  }
+
+  .tilt-l { transform: rotate(-2.4deg); }
+  .tilt-r { transform: rotate(2.4deg); }
+  .tilt-l-sm { transform: rotate(-1.2deg); }
+  .tilt-r-sm { transform: rotate(1.2deg); }
+
+  .card-lift {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-6px) rotate(-0.7deg);
+    box-shadow: 0 30px 60px -24px rgba(11, 61, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(rgba(18, 133, 74, 0.16) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .grid-lines {
+    background-image: linear-gradient(rgba(18, 133, 74, 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(18, 133, 74, 0.09) 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+  .blob-shape {
+    border-radius: 62% 38% 55% 45% / 45% 55% 42% 58%;
+  }
+  .blob-shape-alt {
+    border-radius: 38% 62% 45% 55% / 58% 42% 60% 40%;
+  }
+  .squiggle-underline {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8c8-7 16 7 24 0s16 7 24 0 16 7 24 0 16 7 24 0' fill='none' stroke='%2323CE6B' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 100% 0.4em;
+    padding-bottom: 0.1em;
+  }
+
+  .ticker-track {
+    display: inline-flex;
+    white-space: nowrap;
+    animation: ticker 30s linear infinite;
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  }
+
+  .float-slow {
+    animation: float-slow 9s ease-in-out infinite;
+  }
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-14px) rotate(3deg); }
+  }
+
+  /* ------------------------------------------------ */
+  /* Pastel aurora backdrop (behind the glass)         */
   /* ------------------------------------------------ */
   .page-backdrop {
     position: fixed;
@@ -115,42 +254,43 @@
     z-index: -1;
     pointer-events: none;
     overflow: hidden;
+    background: #F7FBF3;
   }
   .backdrop-blob {
     position: absolute;
     border-radius: 9999px;
-    filter: blur(90px);
-    opacity: 0.5;
+    filter: blur(80px);
+    opacity: 0.55;
     will-change: transform;
   }
   .backdrop-blob-1 {
-    top: -12%;
-    left: -8%;
-    width: 480px;
-    height: 480px;
-    background: radial-gradient(circle, rgba(35, 206, 107, 0.45) 0%, rgba(35, 206, 107, 0) 70%);
+    top: -14%;
+    left: -10%;
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(circle, rgba(35, 206, 107, 0.5) 0%, rgba(35, 206, 107, 0) 70%);
     animation: blob-drift 26s ease-in-out infinite;
   }
   .backdrop-blob-2 {
-    top: 42%;
-    right: -12%;
-    width: 520px;
-    height: 520px;
-    background: radial-gradient(circle, rgba(56, 189, 248, 0.32) 0%, rgba(56, 189, 248, 0) 70%);
+    top: 38%;
+    right: -14%;
+    width: 560px;
+    height: 560px;
+    background: radial-gradient(circle, rgba(125, 211, 252, 0.42) 0%, rgba(125, 211, 252, 0) 70%);
     animation: blob-drift 32s ease-in-out infinite reverse;
   }
   .backdrop-blob-3 {
-    bottom: -16%;
-    left: 30%;
-    width: 520px;
-    height: 520px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(139, 92, 246, 0) 70%);
+    bottom: -18%;
+    left: 26%;
+    width: 560px;
+    height: 560px;
+    background: radial-gradient(circle, rgba(196, 181, 253, 0.4) 0%, rgba(196, 181, 253, 0) 70%);
     animation: blob-drift 38s ease-in-out infinite;
   }
   @keyframes blob-drift {
     0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(40px, -30px) scale(1.08); }
-    66% { transform: translate(-30px, 26px) scale(0.95); }
+    33% { transform: translate(44px, -34px) scale(1.1); }
+    66% { transform: translate(-32px, 28px) scale(0.94); }
   }
 
   /* ------------------------------------------------ */

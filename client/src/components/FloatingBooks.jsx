@@ -2,12 +2,12 @@ import React from 'react';
 import { Book, BookOpen, BookMarked, Library, Feather } from 'lucide-react';
 
 const bookPositions = [
-  { icon: BookOpen, top: '8%', left: '3%', size: 'h-10 w-10', color: 'text-[#23CE6B]/40', dur: '9s', delay: '0s', tilt: '-8deg' },
-  { icon: Book, top: '66%', left: '6%', size: 'h-14 w-14', color: 'text-[#EAFBF1]/70/30', dur: '11.5s', delay: '1.2s', tilt: '6deg' },
-  { icon: BookMarked, top: '20%', left: '88%', size: 'h-11 w-11', color: 'text-[#23CE6B]/40', dur: '10s', delay: '0.6s', tilt: '-4deg' },
-  { icon: Library, top: '76%', left: '86%', size: 'h-12 w-12', color: 'text-[#EAFBF1]/70/30', dur: '12s', delay: '2.1s', tilt: '9deg' },
-  { icon: Book, top: '42%', left: '93%', size: 'h-10 w-10', color: 'text-[#23CE6B]/40', dur: '9.5s', delay: '1.7s', tilt: '-10deg' },
-  { icon: Feather, top: '50%', left: '2%', size: 'h-8 w-8', color: 'text-[#EAFBF1]/70/30', dur: '8.5s', delay: '2.6s', tilt: '-6deg' },
+  { icon: BookOpen, top: '8%', left: '3%', size: 'h-10 w-10', color: 'text-[#12854A]/35', dur: '9s', delay: '0s', tilt: '-8deg' },
+  { icon: Book, top: '66%', left: '6%', size: 'h-14 w-14', color: 'text-[#12854A]/20', dur: '11.5s', delay: '1.2s', tilt: '6deg' },
+  { icon: BookMarked, top: '20%', left: '88%', size: 'h-11 w-11', color: 'text-[#12854A]/35', dur: '10s', delay: '0.6s', tilt: '-4deg' },
+  { icon: Library, top: '76%', left: '86%', size: 'h-12 w-12', color: 'text-[#12854A]/20', dur: '12s', delay: '2.1s', tilt: '9deg' },
+  { icon: Book, top: '42%', left: '93%', size: 'h-10 w-10', color: 'text-[#12854A]/35', dur: '9.5s', delay: '1.7s', tilt: '-10deg' },
+  { icon: Feather, top: '50%', left: '2%', size: 'h-8 w-8', color: 'text-[#12854A]/20', dur: '8.5s', delay: '2.6s', tilt: '-6deg' },
 ];
 
 export default function FloatingBooks() {
@@ -49,20 +49,20 @@ export function BookPile() {
 
       <div className="relative">
         <div className="mb-3 flex items-end gap-3">
-          <div className="flex h-9 w-7 rotate-6 items-center justify-center rounded-sm bg-gradient-to-b from-violet-600 to-purple-600 text-[9px] font-bold text-[#0A122A] shadow-lg shadow-violet-200">
+          <div className="flex h-9 w-7 rotate-6 items-center justify-center rounded-sm bg-gradient-to-b from-violet-600 to-purple-600 text-[9px] font-bold font-mono text-white shadow-[3px_3px_0_0_#0B2E1B]">
             AI
           </div>
-          <div className="flex h-10 w-8 -rotate-3 items-center justify-center rounded-sm bg-gradient-to-b from-amber-600 to-orange-500 text-[9px] font-bold text-[#0A122A] shadow-lg shadow-amber-200">
+          <div className="flex h-10 w-8 -rotate-3 items-center justify-center rounded-sm bg-gradient-to-b from-amber-600 to-orange-500 text-[9px] font-bold font-mono text-white shadow-[3px_3px_0_0_#0B2E1B]">
             TH
           </div>
-          <div className="flex h-8 w-6 rotate-3 items-center justify-center rounded-sm bg-[#23CE6B] text-[9px] font-bold text-[#0A122A] shadow-lg shadow-[#23CE6B]/30">
+          <div className="flex h-8 w-6 rotate-3 items-center justify-center rounded-sm bg-[#23CE6B] text-[9px] font-bold font-mono text-[#062514] shadow-[3px_3px_0_0_#0B2E1B]">
             RP
           </div>
         </div>
-        <div className="rounded-lg bg-[#0A2B1C] p-4 text-[#EAFBF1] shadow-2xl shadow-[#0A122A]/40 ring-1 ring-white/10">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[#23CE6B]">ResearchHub</p>
-          <p className="mt-1 text-xl font-bold leading-snug">A Library of<br />Ideas</p>
-          <div className="mt-3 flex items-center gap-1.5 text-[10px] text-[#EAFBF1]/70">
+        <div className="rounded-3xl rounded-br-lg bg-gradient-to-br from-[#0A2B1C] to-[#123F29] p-5 text-[#EAFBF1] shadow-[8px_8px_0_0_rgba(35,206,107,0.55)] ring-1 ring-white/10">
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#23CE6B]">ResearchHub</p>
+          <p className="mt-1 font-display text-2xl font-semibold leading-tight">A Library of <em className="text-[#23CE6B] not-italic font-normal italic">Ideas</em></p>
+          <div className="mt-3 flex items-center gap-1.5 text-[10px] text-[#9FEBBF]">
             <BookOpen className="h-3.5 w-3.5 text-[#23CE6B]" /> Research Works
           </div>
         </div>

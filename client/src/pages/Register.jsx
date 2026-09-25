@@ -29,15 +29,17 @@ export default function Register() {
     <div className="min-h-screen gradient-bg relative overflow-hidden">
       <Navbar />
       <div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)] relative">
-        <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[#23CE6B]/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#23CE6B]/20 blur-3xl" />
-        <Card className="w-full max-w-md mx-auto shadow-xl shadow-[#23CE6B]/15 border-[#23CE6B]/20 glass-strong relative">
+        <div className="absolute -top-32 -right-32 h-96 w-96 blob-shape bg-[#23CE6B]/25 blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 h-96 w-96 blob-shape-alt bg-[#C4B5FD]/25 blur-3xl" />
+        <div className="absolute inset-0 dot-grid opacity-50" aria-hidden="true" />
+        <Card className="w-full max-w-md mx-auto quirk-c card-lift relative">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2 mb-2">
-            <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#0A122A]" /></div>
-            <span className="font-bold text-lg gradient-text">ResearchHub</span>
+            <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center tilt-r-sm"><GraduationCap className="h-5 w-5 text-[#062514]" /></div>
+            <span className="font-display font-semibold text-lg gradient-text">ResearchHub</span>
           </div>
-          <CardTitle className="text-2xl gradient-text">Create account</CardTitle>
+          <p className="eyebrow">New member</p>
+          <CardTitle className="font-display text-2xl">Create an <span className="gradient-text italic">account</span></CardTitle>
           <CardDescription>Join the research repository</CardDescription>
         </CardHeader>
         <CardContent>
@@ -45,20 +47,20 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="full_name">Full Name</Label>
-              <Input id="full_name" value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required placeholder="Your full name" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
+              <Input id="full_name" value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} required placeholder="Your full name" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" value={form.username} onChange={e => setForm({...form, username: e.target.value})} required placeholder="Choose a username" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
+              <Input id="username" value={form.username} onChange={e => setForm({...form, username: e.target.value})} required placeholder="Choose a username" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required minLength={4} placeholder="Min 4 characters" className="border-[#23CE6B]/30 ring-[#23CE6B]" />
+              <Input id="password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required minLength={4} placeholder="Min 4 characters" />
             </div>
             <Button type="submit" disabled={loading} className="w-full gradient-btn">{loading ? 'Creating...' : 'Create Account'}</Button>
           </form>
           <div className="mt-5 text-center text-sm text-muted-foreground">
-            Already have an account? <a href="/login" className="font-medium text-[#23CE6B] hover:text-[#1CB85C] hover:underline">Sign In</a>
+            Already have an account? <a href="/login" className="font-semibold text-[#12854A] hover:underline">Sign In</a>
           </div>
         </CardContent>
       </Card>
