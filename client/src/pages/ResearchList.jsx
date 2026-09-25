@@ -10,7 +10,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight } from 'lucide-react';
+import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, ArrowRight, Lock, MapPin } from 'lucide-react';
 import FloatingBooks from '../components/FloatingBooks';
 import LockedAbstract from '../components/LockedAbstract';
 
@@ -51,6 +51,7 @@ export default function ResearchList() {
         <div className="pointer-events-none absolute inset-0 grid-lines opacity-20" aria-hidden="true" />
         <FloatingBooks />
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
+          <div className="grid gap-12 lg:grid-cols-[1fr_auto] items-center">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-[#23CE6B]/15 border border-[#23CE6B]/40 px-3.5 py-1.5 text-xs font-medium font-mono uppercase tracking-[0.18em] text-[#9FEBBF] mb-6">
               <Sparkles className="h-3.5 w-3.5" /> Index of works
@@ -83,6 +84,36 @@ export default function ResearchList() {
                   Back to Home <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
+          </div>
+            <aside className="w-full lg:w-[23rem]">
+              <div className="quirk-a glass-green p-6 float-slow">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="code-tag sticker bg-[#23CE6B] text-[#062514]">Lab notice</span>
+                  <Lock className="h-4 w-4 text-[#23CE6B]" />
+                </div>
+                <h2 className="headline text-2xl text-white">The full texts live in the lab.</h2>
+                <p className="mt-3 text-sm leading-relaxed text-[#9FEBBF]/85">
+                  Abstracts are blurred here on purpose. To read a complete manuscript, head to the{' '}
+                  <span className="font-semibold text-[#23CE6B]">Research Laboratory of De La Salle John Bosco College</span>{' '}
+                  and ask the staff for the call number of the work you need.
+                </p>
+                <ul className="mt-5 space-y-2.5 text-xs text-[#9FEBBF]">
+                  {[
+                    'Find the title here and note its RS code',
+                    'Visit the Research Laboratory on campus',
+                    'Ask for the call number, then read on site',
+                  ].map((step, i) => (
+                    <li key={step} className="flex items-start gap-2.5">
+                      <span className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#23CE6B]/20 text-[10px] font-bold font-mono text-[#9FEBBF]">{i + 1}</span>
+                      {step}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-5 flex items-center gap-2 border-t border-white/15 pt-4 text-[11px] font-mono uppercase tracking-[0.18em] text-[#9FEBBF]/70">
+                  <MapPin className="h-3.5 w-3.5 text-[#23CE6B]" /> De La Salle John Bosco College
+                </p>
+              </div>
+            </aside>
           </div>
         </div>
         <div className="relative z-10 h-4 bg-[#E3EFE0] [clip-path:polygon(0_70%,10%_50%,22%_76%,36%_54%,50%_78%,64%_50%,78%_74%,90%_52%,100%_70%,100%_100%,0_100%)]" aria-hidden="true" />
