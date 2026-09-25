@@ -38,27 +38,7 @@ export default function FloatingBooks() {
 export function BookPile() {
   return (
     <div className="relative hidden lg:block" aria-hidden="true">
-      <div
-        className="float-book"
-        style={{ left: 'auto', right: '-14px', top: '-34px', animationDuration: '8s', ['--tilt']: '8deg' }}
-      >
-        <div className="flex items-center gap-2 rounded-md bg-gradient-to-r from-orange-500 to-amber-500 px-3 py-1.5 text-[#0A122A] shadow-lg shadow-orange-200 font-semibold text-xs">
-          <Book className="h-4 w-4" /> Repository Guide
-        </div>
-      </div>
-
       <div className="relative">
-        <div className="mb-3 flex items-end gap-3">
-          <div className="flex h-9 w-7 rotate-6 items-center justify-center rounded-sm bg-gradient-to-b from-violet-600 to-purple-600 text-[9px] font-bold font-mono text-white shadow-[3px_3px_0_0_#0B2E1B]">
-            AI
-          </div>
-          <div className="flex h-10 w-8 -rotate-3 items-center justify-center rounded-sm bg-gradient-to-b from-amber-600 to-orange-500 text-[9px] font-bold font-mono text-white shadow-[3px_3px_0_0_#0B2E1B]">
-            TH
-          </div>
-          <div className="flex h-8 w-6 rotate-3 items-center justify-center rounded-sm bg-[#23CE6B] text-[9px] font-bold font-mono text-[#062514] shadow-[3px_3px_0_0_#0B2E1B]">
-            RP
-          </div>
-        </div>
         <div className="rounded-3xl rounded-br-lg bg-gradient-to-br from-[#0A2B1C] to-[#123F29] p-5 text-[#EAFBF1] shadow-[8px_8px_0_0_rgba(35,206,107,0.55)] ring-1 ring-white/10">
           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#23CE6B]">ResearchHub</p>
           <p className="mt-1 font-display text-2xl font-semibold leading-tight">A Library of <em className="text-[#23CE6B] not-italic font-normal italic">Ideas</em></p>

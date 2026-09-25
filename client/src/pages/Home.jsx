@@ -76,11 +76,13 @@ export default function Home() {
                       </div>
                     </div>
                   ))}
-                  <Button className="gradient-btn-invert" onClick={() => navigate('/register')}>
-                    Join the Repository <ArrowRight className="h-4 w-4" />
-                  </Button>
                 </div>
               )}
+              <div className="mt-7 flex justify-center">
+                <Button className="gradient-btn-invert" onClick={() => navigate('/register')}>
+                  Join the Repository <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             <div><BookPile /></div>
           </div>

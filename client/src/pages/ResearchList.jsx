@@ -75,12 +75,14 @@ export default function ResearchList() {
                       <p className="text-xs text-[#9FEBBF]/70">{s.label}</p>
                     </div>
                   </div>
-                ))}
+                  ))}
+                </div>
+              )}
+              <div className="mt-7 flex justify-center">
                 <Button className="gradient-btn-invert" onClick={() => navigate('/')}>
                   Back to Home <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
-            )}
           </div>
         </div>
         <div className="relative z-10 h-4 bg-[#E3EFE0] [clip-path:polygon(0_70%,10%_50%,22%_76%,36%_54%,50%_78%,64%_50%,78%_74%,90%_52%,100%_70%,100%_100%,0_100%)]" aria-hidden="true" />
