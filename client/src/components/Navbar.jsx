@@ -60,7 +60,7 @@ export default function Navbar() {
           <p className="text-[10px] text-[#9FEBBF]">{isAdmin ? 'Administrator' : 'User'}</p>
         </div>
       </div>
-      <Button variant="outline" size="sm" className="rounded-full border-white/30 text-white hover:bg-white/15 hover:text-white" onClick={handleLogout}>
+      <Button variant="outline" size="sm" className="rounded-full border-white/30 bg-transparent text-white hover:bg-[#23CE6B]/15 hover:text-white" onClick={handleLogout}>
         <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign Out</span>
       </Button>
     </div>

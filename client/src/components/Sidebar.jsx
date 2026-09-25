@@ -81,7 +81,7 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
             <p className="text-[10px] uppercase tracking-[0.2em] text-[#9FEBBF]">Administrator</p>
           </div>
         </div>
-        <Button variant="outline" className="w-full rounded-full border-white/25 text-white/70 hover:text-white hover:bg-white/10" onClick={handleLogout}>
+        <Button variant="outline" className="w-full rounded-full border-white/25 bg-transparent text-white/70 hover:text-white hover:bg-[#23CE6B]/15" onClick={handleLogout}>
           <LogOut className="h-4 w-4" /> Sign Out
         </Button>
       </div>

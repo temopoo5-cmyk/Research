@@ -59,7 +59,11 @@ export default function SubmitResearch() {
           <h1 className="headline text-4xl">{isEdit ? 'Edit' : 'Submit'} <span className="gradient-text italic">Research</span></h1>
           <p className="text-muted-foreground mt-1">{isEdit ? 'Update the research record' : 'Submit a new research work to the institutional repository'}</p>
         </div>
-        <span className="code-tag sticker bg-[#0B2E1B] text-[#9FEBBF] -rotate-1">RS / INTAKE FORM</span>
+        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
+          <div className="pointer-events-none absolute inset-0 rounded-full border border-[#23CE6B]/35" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-2 rotate-45 rounded-[0.8rem] border border-[#12854A]/30" aria-hidden="true" />
+          <span className="code-tag sticker relative z-10 bg-[#0B2E1B] px-1.5 py-1 text-center text-[9px] leading-tight text-[#9FEBBF] -rotate-1">RS / INTAKE FORM</span>
+        </div>
       </div>
 
       <Card className="quirk-c overflow-hidden">

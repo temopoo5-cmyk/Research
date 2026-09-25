@@ -42,7 +42,11 @@ export default function Dashboard() {
           <h1 className="headline text-4xl">The <span className="gradient-text italic">Dashboard</span></h1>
           <p className="text-muted-foreground mt-1">Overview of the research repository</p>
         </div>
-        <span className="code-tag sticker bg-[#0B2E1B] text-[#9FEBBF] rotate-1">RS / ADMIN VIEW</span>
+        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
+          <div className="pointer-events-none absolute inset-0 rounded-full border border-[#23CE6B]/35" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-2 rotate-45 rounded-[0.8rem] border border-[#12854A]/30" aria-hidden="true" />
+          <span className="code-tag sticker relative z-10 bg-[#0B2E1B] px-1.5 py-1 text-center text-[9px] leading-tight text-[#9FEBBF] rotate-1">RS / ADMIN VIEW</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
