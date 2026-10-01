@@ -508,8 +508,8 @@
 
   .research-card {
     flex: 0 0 auto;
-    width: 260px;
-    height: 132px;
+    width: 290px;
+    height: 150px;
     padding: 14px 16px;
     display: flex;
     gap: 12px;
@@ -526,8 +526,8 @@
     transform: translateY(-2px);
   }
   .research-cover {
-    width: 68px;
-    height: 96px;
+    width: 80px;
+    height: 110px;
     flex-shrink: 0;
     border-radius: 2px;
     box-shadow: 0 4px 10px rgba(20, 70, 55, 0.18);
@@ -598,8 +598,8 @@
 
   @media (max-width: 768px) {
     .research-card {
-      width: 270px;
-      height: 136px;
+      width: 300px;
+      height: 156px;
     }
   }
 
@@ -700,7 +700,6 @@
      ================================================================ */
   .catalog-hero {
     position: relative;
-    padding: 48px 0 74px;
     background-image: url("/img/Background.png");
     background-size: cover;
     background-position: center;
@@ -708,7 +707,7 @@
   }
   .catalog-title {
     font-family: "Cormorant Garamond", "Playfair Display", serif;
-    font-size: clamp(34px, 5vw, 48px);
+    font-size: clamp(38px, 5.6vw, 54px);
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.03em;
@@ -734,7 +733,7 @@
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.92);
     border: 1px solid rgba(20, 80, 65, 0.08);
-    font-size: 13.5px;
+    font-size: 15px;
     color: #103F37;
     transition: border-color 200ms ease, box-shadow 200ms ease;
   }
@@ -752,7 +751,7 @@
     padding: 0 20px;
     border-radius: 999px;
     white-space: nowrap;
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 700;
     background: #08755B;
     color: #FFFFFF;
@@ -779,13 +778,13 @@
   }
   .stat-number {
     font-family: "Cormorant Garamond", serif;
-    font-size: 21px;
+    font-size: 23px;
     font-weight: 700;
     line-height: 1;
     color: #103F37;
   }
   .stat-label {
-    @apply text-[10px] font-semibold;
+    @apply text-[11.5px] font-semibold;
     color: #55766D;
   }
 
@@ -800,7 +799,7 @@
     background: #E8F3EE;
   }
   .section-sub {
-    @apply text-[12.5px];
+    @apply text-[14px];
     color: #6B857C;
   }
 
@@ -810,7 +809,7 @@
     border-radius: 8px;
     border: 1px solid #E6EDE9;
     background-color: #FFFFFF;
-    font-size: 12.5px;
+    font-size: 14px;
     color: #245D50;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23557A70' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
@@ -867,17 +866,17 @@
   }
   .cell-title {
     font-family: "Cormorant Garamond", "Playfair Display", serif;
-    font-size: 15px;
+    font-size: 16.5px;
     font-weight: 600;
     line-height: 1.15;
     color: #155144;
   }
   .cell-author {
-    @apply text-[12px];
+    @apply text-[13.5px];
     color: #667C75;
   }
   .program-pill {
-    @apply inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold;
+    @apply inline-flex rounded-full px-2.5 py-1 text-[12.5px] font-bold;
     background: #E4F0EB;
     color: #286254;
   }
@@ -899,7 +898,7 @@
   }
 
   .results-count {
-    @apply text-[12.5px] mt-4;
+    @apply text-[14px] mt-4;
     color: #6B857C;
   }
 
@@ -930,11 +929,11 @@
     color: #08755B;
   }
   .collection-title {
-    @apply text-[12.5px] font-semibold transition;
+    @apply text-[14px] font-semibold transition;
     color: #245D50;
   }
   .collection-count {
-    @apply text-[11px];
+    @apply text-[12.5px];
     color: #7A9189;
   }
   .collection-arrow {
@@ -952,7 +951,7 @@
     @apply flex flex-wrap items-center gap-1.5 mt-6;
   }
   .page-btn {
-    @apply min-w-[30px] h-[30px] px-2 rounded-[7px] text-[12px] font-semibold flex items-center justify-center transition;
+    @apply min-w-[30px] h-[30px] px-2 rounded-[7px] text-[13.5px] font-semibold flex items-center justify-center transition;
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid #E6EDE9;
     color: #557A70;
@@ -976,7 +975,6 @@
      ================================================================ */
   .about-hero {
     position: relative;
-    padding: 60px 0 78px;
     background-image: url("/img/Background.png");
     background-size: cover;
     background-position: center;

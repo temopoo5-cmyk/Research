@@ -211,7 +211,7 @@ export default function ResearchList() {
 
             <h1 className="catalog-title mt-4">Browse Research Catalog</h1>
 
-            <p className="mt-4 max-w-[540px] text-[13.5px] leading-[1.55] text-[#52736A]">
+            <p className="mt-4 max-w-[540px] text-[15px] leading-[1.55] text-[#52736A]">
               Discover credible research, academic papers, and scholarly resources from our institution.
             </p>
 
@@ -277,7 +277,7 @@ export default function ResearchList() {
                     <button
                       type="button"
                       onClick={clearAll}
-                      className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-muted-green transition hover:text-forest"
+                      className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-muted-green transition hover:text-forest"
                     >
                       <X className="h-3.5 w-3.5" /> Clear all
                     </button>
@@ -331,12 +331,12 @@ export default function ResearchList() {
                     <FileText className="h-4 w-4" />
                   </span>
                   <div>
-                    <h2 className="section-title text-[21px]">Latest Research</h2>
+                    <h2 className="section-title text-[23px]">Latest Research</h2>
                     <p className="section-sub">Explore the most recent research works from our community.</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label htmlFor="sort" className="text-[10.5px] text-[#607B72]">Sort by:</label>
+                  <label htmlFor="sort" className="text-[12px] text-[#607B72]">Sort by:</label>
                   <select
                     id="sort"
                     className="sort-select"
@@ -350,7 +350,7 @@ export default function ResearchList() {
 
               {hasFilters && (
                 <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className="text-[11.5px] text-[#607B72]">Active filters:</span>
+                  <span className="text-[13px] text-[#607B72]">Active filters:</span>
                   {q && (
                     <button type="button" onClick={() => setFilter('q', '')} className="program-badge gap-1">
                       “{q}” <X className="h-3 w-3" />
@@ -385,8 +385,8 @@ export default function ResearchList() {
                     <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-soft-green text-emerald-brand">
                       <BookOpen className="h-6 w-6" />
                     </span>
-                    <h3 className="section-title text-[20px]">No research found</h3>
-                    <p className="mx-auto mt-1.5 max-w-sm text-[13px] text-muted-green">
+                    <h3 className="section-title text-[22px]">No research found</h3>
+                    <p className="mx-auto mt-1.5 max-w-sm text-[14.5px] text-muted-green">
                       {hasFilters
                         ? 'Try a different search term, or clear the active filters.'
                         : 'Nothing has been catalogued yet.'}
@@ -426,12 +426,12 @@ export default function ResearchList() {
                           <td>
                             {r.program_name
                               ? <span className="program-pill">{r.program_name}</span>
-                              : <span className="text-[11.5px] text-[#A3B5AF]">—</span>}
+                              : <span className="text-[13px] text-[#A3B5AF]">—</span>}
                           </td>
-                          <td><span className="text-[12.5px]">{r.year || '—'}</span></td>
-                          <td><span className="text-[12.5px]">{formatDate(r.created_at) || '—'}</span></td>
+                          <td><span className="text-[14px]">{r.year || '—'}</span></td>
+                          <td><span className="text-[14px]">{formatDate(r.created_at) || '—'}</span></td>
                           <td>
-                            <Link to={`/research/${r.id}`} className="view-details inline-flex items-center gap-1 text-[12px] font-semibold">
+                            <Link to={`/research/${r.id}`} className="view-details inline-flex items-center gap-1 text-[13.5px] font-semibold">
                               View Details <ArrowRight className="h-3 w-3" />
                             </Link>
                           </td>
@@ -455,12 +455,12 @@ export default function ResearchList() {
             {/* ---------- SIDEBAR ---------- */}
             <aside className="flex flex-col gap-5">
               <section className="sidebar-card">
-                <h2 className="section-title text-[21px]">Featured Collections</h2>
+                <h2 className="section-title text-[23px]">Featured Collections</h2>
                 <p className="section-sub">Curated research works, hand-picked by the archive.</p>
 
                 <div className="mt-3">
                   {featured.length === 0 ? (
-                    <p className="py-4 text-[12.5px] text-muted-green">
+                    <p className="py-4 text-[14px] text-muted-green">
                       No featured works yet.
                     </p>
                   ) : featured.map((r, i) => (
@@ -479,12 +479,12 @@ export default function ResearchList() {
               </section>
 
               <section className="sidebar-card">
-                <h2 className="section-title text-[21px]">Browse by Program</h2>
+                <h2 className="section-title text-[23px]">Browse by Program</h2>
                 <p className="section-sub">Filter the catalog by a specific program.</p>
 
                 <div className="mt-3">
                   {programs.length === 0 ? (
-                    <p className="py-4 text-[12.5px] text-muted-green">No programs yet.</p>
+                    <p className="py-4 text-[14px] text-muted-green">No programs yet.</p>
                   ) : programs.map((p, i) => (
                     <button
                       key={p.id}
