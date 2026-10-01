@@ -69,7 +69,7 @@ function BookSlider({ items }) {
                     <span className="book-cover-title mt-2 block">
                       {r.title?.length > 46 ? `${r.title.slice(0, 44).trimEnd()}…` : r.title}
                     </span>
-                    <span className="mt-3 block text-[10.5px] font-normal text-white/80">
+                    <span className="mt-3 block text-[12px] font-normal text-white/80">
                       {r.authors || 'Unattributed'}
                     </span>
                     <span className="book-spine" />
@@ -256,7 +256,7 @@ function WorksCarousel({ items }) {
                 tabIndex={copy === 1 ? undefined : -1}
               >
                 <span className="research-cover" style={{ background: coverGradients[i % coverGradients.length] }}>
-                  <span className="px-1 text-center font-display text-[12px] leading-tight text-white/95">
+                  <span className="px-1 text-center font-display text-[13.5px] leading-tight text-white/95">
                     {r.program_code || r.program_name || 'Research'}
                   </span>
                 </span>
@@ -339,7 +339,7 @@ export default function Home() {
                 <em>works worth keeping.</em>
               </h1>
 
-              <p className="mt-5 max-w-[390px] text-[13px] leading-[1.5] text-[#55736C]">
+              <p className="mt-5 max-w-[390px] text-[14.5px] leading-[1.5] text-[#55736C]">
                 Browse and search the institutional repository. Submissions are automatically cataloged
                 with unique codes.
               </p>
@@ -350,8 +350,8 @@ export default function Home() {
                     <FileText className="h-[18px] w-[18px] text-emerald-brand" />
                   </span>
                   <div>
-                    <div className="text-[21px] font-bold leading-none text-forest">{totalWorks}</div>
-                    <div className="mt-1 text-[9.5px] font-semibold text-muted-green">Research Works</div>
+                    <div className="text-[23px] font-bold leading-none text-forest">{totalWorks}</div>
+                    <div className="mt-1 text-[11px] font-semibold text-muted-green">Research Works</div>
                   </div>
                 </div>
                 <div className="stat-card flex h-16 w-[156px] items-center gap-3 px-4">
@@ -359,8 +359,8 @@ export default function Home() {
                     <Folder className="h-[18px] w-[18px] text-emerald-brand" />
                   </span>
                   <div>
-                    <div className="text-[21px] font-bold leading-none text-forest">{stats?.programs ?? programs.length}</div>
-                    <div className="mt-1 text-[9.5px] font-semibold text-muted-green">Programs</div>
+                    <div className="text-[23px] font-bold leading-none text-forest">{stats?.programs ?? programs.length}</div>
+                    <div className="mt-1 text-[11px] font-semibold text-muted-green">Programs</div>
                   </div>
                 </div>
               </div>
@@ -379,10 +379,10 @@ export default function Home() {
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-12">
             <div>
               <div className="flex items-center gap-3">
-                <span className="text-[11px] font-bold uppercase tracking-[0.10em] text-[#176653]">Quick Access</span>
+                <span className="text-[12.5px] font-bold uppercase tracking-[0.10em] text-[#176653]">Quick Access</span>
                 <span className="h-px w-[28px] bg-[#8FB3A7]" />
               </div>
-              <h2 className="section-title mt-3.5 text-[34px] leading-none">Explore. Read. Grow.</h2>
+              <h2 className="section-title mt-3.5 text-[37px] leading-none">Explore. Read. Grow.</h2>
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -400,7 +400,7 @@ export default function Home() {
               </Link>
               <Link to="/about" className="quick-card h-[72px] w-[108px]">
                 <span className="quick-icon"><Landmark className="h-[17px] w-[17px]" /></span>
-                <span className="quick-label !text-[10px] !leading-[1.2]">Institutional<br />Repository</span>
+                <span className="quick-label !text-[11.5px] !leading-[1.2]">Institutional<br />Repository</span>
               </Link>
             </div>
           </div>
@@ -417,7 +417,7 @@ export default function Home() {
               <br />
               empowering futures.
             </h2>
-            <p className="mt-4 max-w-[360px] text-[13px] leading-[1.55] text-[#52736A]">
+            <p className="mt-4 max-w-[360px] text-[14.5px] leading-[1.55] text-[#52736A]">
               The Central Research Repository is a digital library of academic and institutional research,
               providing easy access to scholarly works, programs, and resources from our community.
             </p>
@@ -461,7 +461,7 @@ export default function Home() {
                 <span>Browse by Category</span>
                 <span className="h-px w-[25px] bg-[#8FB3A7]" />
               </div>
-              <h2 className="section-title mt-2 text-[33px]">Find research by program.</h2>
+              <h2 className="section-title mt-2 text-[36px]">Find research by program.</h2>
             </div>
             <Link to="/research" className="view-programs">
               <span>View All Programs</span>
@@ -497,13 +497,13 @@ export default function Home() {
         <div className="container-page">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <div className="eyebrow flex items-center gap-2 text-[13px] text-[#176653]">
+              <div className="eyebrow flex items-center gap-2 text-[14.5px] text-[#176653]">
                 <span>Featured Collections</span>
                 <span className="h-px w-[25px] bg-[#8FB3A7]" />
               </div>
-              <h2 className="section-title mt-2 text-[36px]">Featured Research Works</h2>
+              <h2 className="section-title mt-2 text-[40px]">Featured Research Works</h2>
             </div>
-            <Link to="/research" className="view-programs !text-[13px]">
+            <Link to="/research" className="view-programs !text-[14.5px]">
               <span>View All</span>
               <ArrowRight className="view-arrow h-[13px] w-[13px]" />
             </Link>
@@ -518,13 +518,13 @@ export default function Home() {
         <div className="container-page">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <div className="eyebrow flex items-center gap-2 text-[13px] text-[#176653]">
+              <div className="eyebrow flex items-center gap-2 text-[14.5px] text-[#176653]">
                 <span>Recent Submissions</span>
                 <span className="h-px w-[25px] bg-[#8FB3A7]" />
               </div>
-              <h2 className="section-title mt-1.5 text-[36px]">Latest Added Research</h2>
+              <h2 className="section-title mt-1.5 text-[40px]">Latest Added Research</h2>
             </div>
-            <Link to="/research" className="view-programs !text-[13px]">
+            <Link to="/research" className="view-programs !text-[14.5px]">
               <span>View All</span>
               <ArrowRight className="view-arrow h-[13px] w-[13px]" />
             </Link>
@@ -535,8 +535,8 @@ export default function Home() {
               <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-soft-green text-emerald-brand">
                 <BookOpen className="h-6 w-6" />
               </span>
-              <h3 className="section-title text-[20px]">No research catalogued yet</h3>
-              <p className="mx-auto mt-1.5 max-w-sm text-[13px] text-muted-green">
+              <h3 className="section-title text-[22px]">No research catalogued yet</h3>
+              <p className="mx-auto mt-1.5 max-w-sm text-[14.5px] text-muted-green">
                 Submissions appear here as soon as an administrator approves them.
               </p>
               <button type="button" onClick={() => navigate('/research')} className="hero-cta mt-5">

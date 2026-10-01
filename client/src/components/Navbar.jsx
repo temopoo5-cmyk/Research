@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GraduationCap, Menu, X, Search, LogOut, ChevronRight } from 'lucide-react';
 
@@ -33,7 +33,6 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [term, setTerm] = useState('');
   const navigate = useNavigate();
-  const [params] = useSearchParams();
 
   const close = () => setOpen(false);
 
@@ -47,7 +46,6 @@ export default function Navbar() {
     e.preventDefault();
     const q = term.trim();
     close();
-    if (!params.get('q')) return;
     navigate(q ? `/research?q=${encodeURIComponent(q)}` : '/research');
   };
 

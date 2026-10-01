@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
-import { GraduationCap, Search } from 'lucide-react';
+import React from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { GraduationCap, Facebook, Twitter, Youtube } from 'lucide-react';
 
 const links = [
   { to: '/', label: 'Home', end: true },
@@ -9,23 +9,17 @@ const links = [
 ];
 
 const socials = [
-  { href: 'https://facebook.com', label: 'Facebook' },
-  { href: 'https://x.com', label: 'X' },
-  { href: 'https://youtube.com', label: 'YouTube' },
+  { href: 'https://facebook.com', label: 'Facebook', Icon: Facebook },
+  { href: 'https://x.com', label: 'X', Icon: Twitter },
+  { href: 'https://youtube.com', label: 'YouTube', Icon: Youtube },
+];
+
+const legal = [
+  { to: '/privacy', label: 'Privacy Policy' },
+  { to: '/terms', label: 'Terms of Service' },
 ];
 
 export default function Footer() {
-  const navigate = useNavigate();
-  const [params] = useSearchParams();
-  const [term, setTerm] = useState('');
-
-  const submitSearch = (e) => {
-    e.preventDefault();
-    const q = term.trim();
-    if (!params.get('q')) return;
-    navigate(q ? `/research?q=${encodeURIComponent(q)}` : '/research');
-  };
-
   const navClass = ({ isActive }) => (isActive ? 'active' : '');
 
   return (
@@ -39,14 +33,14 @@ export default function Footer() {
       </svg>
 
       <div className="container-page relative z-10">
-        <div className="flex flex-col items-center justify-between gap-7 lg:flex-row">
+        <div className="flex flex-col items-center justify-between gap-7 border-b border-white/10 pb-8 lg:flex-row">
           <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10">
-              <GraduationCap className="h-5 w-5 text-white" />
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
+              <GraduationCap className="h-[18px] w-[18px] text-white" />
             </span>
             <div>
               <div className="footer-brand-name">ResearchHub</div>
-              <div className="footer-brand-subtitle">Research. Discover. Make an Impact.</div>
+              <p className="footer-brand-subtitle">Research. Discover. Make an Impact.</p>
             </div>
           </div>
 
@@ -58,40 +52,29 @@ export default function Footer() {
             ))}
           </nav>
 
-          <form onSubmit={submitSearch} className="footer-search relative w-full sm:w-[300px]">
-            <label htmlFor="footer-search" className="sr-only">Search research</label>
-            <input
-              id="footer-search"
-              type="search"
-              value={term}
-              onChange={(e) => setTerm(e.target.value)}
-              placeholder="Search research, authors, keywords..."
-            />
-            <button type="submit" aria-label="Search">
-              <Search className="h-[15px] w-[15px]" />
-            </button>
-          </form>
-        </div>
-
-        <div className="mb-5 mt-7 h-px" style={{ background: 'rgba(255,255,255,.12)' }} />
-
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-[11px]" style={{ color: 'rgba(245,250,247,.55)' }}>
-            &copy; {new Date().getFullYear()} ResearchHub. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4">
-            {socials.map(s => (
+          <div className="flex items-center gap-2.5">
+            {socials.map(({ href, label, Icon }) => (
               <a
-                key={s.label}
-                href={s.href}
+                key={label}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={s.label}
-                className="flex transition hover:opacity-70"
-                style={{ color: 'rgba(245,250,247,.82)' }}
+                aria-label={label}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition-colors duration-200 hover:bg-white/20"
               >
-                <span className="text-[13px] font-semibold">{s.label.charAt(0)}</span>
+                <Icon className="h-[15px] w-[15px]" aria-hidden="true" />
               </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center justify-between gap-4 pt-6 text-[12.5px] sm:flex-row">
+          <p className="footer-copy">&copy; {new Date().getFullYear()} ResearchHub. All rights reserved.</p>
+          <div className="flex gap-5">
+            {legal.map(l => (
+              <Link key={l.to} to={l.to} className="footer-legal">
+                {l.label}
+              </Link>
             ))}
           </div>
         </div>

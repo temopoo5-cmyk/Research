@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 import About from './pages/About';
+import Legal from './pages/Legal';
 import Dashboard from './pages/Dashboard';
 import ResearchList from './pages/ResearchList';
 import ResearchDetail from './pages/ResearchDetail';
@@ -92,6 +93,8 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
       <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+      <Route path="/privacy" element={<PublicLayout><Legal doc="privacy" /></PublicLayout>} />
+      <Route path="/terms" element={<PublicLayout><Legal doc="terms" /></PublicLayout>} />
       <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <Register />} />
       <Route path="/dashboard" element={<PrivateRoute><AdminLayout><Dashboard /></AdminLayout></PrivateRoute>} />

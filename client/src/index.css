@@ -68,7 +68,7 @@
      ================================================================ */
   .hero-title {
     font-family: "Cormorant Garamond", "Playfair Display", serif;
-    font-size: clamp(40px, 6.5vw, 68px);
+    font-size: clamp(44px, 7.2vw, 76px);
     line-height: 0.92;
     font-weight: 700;
     letter-spacing: -0.038em;
@@ -90,13 +90,13 @@
 
   /* Small uppercase kicker used above section headings */
   .eyebrow {
-    @apply text-[10.5px] font-bold uppercase;
+    @apply text-[12px] font-bold uppercase;
     letter-spacing: 0.08em;
     color: #176653;
   }
 
   .section-label {
-    @apply flex items-center gap-3 text-[11px] font-bold uppercase;
+    @apply flex items-center gap-3 text-[12.5px] font-bold uppercase;
     letter-spacing: 0.09em;
     color: #176653;
   }
@@ -129,7 +129,7 @@
      ================================================================ */
   .hero-cta {
     @apply inline-flex items-center gap-2 bg-emerald-brand text-white font-bold rounded-full;
-    font-size: 11px;
+    font-size: 12.5px;
     padding: 9px 17px;
     transition: background 200ms ease;
   }
@@ -140,7 +140,7 @@
 
   .learn-more {
     @apply inline-flex items-center gap-2 text-white font-bold rounded-full;
-    font-size: 12px;
+    font-size: 13.5px;
     padding: 8px 15px;
     background: #08755B;
     transition: background 200ms ease, transform 200ms ease;
@@ -277,7 +277,7 @@
   }
   .book-cover-title {
     font-family: "Cormorant Garamond", serif;
-    font-size: 23px;
+    font-size: 25px;
     font-weight: 600;
     line-height: 1.05;
     color: #F7F8F3;
@@ -349,7 +349,7 @@
     background: #DBEDE4;
   }
   .quick-label {
-    @apply text-[11px] font-semibold text-center;
+    @apply text-[12.5px] font-semibold text-center;
     color: #315F54;
     line-height: 1.25;
   }
@@ -375,7 +375,7 @@
 
   .about-title {
     font-family: "Cormorant Garamond", "Playfair Display", serif;
-    font-size: 33px;
+    font-size: 36px;
     font-weight: 700;
     line-height: 0.98;
     letter-spacing: -0.026em;
@@ -406,11 +406,11 @@
     background: #E5F1EC;
   }
   .feature-title {
-    @apply text-[13px] font-bold;
+    @apply text-[14.5px] font-bold;
     color: #245D50;
   }
   .feature-description {
-    @apply text-[11px] leading-[1.45];
+    @apply text-[12.5px] leading-[1.45];
     color: #617C74;
   }
 
@@ -434,7 +434,7 @@
   }
 
   .view-programs {
-    @apply inline-flex items-center gap-1.5 text-[11px] font-semibold whitespace-nowrap;
+    @apply inline-flex items-center gap-1.5 text-[12.5px] font-semibold whitespace-nowrap;
     color: #176653;
     transition: color 200ms ease;
   }
@@ -484,11 +484,11 @@
     background: #E5F1EC;
   }
   .program-name {
-    @apply text-[11px] font-bold mt-2;
+    @apply text-[12.5px] font-bold mt-2;
     color: #245D50;
   }
   .program-count {
-    @apply text-[10px] mt-0.5;
+    @apply text-[11.5px] mt-0.5;
     color: #55766D;
   }
   .program-arrow {
@@ -538,7 +538,7 @@
   }
   .research-card-title {
     font-family: "Cormorant Garamond", "Playfair Display", serif;
-    font-size: 16.5px;
+    font-size: 18px;
     font-weight: 700;
     line-height: 1.12;
     color: #155144;
@@ -549,11 +549,11 @@
     overflow: hidden;
   }
   .research-author {
-    @apply text-[12px] mt-1;
+    @apply text-[13.5px] mt-1;
     color: #668078;
   }
   .research-type {
-    @apply inline-flex text-[11px] font-semibold rounded-full px-2 py-0.5 mt-1.5;
+    @apply inline-flex text-[12.5px] font-semibold rounded-full px-2 py-0.5 mt-1.5;
     background: #E8F2ED;
     color: #276456;
   }
@@ -615,7 +615,7 @@
   }
   .research-row {
     display: grid;
-    grid-template-columns: 38% 17% 13% 12% 16% 4%;
+    grid-template-columns: 34% 15% 17% 12% 14% 4%;
     align-items: center;
     min-height: 44px;
     padding: 0 16px;
@@ -631,16 +631,23 @@
   .table-header {
     min-height: 36px;
     background: rgba(225, 239, 233, 0.45);
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 700;
     letter-spacing: 0.07em;
     text-transform: uppercase;
     color: #5D766E;
   }
   .research-row-title {
-    @apply flex items-center gap-2 text-[12px] font-semibold;
+    @apply flex items-center gap-2 text-[13.5px] font-semibold;
     color: #245D50;
     min-width: 0;
+  }
+  .research-row-title > span {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .research-row-title i {
     color: #08755B;
@@ -651,19 +658,20 @@
     white-space: nowrap;
   }
   .research-row-author {
-    @apply text-[12px];
+    @apply text-[13.5px];
     color: #667C75;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .program-badge {
-    @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold;
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-[12.5px] font-bold;
     background: #E4F0EB;
     color: #286254;
+    white-space: nowrap;
   }
   .research-date {
-    @apply text-[11.5px];
+    @apply text-[13px];
     color: #667C75;
   }
   .research-row-arrow {
@@ -1194,6 +1202,17 @@
   .footer-nav a.active {
     color: #FFFFFF;
     font-weight: 600;
+  }
+  .footer-copy {
+    color: rgba(209, 250, 234, 0.55);
+  }
+  .footer-legal {
+    color: rgba(209, 250, 234, 0.55);
+    transition: color 200ms ease;
+  }
+  .footer-legal:hover {
+    color: #FFFFFF;
+    text-decoration: underline;
   }
   .footer-search input {
     height: 38px;
