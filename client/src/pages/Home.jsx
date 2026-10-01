@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../context/AuthContext';
@@ -116,104 +115,116 @@ function BookSlider({ items }) {
 
 const COPIES = 3;
 const DELAY = 6000;
+const GAP = 14;
 
 function WorksCarousel({ items }) {
   const viewportRef = useRef(null);
   const trackRef = useRef(null);
   const timerRef = useRef(null);
-  const rafRef = useRef(0);
-  const [pos, setPos] = useState(0);
   const posRef = useRef(0);
-  const [step, setStep] = useState(0);
-  const [instant, setInstant] = useState(false);
-
-  const commit = (value) => {
-    posRef.current = value;
-    setPos(value);
-  };
 
   const n = items.length;
   // Active window only ever travels through the middle copy, so the first and
   // last copies act as a seamless wrap-around buffer.
   const last = (COPIES - 1) * n - 1;
 
-  const measure = () => {
+  // Measured fresh on every paint rather than cached, so the slide distance can
+  // never drift from the rendered card width.
+  const step = () => {
     const track = trackRef.current;
-    if (!track || !track.children.length) return;
-    const card = track.children[0].getBoundingClientRect();
-    setStep(card.width + 14);
+    if (!track || !track.children.length) return 0;
+    return track.children[0].getBoundingClientRect().width + GAP;
   };
 
-  useEffect(() => {
-    if (!n) {
-      commit(0);
-      return undefined;
+  // The track is moved by writing one inline style, the way the mockup does.
+  // Driving it through React state instead re-rendered every card on each
+  // slide, which is what made the motion stutter.
+  const paint = (animate) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const x = -posRef.current * step();
+    if (!animate) {
+      track.style.transition = 'none';
+      track.style.transform = `translateX(${x}px)`;
+      void track.offsetWidth; // force reflow so the next move animates
+      track.style.transition = '';
+    } else {
+      track.style.transform = `translateX(${x}px)`;
     }
-    // Rebuild from the middle copy whenever the item count changes.
-    commit(n);
-    setInstant(true);
-    rafRef.current = requestAnimationFrame(() => setInstant(false));
-    measure();
-    window.addEventListener('resize', measure);
-    // Card widths depend on Cormorant Garamond, which arrives after first paint.
-    // Re-measuring keeps every translateX landing on a real card boundary.
-    let cancelled = false;
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => {
-        if (!cancelled) measure();
-      }).catch(() => {});
-    }
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(rafRef.current);
-      window.removeEventListener('resize', measure);
-    };
-  }, [n]);
-
-  // Skip the transition for the invisible half of a wrap, then animate the
-  // single visible step. flushSync is what makes this seamless: without it the
-  // browser can coalesce both updates into one paint and animate the entire
-  // distance across the track instead of one card.
-  const jumpTo = (hidden, visible) => {
-    flushSync(() => {
-      setInstant(true);
-      commit(hidden);
-    });
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      setInstant(false);
-      commit(visible);
-    });
   };
 
   const goNext = () => {
     if (!n) return;
-    const p = posRef.current;
-    if (p >= last) jumpTo(n - 1, n);
-    else commit(p + 1);
+    if (posRef.current >= last) {
+      posRef.current = n - 1;
+      paint(false);
+      requestAnimationFrame(() => {
+        posRef.current = n;
+        paint(true);
+      });
+    } else {
+      posRef.current += 1;
+      paint(true);
+    }
   };
 
   const goPrev = () => {
     if (!n) return;
-    const p = posRef.current;
-    if (p <= 0) jumpTo(2 * n, 2 * n - 1);
-    else commit(p - 1);
+    if (posRef.current <= 0) {
+      posRef.current = 2 * n;
+      paint(false);
+      requestAnimationFrame(() => {
+        posRef.current = 2 * n - 1;
+        paint(true);
+      });
+    } else {
+      posRef.current -= 1;
+      paint(true);
+    }
   };
 
-  const restart = () => {
+  const start = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(goNext, DELAY);
   };
 
-  useEffect(() => {
-    if (!n) return undefined;
-    restart();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [n]);
+  const stop = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = null;
+  };
 
-  if (!items.length) return null;
+  const restart = () => {
+    stop();
+    start();
+  };
+
+  // Layout effect so the track is parked on the middle copy before the browser
+  // paints, otherwise the first frame flashes the untranslated originals.
+  useLayoutEffect(() => {
+    if (!n) return undefined;
+    posRef.current = n;
+    paint(false);
+    start();
+
+    const onResize = () => paint(false);
+    window.addEventListener('resize', onResize);
+
+    // Cormorant Garamond lands after first paint and changes card widths.
+    let cancelled = false;
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready
+        .then(() => { if (!cancelled) paint(false); })
+        .catch(() => {});
+    }
+
+    return () => {
+      cancelled = true;
+      stop();
+      window.removeEventListener('resize', onResize);
+    };
+  }, [items]);
+
+  if (!n) return null;
 
   const onKeyDown = (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); restart(); }
@@ -231,14 +242,10 @@ function WorksCarousel({ items }) {
         className="carousel-viewport"
         tabIndex={0}
         onKeyDown={onKeyDown}
-        onMouseEnter={() => { if (timerRef.current) clearInterval(timerRef.current); }}
-        onMouseLeave={restart}
+        onMouseEnter={stop}
+        onMouseLeave={start}
       >
-        <div
-          ref={trackRef}
-          className={`carousel-track${instant ? ' is-instant' : ''}`}
-          style={step ? { transform: `translateX(${-pos * step}px)` } : undefined}
-        >
+        <div ref={trackRef} className="carousel-track">
           {Array.from({ length: COPIES }).flatMap((_, copy) =>
             items.map((r, i) => (
               <Link
