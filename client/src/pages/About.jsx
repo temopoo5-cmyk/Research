@@ -21,6 +21,10 @@ const features = [
   { icon: ShieldCheck, title: 'Secure Archive', copy: 'Reliable access, storage, and long-term management of institutional research archives.' },
 ];
 
+const team = [
+  { name: 'Jason Paul Simborios', credential: 'M.B.A.', role: 'Head of Research Office' },
+];
+
 const partners = [
   'De La Salle John Bosco College',
   'Research Laboratory',
@@ -29,6 +33,15 @@ const partners = [
   'Academic Departments',
   'Community Partners',
 ];
+
+function initials(name) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part.charAt(0).toUpperCase())
+    .join('');
+}
 
 function StatCard({ label, values, icon: Icon }) {
   return (
@@ -180,6 +193,23 @@ export default function About() {
 
             {/* ---------- SIDEBAR ---------- */}
             <aside className="flex flex-col gap-[18px]">
+              <section className="side-card">
+                <h2 className="section-title text-[20px]">Our Team</h2>
+                <div className="mt-2">
+                  {team.map(member => (
+                    <div key={member.name} className="team-member py-3">
+                      <span className="team-photo">{initials(member.name)}</span>
+                      <div className="min-w-0">
+                        <div className="team-name truncate">{member.name}</div>
+                        <div className="team-role">
+                          {member.credential ? `${member.credential} · ${member.role}` : member.role}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
               <section className="side-card">
                 <h2 className="section-title text-[20px]">Partners</h2>
                 <div className="partner-grid mt-4">
