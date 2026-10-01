@@ -91,7 +91,7 @@ function BookSlider({ items }) {
       </div>
 
       <div className="mx-auto mt-5 w-full max-w-[230px] lg:mx-0 lg:mr-[19px] lg:ml-auto">
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           {items.map((r, i) => (
             <button
               key={r.id}
@@ -293,7 +293,7 @@ export default function Home() {
     axios.get(`${API}/programs/`)
       .then(r => { if (Array.isArray(r.data)) setPrograms(r.data); })
       .catch(() => {});
-    axios.get(`${API}/research/`, { params: { featured: 1, limit: 8 } })
+    axios.get(`${API}/research/`, { params: { featured: 1, limit: 50 } })
       .then(r => { if (Array.isArray(r.data?.data)) setFeatured(r.data.data); })
       .catch(() => setLoadError(true));
     axios.get(`${API}/research/`, { params: { limit: 4 } })
@@ -301,7 +301,16 @@ export default function Home() {
       .catch(() => setLoadError(true));
   }, []);
 
-  const sliderItems = useMemo(() => (featured.length ? featured : latest.slice(0, 2)), [featured, latest]);
+  // Every featured work drives the carousel below. The hero 3D slider is capped
+  // because it renders one 6px dot per slide inside a 230px row, which would
+  // overflow once the set gets large. The fallback only matters while the
+  // is_featured migration is pending, and uses the whole latest batch so the
+  // hero is never stranded on a two-slide rotation.
+  const HERO_SLIDES = 10;
+  const sliderItems = useMemo(
+    () => (featured.length ? featured.slice(0, HERO_SLIDES) : latest),
+    [featured, latest],
+  );
   const carouselItems = useMemo(() => (featured.length >= 4 ? featured : [...featured, ...latest].slice(0, 6)), [featured, latest]);
 
   const totalWorks = stats?.total ?? latest.length;

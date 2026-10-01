@@ -48,15 +48,18 @@ function initials(name) {
     .join('');
 }
 
-function StatCard({ label, values }) {
+function StatCard({ label, values, icon: Icon }) {
   return (
-    <div className="stat-card">
-      <div className="stat-card-label">{label}</div>
-      <div className="mt-3 flex items-end gap-6">
+    <div className="about-stat-card">
+      <div className="about-stat-label">
+        {Icon ? <Icon className="h-3.5 w-3.5 shrink-0" /> : null}
+        <span>{label}</span>
+      </div>
+      <div className="about-stat-metrics">
         {values.map(v => (
-          <div key={v.caption}>
-            <div className="stat-value">{v.value}</div>
-            <div className="stat-caption mt-1.5">{v.caption}</div>
+          <div key={v.caption} className="about-stat-metric">
+            <div className="about-stat-value">{v.value}</div>
+            <div className="about-stat-caption">{v.caption}</div>
           </div>
         ))}
       </div>
@@ -115,6 +118,7 @@ export default function About() {
             <div className="flex flex-col gap-4">
               <div className="stat-grid">
                 <StatCard
+                  icon={BarChart3}
                   label="Platform Usage"
                   values={[
                     { value: stats?.total ?? '—', caption: 'Catalogued Works' },
@@ -122,6 +126,7 @@ export default function About() {
                   ]}
                 />
                 <StatCard
+                  icon={ShieldCheck}
                   label="Community"
                   values={[
                     { value: stats?.users ?? '—', caption: 'Registered Members' },

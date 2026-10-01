@@ -996,13 +996,68 @@
 
   .stat-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
   @media (max-width: 640px) {
     .stat-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: minmax(0, 1fr);
     }
+  }
+
+  /* About page usage / community metrics.
+     The mockup's .stat-card had no padding, which left the text flush against
+     the border, so the About variant is styled separately from the Home cards
+     that still rely on the shared .stat-card. */
+  .about-stat-card {
+    position: relative;
+    overflow: hidden;
+    padding: 18px 20px 20px;
+    border-radius: 14px;
+    background: linear-gradient(158deg, rgba(255, 255, 255, 0.94) 0%, rgba(247, 248, 243, 0.72) 100%);
+    border: 1px solid rgba(25, 80, 65, 0.1);
+    box-shadow: 0 10px 26px -22px rgba(7, 60, 48, 0.5);
+  }
+  .about-stat-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, #0B6B52 0%, #0A3D33 100%);
+  }
+  .about-stat-label {
+    @apply text-[10px] font-bold uppercase;
+    letter-spacing: 0.1em;
+    color: #176653;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .about-stat-metrics {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 15px;
+  }
+  .about-stat-metric {
+    flex: 1;
+    min-width: 0;
+  }
+  .about-stat-metric + .about-stat-metric {
+    margin-left: 18px;
+    padding-left: 18px;
+    border-left: 1px solid rgba(25, 80, 65, 0.1);
+  }
+  .about-stat-value {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #0B4038;
+  }
+  .about-stat-caption {
+    @apply text-[10.5px] mt-2;
+    color: #7A9189;
   }
   .stat-card-label {
     @apply text-[10.5px] font-bold uppercase;
