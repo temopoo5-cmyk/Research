@@ -391,7 +391,7 @@ export default function Home() {
               The Central Research Repository is a digital library of academic and institutional research,
               providing easy access to scholarly works, programs, and resources from our community.
             </p>
-            <Link to="/about" className="hero-cta mt-6">
+            <Link to="/about" className="learn-more mt-6">
               <span>Learn More</span>
               <ArrowRight className="h-[13px] w-[13px]" />
             </Link>
