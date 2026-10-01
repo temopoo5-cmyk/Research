@@ -11,6 +11,7 @@ router.get('/', async (req, res) => {
     const { rows } = await pool.query('SELECT id::int AS id, username, full_name, role, created_at FROM users ORDER BY id');
     res.json(rows);
   } catch (err) {
+    console.error('[api/users] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -25,6 +26,7 @@ router.post('/', async (req, res) => {
     const { rows } = await pool.query('INSERT INTO users (username, password, full_name, role) VALUES ($1, $2, $3, $4) RETURNING id::int AS id, username, full_name, role', [username, hash, full_name, role || 'user']);
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/users] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -42,6 +44,7 @@ router.put('/:id', async (req, res) => {
     if (!rows[0]) return res.status(404).json({ error: 'User not found' });
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/users] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -52,6 +55,7 @@ router.delete('/:id', async (req, res) => {
     if (result.rowCount === 0) return res.status(404).json({ error: 'User not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {
+    console.error('[api/users] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });

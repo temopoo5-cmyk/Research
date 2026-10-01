@@ -46,6 +46,7 @@ router.get('/', async (req, res) => {
     const { rows } = await pool.query(`${SELECT}${where} ORDER BY r.created_at DESC LIMIT $${values.length - 1} OFFSET $${values.length}`, values);
     res.json({ data: rows, total: total.rows[0].total, page, pages: Math.ceil(total.rows[0].total / limit) });
   } catch (err) {
+    console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -61,6 +62,7 @@ router.get('/all', authenticateToken, async (req, res) => {
     const { rows } = await pool.query(`${SELECT}${where} ORDER BY r.created_at DESC`, values);
     res.json(rows);
   } catch (err) {
+    console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -71,6 +73,7 @@ router.get('/:id', async (req, res) => {
     if (!rows[0]) return res.status(404).json({ error: 'Not found' });
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -89,6 +92,7 @@ router.post('/', authenticateToken, async (req, res) => {
     );
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -107,6 +111,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
     );
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -120,6 +125,7 @@ router.patch('/:id/status', authenticateToken, requireAdmin, async (req, res) =>
     const { rows } = await pool.query(`${SELECT} WHERE r.id = $1`, [req.params.id]);
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -133,6 +139,7 @@ router.patch('/:id/featured', authenticateToken, requireAdmin, async (req, res) 
     const { rows } = await pool.query(`${SELECT} WHERE r.id = $1`, [req.params.id]);
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -146,6 +153,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     await pool.query('DELETE FROM research WHERE id = $1', [req.params.id]);
     res.json({ message: 'Deleted' });
   } catch (err) {
+    console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });

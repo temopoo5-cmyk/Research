@@ -9,6 +9,7 @@ router.get('/', async (req, res) => {
     const { rows } = await pool.query('SELECT id::int AS id, name, code, created_at FROM programs ORDER BY name');
     res.json(rows);
   } catch (err) {
+    console.error('[api/programs] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -22,6 +23,7 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
     const { rows } = await pool.query('INSERT INTO programs (name, code) VALUES ($1, $2) RETURNING id::int AS id, name, code, created_at', [name, code]);
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/programs] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -33,6 +35,7 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
     if (!rows[0]) return res.status(404).json({ error: 'Not found' });
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/programs] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -42,6 +45,7 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
     await pool.query('DELETE FROM programs WHERE id = $1', [req.params.id]);
     res.json({ message: 'Deleted' });
   } catch (err) {
+    console.error('[api/programs] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });

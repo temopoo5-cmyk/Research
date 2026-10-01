@@ -17,6 +17,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user.id, username: user.username, role: user.role, full_name: user.full_name }, JWT_SECRET, { expiresIn: '24h' });
     res.json({ token, user: { id: user.id, username: user.username, full_name: user.full_name, role: user.role } });
   } catch (err) {
+    console.error('[api/auth] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -36,6 +37,7 @@ router.post('/register', async (req, res) => {
     const token = jwt.sign({ id: user.id, username, role: user.role, full_name }, JWT_SECRET, { expiresIn: '24h' });
     res.json({ token, user: { id: user.id, username, full_name, role: user.role } });
   } catch (err) {
+    console.error('[api/auth] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -46,6 +48,7 @@ router.get('/me', authenticateToken, async (req, res) => {
     if (!rows[0]) return res.status(404).json({ error: 'User not found' });
     res.json(rows[0]);
   } catch (err) {
+    console.error('[api/auth] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });

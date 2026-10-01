@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
       byYear: r6.rows.map(r => ({ year: r.year, count: r.count }))
     });
   } catch (err) {
+    console.error('[api/stats] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
   }
 });
