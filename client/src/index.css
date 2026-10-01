@@ -167,6 +167,26 @@
     background: #06684F;
   }
 
+  /* Emerald gradient wordmark/accent. Falls back to solid emerald if the
+     browser ignores background-clip:text. */
+  .gradient-text {
+    color: #0C765E;
+    background: linear-gradient(96deg, #0C765E 0%, #08755B 42%, #103F37 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Soft ivory backdrop for the auth pages */
+  .gradient-bg {
+    background: linear-gradient(168deg, #FBFBF7 0%, #F2F7F4 48%, #EAF3EF 100%);
+  }
+
+  .blob-shape,
+  .blob-shape-alt {
+    border-radius: 9999px;
+  }
+
   /* Neutral pill button for secondary actions */
   .pill-outline {
     @apply inline-flex items-center gap-2 rounded-full border border-[#DCEBE5] bg-white px-4 py-2 text-[13px] font-semibold text-forest transition;
@@ -1279,6 +1299,145 @@
     box-shadow: 0 14px 26px -18px rgba(16, 63, 55, 0.35);
   }
 
+  /* ================================================================
+     ADMIN PANEL
+     Light institutional surface that matches the public site: cream
+     page, white panels, emerald accents, Cormorant headings.
+     ================================================================ */
+
+  .admin-page {
+    @apply mx-auto w-full max-w-[1320px];
+  }
+
+  /* Pill label above every admin page title (mirrors the public eyebrow) */
+  .admin-eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full px-[11px] py-[7px] text-[11px] font-bold uppercase;
+    letter-spacing: 0.1em;
+    background: #E7F1EC;
+    color: #176653;
+  }
+
+  .admin-title {
+    font-family: "Cormorant Garamond", "Playfair Display", serif;
+    font-weight: 700;
+    font-size: clamp(30px, 3.2vw, 38px);
+    line-height: 1.06;
+    letter-spacing: -0.028em;
+    color: #103F37;
+  }
+  .admin-title em {
+    font-style: italic;
+    color: #0C765E;
+  }
+
+  .admin-subtitle {
+    @apply mt-2 text-[14px] leading-[1.55];
+    color: #557A70;
+  }
+
+  /* White content panel */
+  .admin-panel {
+    background: #FFFFFF;
+    border: 1px solid #E6EDE9;
+    border-radius: 18px;
+    box-shadow: 0 12px 32px -26px rgba(16, 63, 55, 0.5);
+  }
+
+  .admin-panel-head {
+    @apply flex flex-wrap items-center justify-between gap-3 px-5 py-4 md:px-6;
+    border-bottom: 1px solid #E6EDE9;
+  }
+
+  .admin-panel-title {
+    @apply flex items-center gap-2 text-[15px] font-semibold;
+    color: #103F37;
+  }
+
+  .admin-panel-body {
+    @apply p-5 md:p-6;
+  }
+
+  /* Stat tiles */
+  .admin-stat {
+    @apply flex items-center gap-3.5 p-4;
+    background: #FFFFFF;
+    border: 1px solid #E6EDE9;
+    border-radius: 16px;
+    box-shadow: 0 10px 26px -24px rgba(16, 63, 55, 0.55);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  }
+  .admin-stat:hover {
+    transform: translateY(-2px);
+    border-color: #CFE2DA;
+    box-shadow: 0 16px 30px -24px rgba(16, 63, 55, 0.6);
+  }
+
+  .admin-stat-chip {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full;
+  }
+
+  .admin-stat-value {
+    font-family: "Cormorant Garamond", "Playfair Display", serif;
+    @apply text-[26px] font-bold leading-none;
+    color: #103F37;
+  }
+
+  .admin-stat-label {
+    @apply mt-1 text-[11px] font-semibold uppercase;
+    letter-spacing: 0.08em;
+    color: #557A70;
+  }
+
+  /* Data tables */
+  .admin-table thead th {
+    @apply whitespace-nowrap px-4 py-3 text-left text-[11px] font-bold uppercase;
+    letter-spacing: 0.09em;
+    color: #557A70;
+    background: #F2F7F4;
+    border-bottom: 1px solid #E6EDE9;
+  }
+  .admin-table tbody td {
+    @apply px-4 py-3.5 align-middle text-[13.5px];
+    border-bottom: 1px solid #EEF3F0;
+  }
+  .admin-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .admin-table tbody tr {
+    transition: background 150ms ease;
+  }
+  .admin-table tbody tr:hover {
+    background: #F7FAF8;
+  }
+
+  /* Sidebar navigation, mirrors the public nav link treatment */
+  .admin-nav-link {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13.5px] font-semibold transition;
+    color: #557A70;
+  }
+  .admin-nav-link:hover {
+    background: #EAF3EF;
+    color: #103F37;
+  }
+  .admin-nav-link.is-active {
+    background: #08755B;
+    color: #FFFFFF;
+  }
+
+  .admin-nav-section {
+    @apply px-3 pb-1.5 pt-4 text-[10.5px] font-bold uppercase;
+    letter-spacing: 0.14em;
+    color: #8AA79E;
+  }
+
+  /* Inline notice used by the intake form */
+  .admin-note {
+    @apply flex items-start gap-3 rounded-2xl border p-4 text-[13.5px] leading-[1.55];
+    background: #F2F7F4;
+    border-color: #DCEBE5;
+    color: #3F635A;
+  }
+
   .glass {
     background: rgba(255, 255, 255, 0.85);
     -webkit-backdrop-filter: blur(18px) saturate(180%);
@@ -1350,42 +1509,6 @@
   @keyframes fade-in-up {
     from { opacity: 0; transform: translateY(18px); }
     to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Deep-green page backdrop used behind the admin shell */
-  .page-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: linear-gradient(170deg, #0d453a 0%, #08342b 55%, #062a22 100%);
-  }
-  .backdrop-blob {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(90px);
-    opacity: 0.4;
-  }
-  .backdrop-blob-1 {
-    top: -12%;
-    left: -8%;
-    width: 480px;
-    height: 480px;
-    background: radial-gradient(circle, rgba(8, 117, 91, 0.6) 0%, rgba(8, 117, 91, 0) 70%);
-  }
-  .backdrop-blob-2 {
-    top: 42%;
-    right: -12%;
-    width: 520px;
-    height: 520px;
-    background: radial-gradient(circle, rgba(45, 138, 114, 0.5) 0%, rgba(45, 138, 114, 0) 70%);
-  }
-  .backdrop-blob-3 {
-    bottom: -16%;
-    left: 28%;
-    width: 520px;
-    height: 520px;
-    background: radial-gradient(circle, rgba(20, 84, 62, 0.6) 0%, rgba(20, 84, 62, 0) 70%);
   }
 
   /* ================================================================

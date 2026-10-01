@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../context/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { BookOpen, CheckCircle2, Clock, XCircle, Users, FolderTree, ArrowRight, FileText } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, XCircle, Users, FolderTree, ArrowRight, FileText, LayoutDashboard, BarChart3 } from 'lucide-react';
 
 const StatusIcon = ({ status }) => {
   const map = { approved: CheckCircle2, pending: Clock, rejected: XCircle };
   const Icon = map[status] || Clock;
-  return <Icon className="h-5 w-5" />;
+  return <Icon className="h-3.5 w-3.5" />;
 };
 
 export default function Dashboard() {
@@ -23,100 +22,99 @@ export default function Dashboard() {
     axios.get(`${API}/research/?limit=5`).then(r => { if (Array.isArray(r.data?.data)) setRecent(r.data.data); }).catch(() => {});
   }, []);
 
-  if (!stats) return <div className="flex items-center justify-center h-64"><div className="text-lg font-semibold gradient-text">Loading...</div></div>;
+  if (!stats) return <div className="flex h-64 items-center justify-center"><div className="text-[15px] font-semibold text-muted-green">Loading...</div></div>;
 
   const statCards = [
-    { label: 'Total Research', value: stats.total, icon: BookOpen, color: 'bg-[#08755B] text-[#FFFFFF]', quirk: 'quirk-a' },
-    { label: 'Approved', value: stats.approved, icon: CheckCircle2, color: 'bg-[#08755B]/15 text-[#0C765E]', quirk: 'quirk-b' },
-    { label: 'Pending', value: stats.pending, icon: Clock, color: 'bg-amber-100 text-amber-700', quirk: 'quirk-c' },
-    { label: 'Rejected', value: stats.rejected, icon: XCircle, color: 'bg-red-100 text-red-700', quirk: 'quirk-a' },
-    { label: 'Users', value: stats.users, icon: Users, color: 'bg-[#8FB3A7]/20 text-[#0369A1]', quirk: 'quirk-b' },
-    { label: 'Programs', value: stats.programs, icon: FolderTree, color: 'bg-[#C4B5FD]/20 text-[#6D28D9]', quirk: 'quirk-c' },
+    { label: 'Total Research', value: stats.total, icon: BookOpen, chip: 'bg-soft-green text-emerald-brand' },
+    { label: 'Approved', value: stats.approved, icon: CheckCircle2, chip: 'bg-soft-green text-emerald-brand' },
+    { label: 'Pending', value: stats.pending, icon: Clock, chip: 'bg-amber-50 text-amber-700' },
+    { label: 'Rejected', value: stats.rejected, icon: XCircle, chip: 'bg-red-50 text-red-600' },
+    { label: 'Users', value: stats.users, icon: Users, chip: 'bg-pale-green text-[#0C765E]' },
+    { label: 'Programs', value: stats.programs, icon: FolderTree, chip: 'bg-mint-dark text-deep-green' },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="admin-page space-y-7">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="eyebrow mb-2">Overview</p>
-          <h1 className="headline text-4xl">The <span className="gradient-text italic">Dashboard</span></h1>
-          <p className="text-muted-foreground mt-1">Overview of the research repository</p>
+          <span className="admin-eyebrow">
+            <LayoutDashboard className="h-3 w-3" />
+            Overview
+          </span>
+          <h1 className="admin-title mt-3">The <em>Dashboard</em></h1>
+          <p className="admin-subtitle">Overview of the research repository</p>
         </div>
-        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
-          <div className="pointer-events-none absolute inset-0 rounded-full border border-[#08755B]/35" aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-2 rotate-45 rounded-[0.8rem] border border-[#0C765E]/30" aria-hidden="true" />
-          <span className="code-tag sticker relative z-10 bg-[#0A3B2E] px-1.5 py-1 text-center text-[9px] leading-tight text-[#BFE0D3] rotate-1">RS / ADMIN VIEW</span>
-        </div>
+        <Link to="/admin/research">
+          <Button className="gradient-btn rounded-full">
+            Manage Research <ArrowRight className="h-4 w-4" />
+          </Button>
+        </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {statCards.map(s => (
-          <Card key={s.label} className={`${s.quirk} card-lift`}>
-            <CardContent className="p-5">
-              <div className={`h-9 w-9 rounded-xl flex items-center justify-center mb-3 ${s.color}`}><s.icon className="h-4 w-4" /></div>
-              <p className="font-display text-2xl font-semibold">{s.value}</p>
-              <p className="text-xs text-muted-foreground">{s.label}</p>
-            </CardContent>
-          </Card>
+          <div key={s.label} className="admin-stat">
+            <span className={`admin-stat-chip ${s.chip}`}>
+              <s.icon className="h-4 w-4" />
+            </span>
+            <div className="min-w-0">
+              <p className="admin-stat-value">{s.value}</p>
+              <p className="admin-stat-label">{s.label}</p>
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="md:col-span-2 quirk-c">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-            <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-[#0C765E]" /> Recent Submissions</CardTitle>
-            <Link to="/research">
-              <Button variant="ghost" className="text-[#0C765E] hover:text-[#0C765E]">View All <ArrowRight className="h-4 w-4" /></Button>
+      <div className="grid gap-5 lg:grid-cols-3">
+        <div className="admin-panel lg:col-span-2">
+          <div className="admin-panel-head">
+            <h2 className="admin-panel-title"><FileText className="h-4 w-4 text-emerald-brand" /> Recent Submissions</h2>
+            <Link to="/research" className="text-[13px] font-semibold text-[#0C765E] transition hover:text-forest">
+              View All
             </Link>
-          </CardHeader>
-          <CardContent>
-            {recent.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <BookOpen className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                <p>No submissions yet</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="hover:bg-transparent">
-                      <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recent.map(r => (
-                      <TableRow key={r.id} className="cursor-pointer hover:bg-[#08755B]/10" onClick={() => window.location.href = `/research/${r.id}`}>
-                        <TableCell className="font-mono font-bold text-[#0C765E] text-xs">{r.code}</TableCell>
-                        <TableCell className="font-medium">{r.title}</TableCell>
-                        <TableCell>
-                          <Badge variant={r.status} className="gap-1"><StatusIcon status={r.status} />{r.status}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <div className="space-y-6">
-          <Card className="quirk-a">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-[#0C765E]" /> By Year</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {stats.byYear.length === 0 && <p className="text-sm text-muted-foreground">No data yet</p>}
-                {stats.byYear.slice(0, 5).map(y => (
-                  <div key={y.year} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                    <span className="text-sm font-mono">{y.year}</span>
-                    <Badge variant="secondary" className="bg-[#08755B]/20 text-[#0C765E] hover:bg-[#08755B]/30">{y.count}</Badge>
-                  </div>
+          </div>
+          {recent.length === 0 ? (
+            <div className="px-6 py-14 text-center text-muted-green">
+              <BookOpen className="mx-auto mb-3 h-8 w-8 opacity-35" />
+              <p className="text-[13.5px]">No submissions yet</p>
+            </div>
+          ) : (
+            <Table className="admin-table">
+              <TableHeader>
+                <TableRow className="border-0 hover:bg-transparent">
+                  <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recent.map(r => (
+                  <TableRow key={r.id} className="cursor-pointer border-0" onClick={() => window.location.href = `/research/${r.id}`}>
+                    <TableCell className="font-mono text-[12px] font-semibold text-[#0C765E]">{r.code}</TableCell>
+                    <TableCell className="font-medium text-forest">{r.title}</TableCell>
+                    <TableCell>
+                      <Badge variant={r.status} className="gap-1 capitalize"><StatusIcon status={r.status} />{r.status}</Badge>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
+              </TableBody>
+            </Table>
+          )}
+        </div>
+
+        <div className="admin-panel">
+          <div className="admin-panel-head">
+            <h2 className="admin-panel-title"><BarChart3 className="h-4 w-4 text-emerald-brand" /> By Year</h2>
+          </div>
+          <div className="admin-panel-body">
+            {(!stats.byYear || stats.byYear.length === 0) && <p className="text-[13.5px] text-muted-green">No data yet</p>}
+            <div className="space-y-1">
+              {(stats.byYear || []).slice(0, 6).map(y => (
+                <div key={y.year} className="flex items-center justify-between rounded-lg px-2 py-2 transition hover:bg-pale-green">
+                  <span className="font-mono text-[13px] font-semibold text-forest">{y.year}</span>
+                  <Badge variant="secondary" className="bg-soft-green text-[#0C765E] hover:bg-mint-dark">{y.count}</Badge>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

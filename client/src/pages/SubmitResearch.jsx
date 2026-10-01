@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { API, useAuth } from '../context/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -10,7 +9,7 @@ import { Textarea } from '../components/ui/textarea';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
-import { Info } from 'lucide-react';
+import { Info, BookMarked, FileText, ArrowLeft } from 'lucide-react';
 
 export default function SubmitResearch() {
   const { id } = useParams();
@@ -52,48 +51,54 @@ export default function SubmitResearch() {
   const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
 
   return (
-    <div className="space-y-6">
+    <div className="admin-page space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="eyebrow mb-2">Repository intake</p>
-          <h1 className="headline text-4xl">{isEdit ? 'Edit' : 'Submit'} <span className="gradient-text italic">Research</span></h1>
-          <p className="text-muted-foreground mt-1">{isEdit ? 'Update the research record' : 'Submit a new research work to the institutional repository'}</p>
+          <span className="admin-eyebrow">
+            <BookMarked className="h-3 w-3" />
+            Repository Intake
+          </span>
+          <h1 className="admin-title mt-3">{isEdit ? 'Edit' : 'Submit'} <em>Research</em></h1>
+          <p className="admin-subtitle">{isEdit ? 'Update the research record' : 'Submit a new research work to the institutional repository'}</p>
         </div>
-        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
-          <div className="pointer-events-none absolute inset-0 rounded-full border border-[#08755B]/35" aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-2 rotate-45 rounded-[0.8rem] border border-[#0C765E]/30" aria-hidden="true" />
-          <span className="code-tag sticker relative z-10 bg-[#0A3B2E] px-1.5 py-1 text-center text-[9px] leading-tight text-[#BFE0D3] -rotate-1">RS / INTAKE FORM</span>
-        </div>
+        <Button type="button" variant="outline" className="rounded-full border-[#DCEBE5] text-[13px] font-semibold text-muted-green transition hover:bg-soft-green hover:text-forest" onClick={() => navigate(isAdmin ? '/admin/research' : '/research')}>
+          <ArrowLeft className="h-4 w-4" /> Back to Catalog
+        </Button>
       </div>
 
-      <Card className="quirk-c overflow-hidden">
-        <div className="h-1.5 bg-gradient-to-r from-[#08755B] via-[#0C765E] to-[#8FB3A7]" />
-        <CardContent className="p-6 md:p-8">
-          {error && <div className="mb-5 rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">{error}</div>}
-          <div className="mb-6 flex items-center gap-3 text-sm text-muted-foreground p-4 rounded-2xl quirk-b bg-[#08755B]/10 border border-[#08755B]/30">
-            <Info className="h-4 w-4 text-[#0C765E] shrink-0" />
-            <span>A unique research code (e.g. <strong className="text-[#0C765E] font-mono">RS-2026-0001</strong>) will be automatically assigned when submitted.</span>
+      <form onSubmit={handleSubmit} className="admin-panel overflow-hidden">
+        <div className="admin-panel-head">
+          <h2 className="admin-panel-title"><FileText className="h-4 w-4 text-emerald-brand" /> Work Details</h2>
+          <span className="text-[12px] font-semibold text-muted-green"><span className="text-red-500">*</span> Required fields</span>
+        </div>
+        <div className="admin-panel-body">
+          {error && <div role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13.5px] text-red-700">{error}</div>}
+
+          <div className="admin-note mb-6">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-emerald-brand" />
+            <span>A unique research code (e.g. <strong className="font-mono font-semibold text-[#0C765E]">RS-2026-0001</strong>) will be automatically assigned when submitted.</span>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-5">
+
+          <div className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="title">Title *</Label>
-              <Input id="title" value={form.title} onChange={e => setForm({...form, title: e.target.value})} required placeholder="Enter the research title" />
+              <Input id="title" value={form.title} onChange={e => setForm({...form, title: e.target.value})} required placeholder="Enter the research title" className="rounded-xl border-[#DCEBE5] bg-ivory" />
             </div>
-            <div className="grid sm:grid-cols-2 gap-5">
+            <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="authors">Authors *</Label>
-                <Input id="authors" value={form.authors} onChange={e => setForm({...form, authors: e.target.value})} required placeholder="e.g. Juan Dela Cruz, Maria Santos" />
+                <Input id="authors" value={form.authors} onChange={e => setForm({...form, authors: e.target.value})} required placeholder="e.g. Juan Dela Cruz, Maria Santos" className="rounded-xl border-[#DCEBE5] bg-ivory" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="adviser">Adviser</Label>
-                <Input id="adviser" value={form.adviser} onChange={e => setForm({...form, adviser: e.target.value})} placeholder="Research adviser" />
+                <Input id="adviser" value={form.adviser} onChange={e => setForm({...form, adviser: e.target.value})} placeholder="Research adviser" className="rounded-xl border-[#DCEBE5] bg-ivory" />
               </div>
             </div>
-            <div className="grid sm:grid-cols-2 gap-5">
+            <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>Program</Label>
                 <Select value={form.program_id ? String(form.program_id) : 'none'} onValueChange={v => setForm({...form, program_id: v === 'none' ? '' : v})}>
-                  <SelectTrigger><SelectValue placeholder="Select program" /></SelectTrigger>
+                  <SelectTrigger className="rounded-xl border-[#DCEBE5] bg-ivory"><SelectValue placeholder="Select program" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Select Program</SelectItem>
                     {programs.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}
@@ -103,7 +108,7 @@ export default function SubmitResearch() {
               <div className="space-y-2">
                 <Label>Year *</Label>
                 <Select value={String(form.year)} onValueChange={v => setForm({...form, year: parseInt(v)})}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="rounded-xl border-[#DCEBE5] bg-ivory"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
                   </SelectContent>
@@ -112,19 +117,22 @@ export default function SubmitResearch() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="keywords">Keywords</Label>
-              <Input id="keywords" value={form.keywords} onChange={e => setForm({...form, keywords: e.target.value})} placeholder="Comma-separated keywords, e.g. machine learning, education" />
+              <Input id="keywords" value={form.keywords} onChange={e => setForm({...form, keywords: e.target.value})} placeholder="Comma-separated keywords, e.g. machine learning, education" className="rounded-xl border-[#DCEBE5] bg-ivory" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="abstract">Abstract</Label>
-              <Textarea id="abstract" rows={5} value={form.abstract} onChange={e => setForm({...form, abstract: e.target.value})} placeholder="Enter the research abstract..." />
+              <Textarea id="abstract" rows={5} value={form.abstract} onChange={e => setForm({...form, abstract: e.target.value})} placeholder="Enter the research abstract..." className="rounded-xl border-[#DCEBE5] bg-ivory" />
             </div>
-            <div className="flex gap-3 pt-2">
-              <Button type="submit" disabled={loading} className="gradient-btn min-w-40 rounded-full">{loading ? 'Submitting...' : isEdit ? 'Update Research' : 'Submit Research'}</Button>
-              <Button type="button" variant="outline" className="rounded-full" onClick={() => navigate(-1)}>Cancel</Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+
+          <div className="mt-7 flex flex-wrap gap-3 border-t border-[#EEF3F0] pt-5">
+            <Button type="submit" disabled={loading} className="gradient-btn min-w-40 rounded-full">
+              {loading ? 'Saving...' : isEdit ? 'Update Research' : 'Submit Research'}
+            </Button>
+            <Button type="button" variant="outline" className="rounded-full border-[#DCEBE5] text-[13px] font-semibold text-muted-green transition hover:bg-soft-green hover:text-forest" onClick={() => navigate(-1)}>Cancel</Button>
+          </div>
+        </div>
+      </form>
     </div>
   );
 }

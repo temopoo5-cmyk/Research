@@ -2,7 +2,6 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
-import { Separator } from './ui/separator';
 import { LayoutDashboard, Upload, Users, FolderTree, BookMarked, LogOut, GraduationCap, X } from 'lucide-react';
 
 const navItems = [
@@ -17,11 +16,7 @@ const adminItems = [
 ];
 
 const itemClass = ({ isActive }) =>
-  `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-    isActive
-      ? 'bg-[#08755B] text-white font-semibold'
-      : 'text-white/70 hover:bg-white/10 hover:text-white'
-  }`;
+  `admin-nav-link${isActive ? ' is-active' : ''}`;
 
 export default function Sidebar({ open = false, onClose = () => {} }) {
   const { user, logout } = useAuth();
@@ -36,48 +31,48 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
   };
 
   const inner = (
-    <div className="flex h-full w-64 flex-col bg-gradient-to-b from-[#093227] via-[#0a3527] to-[#072a20] border-r border-white/10 shadow-[0_20px_60px_-30px_rgba(4,28,21,0.95)]">
-      <div className="relative overflow-hidden border-b border-white/10 p-5">
-        <div className="pointer-events-none absolute -right-5 -top-7 h-24 w-24 rounded-full border border-white/10" />
-        <div className="relative z-10 flex items-center justify-between">
-          <button onClick={handleLogout} className="flex items-center gap-2.5 group">
-            <div className="h-10 w-10 shrink-0 rounded-full bg-[#08755B] flex items-center justify-center">
-              <GraduationCap className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h2 className="font-display font-semibold text-lg leading-tight text-white">ResearchHub</h2>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[#BFE0D3] mt-0.5">Admin Panel</p>
-            </div>
-          </button>
-          <button onClick={onClose} aria-label="Close navigation" className="md:hidden rounded-full p-1.5 text-white/60 hover:bg-white/10 hover:text-white">
-            <X className="h-5 w-5" />
-          </button>
+    <div className="flex h-full w-64 flex-col border-r border-[#E6EDE9] bg-ivory">
+      <div className="flex items-center justify-between border-b border-[#E6EDE9] px-5 py-[18px]">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-brand">
+            <GraduationCap className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h2 className="font-display text-[17px] font-semibold leading-tight text-forest">ResearchHub</h2>
+            <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#176653]">Admin Panel</p>
+          </div>
         </div>
+        <button onClick={onClose} aria-label="Close navigation" className="rounded-lg p-1.5 text-muted-green transition hover:bg-soft-green hover:text-forest md:hidden">
+          <X className="h-5 w-5" />
+        </button>
       </div>
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-3">
+
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <p className="admin-nav-section">Workspace</p>
         {navItems.map(item => (
           <NavLink key={item.to} to={item.to} onClick={handleNav} className={itemClass}>
-            <item.icon className="h-4 w-4" />{item.label}
+            <item.icon className="h-4 w-4 shrink-0" />{item.label}
           </NavLink>
         ))}
+        <p className="admin-nav-section">Administration</p>
         {adminItems.map(item => (
           <NavLink key={item.to} to={item.to} onClick={handleNav} className={itemClass}>
-            <item.icon className="h-4 w-4" />{item.label}
+            <item.icon className="h-4 w-4 shrink-0" />{item.label}
           </NavLink>
         ))}
       </nav>
-      <Separator className="bg-white/10" />
-      <div className="p-4">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="h-9 w-9 rounded-full bg-[#08755B] flex items-center justify-center text-[#FFFFFF] font-semibold text-sm font-mono">
+
+      <div className="border-t border-[#E6EDE9] p-4">
+        <div className="mb-3 flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-soft-green text-[13px] font-bold text-[#0C765E]">
             {(user?.full_name || 'U').charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold truncate text-white">{user?.full_name || 'User'}</p>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#BFE0D3]">Administrator</p>
+            <p className="truncate text-[13.5px] font-semibold text-forest">{user?.full_name || 'User'}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8AA79E]">Administrator</p>
           </div>
         </div>
-        <Button variant="outline" className="w-full rounded-full border-white/25 bg-transparent text-white/70 hover:text-white hover:bg-[#08755B]/15" onClick={handleLogout}>
+        <Button variant="outline" className="w-full rounded-full border-[#DCEBE5] bg-white text-[13px] font-semibold text-muted-green transition hover:border-[#CFE2DA] hover:bg-soft-green hover:text-forest" onClick={handleLogout}>
           <LogOut className="h-4 w-4" /> Sign Out
         </Button>
       </div>
@@ -86,8 +81,8 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
 
   return (
     <>
-      <div className={`fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={handleNav} />
-      <div className={`fixed top-0 left-0 bottom-0 z-50 md:translate-x-0 transition-transform duration-200 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed inset-0 z-40 bg-[#062A22]/45 transition-opacity md:hidden ${open ? 'opacity-100' : 'pointer-events-none opacity-0'}`} onClick={handleNav} />
+      <div className={`fixed bottom-0 left-0 top-0 z-50 transition-transform duration-200 md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         {inner}
       </div>
     </>

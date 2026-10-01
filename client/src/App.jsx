@@ -39,16 +39,6 @@ function AdminRoute({ children }) {
   return token && isAdmin ? children : <Navigate to="/" />;
 }
 
-function PageBackdrop() {
-  return (
-    <div className="page-backdrop" aria-hidden="true">
-      <div className="backdrop-blob backdrop-blob-1" />
-      <div className="backdrop-blob backdrop-blob-2" />
-      <div className="backdrop-blob backdrop-blob-3" />
-    </div>
-  );
-}
-
 function PublicLayout({ children }) {
   return (
     <div className="flex min-h-screen flex-col bg-cream">
@@ -62,26 +52,22 @@ function PublicLayout({ children }) {
 function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen">
-      <PageBackdrop />
+    <div className="min-h-screen bg-cream">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 h-14 overflow-hidden bg-gradient-to-r from-[#0d453a] to-[#08342b] border-b border-white/15">
-        <div className="pointer-events-none absolute -right-5 -top-10 h-24 w-24 rounded-full border border-white/20" />
-        <div className="pointer-events-none absolute right-16 top-2 h-8 w-8 rotate-45 rounded-lg border border-white/15" />
-        <div className="relative z-10 flex h-full items-center justify-between px-4">
-          <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-full bg-emerald-brand flex items-center justify-center shrink-0">
-              <GraduationCap className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-display font-semibold text-white">ResearchHub</span>
-          </div>
-          <button onClick={() => setSidebarOpen(true)} aria-label="Open navigation" className="rounded-full p-2 text-[#EAF6F1] hover:bg-white/10">
+      <div className="md:pl-64">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-[#E6EDE9] bg-white/90 px-4 backdrop-blur-md md:hidden">
+          <button onClick={() => setSidebarOpen(true)} aria-label="Open navigation" className="-ml-2 rounded-lg p-2 text-muted-green transition hover:bg-soft-green hover:text-forest">
             <Menu className="h-5 w-5" />
           </button>
-        </div>
-      </div>
-      <div className="pt-14 md:pt-8 p-4 md:pl-64 md:p-8">
-        <div className="md:ml-8">{children}</div>
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-brand">
+              <GraduationCap className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-display text-[17px] font-semibold leading-none text-forest">ResearchHub</span>
+          </div>
+          <span className="ml-auto rounded-full bg-soft-green px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#176653]">Admin</span>
+        </header>
+        <main className="px-4 py-6 md:px-8 md:py-9">{children}</main>
       </div>
     </div>
   );
