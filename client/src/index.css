@@ -572,26 +572,18 @@
     color: #08755B;
     transform: translateY(-1px);
   }
-  .carousel-button:disabled {
-    opacity: 0.35;
-    cursor: default;
-    transform: none;
+  .carousel-viewport:focus-visible {
+    outline: 2px solid #08755B;
+    outline-offset: 3px;
+    border-radius: 10px;
+  }
+  .carousel-track.is-instant {
+    transition: none;
   }
 
   @media (max-width: 768px) {
     .research-card {
       width: 260px;
-    }
-    .carousel-viewport {
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-    }
-    .carousel-track {
-      transform: none !important;
-    }
-    .research-card {
-      scroll-snap-align: start;
     }
   }
 

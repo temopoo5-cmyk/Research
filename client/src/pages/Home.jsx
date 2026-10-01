@@ -113,73 +113,144 @@ function BookSlider({ items }) {
   );
 }
 
+const COPIES = 3;
+const DELAY = 6000;
+
 function WorksCarousel({ items }) {
   const viewportRef = useRef(null);
   const trackRef = useRef(null);
-  const [offset, setOffset] = useState(0);
-  const [bounds, setBounds] = useState({ max: 0, step: 264 });
+  const timerRef = useRef(null);
+  const rafRef = useRef(0);
+  const [pos, setPos] = useState(0);
+  const posRef = useRef(0);
+  const [step, setStep] = useState(0);
+  const [instant, setInstant] = useState(false);
+
+  const commit = (value) => {
+    posRef.current = value;
+    setPos(value);
+  };
+
+  const n = items.length;
+  // Active window only ever travels through the middle copy, so the first and
+  // last copies act as a seamless wrap-around buffer.
+  const last = (COPIES - 1) * n - 1;
 
   const measure = () => {
     const track = trackRef.current;
     if (!track || !track.children.length) return;
     const card = track.children[0].getBoundingClientRect();
-    const step = card.width + 14;
-    setBounds({ step, max: Math.max(0, track.scrollWidth - viewportRef.current.clientWidth) });
+    setStep(card.width + 14);
   };
 
   useEffect(() => {
+    if (!n) {
+      commit(0);
+      return undefined;
+    }
+    // Rebuild from the middle copy whenever the item count changes.
+    commit(n);
+    setInstant(true);
+    rafRef.current = requestAnimationFrame(() => setInstant(false));
     measure();
     window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [items.length]);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('resize', measure);
+    };
+  }, [n]);
 
-  // Keep the offset inside bounds when the viewport resizes
+  // Skip the transition for the invisible half of a wrap, then animate the
+  // single visible step. Mirrors the mockup's paint(false) + rAF + paint(true).
+  const jumpTo = (hidden, visible) => {
+    setInstant(true);
+    commit(hidden);
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      setInstant(false);
+      commit(visible);
+    });
+  };
+
+  const goNext = () => {
+    if (!n) return;
+    const p = posRef.current;
+    if (p >= last) jumpTo(n - 1, n);
+    else commit(p + 1);
+  };
+
+  const goPrev = () => {
+    if (!n) return;
+    const p = posRef.current;
+    if (p <= 0) jumpTo(2 * n, 2 * n - 1);
+    else commit(p - 1);
+  };
+
+  const restart = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(goNext, DELAY);
+  };
+
   useEffect(() => {
-    setOffset((o) => Math.min(o, bounds.max));
-  }, [bounds.max]);
+    if (!n) return undefined;
+    restart();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [n]);
 
   if (!items.length) return null;
 
-  const step = Math.min(bounds.step, bounds.max || bounds.step);
+  const onKeyDown = (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); restart(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(); restart(); }
+  };
 
   return (
     <div className="mt-[22px] flex items-center gap-2.5">
-      <button
-        type="button"
-        onClick={() => setOffset((o) => Math.max(0, o - step))}
-        disabled={offset <= 0}
-        aria-label="Previous research works"
-        className="carousel-button"
-      >
+      <button type="button" onClick={() => { goPrev(); restart(); }} aria-label="Previous research works" className="carousel-button">
         <ChevronLeft className="h-3 w-3" />
       </button>
 
-      <div ref={viewportRef} className="carousel-viewport">
-        <div ref={trackRef} className="carousel-track" style={{ transform: `translateX(${-offset}px)` }}>
-          {items.map((r, i) => (
-            <Link key={r.id} to={`/research/${r.id}`} className="research-card">
-              <span className="research-cover" style={{ background: coverGradients[i % coverGradients.length] }}>
-                <span className="px-1 text-center font-display text-[12px] leading-tight text-white/95">
-                  {r.program_code || r.program_name || 'Research'}
+      <div
+        ref={viewportRef}
+        className="carousel-viewport"
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        onMouseEnter={() => { if (timerRef.current) clearInterval(timerRef.current); }}
+        onMouseLeave={restart}
+      >
+        <div
+          ref={trackRef}
+          className={`carousel-track${instant ? ' is-instant' : ''}`}
+          style={step ? { transform: `translateX(${-pos * step}px)` } : undefined}
+        >
+          {Array.from({ length: COPIES }).flatMap((_, copy) =>
+            items.map((r, i) => (
+              <Link
+                key={`${copy}-${r.id}`}
+                to={`/research/${r.id}`}
+                className="research-card"
+                aria-hidden={copy === 1 ? undefined : 'true'}
+                tabIndex={copy === 1 ? undefined : -1}
+              >
+                <span className="research-cover" style={{ background: coverGradients[i % coverGradients.length] }}>
+                  <span className="px-1 text-center font-display text-[12px] leading-tight text-white/95">
+                    {r.program_code || r.program_name || 'Research'}
+                  </span>
                 </span>
-              </span>
-              <div className="min-w-0">
-                <h3 className="research-card-title">{r.title}</h3>
-                <p className="research-author">{r.authors || 'Unattributed'}</p>
-                {r.year && <span className="research-type">{r.year}</span>}
-              </div>
-            </Link>
-          ))}
+                <div className="min-w-0">
+                  <h3 className="research-card-title">{r.title}</h3>
+                  <p className="research-author">{r.authors || 'Unattributed'}</p>
+                  {r.year && <span className="research-type">{r.year}</span>}
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setOffset((o) => Math.min(bounds.max, o + step))}
-        disabled={offset >= bounds.max}
-        aria-label="Next research works"
-        className="carousel-button"
-      >
+      <button type="button" onClick={() => { goNext(); restart(); }} aria-label="Next research works" className="carousel-button">
         <ChevronRight className="h-3 w-3" />
       </button>
     </div>
