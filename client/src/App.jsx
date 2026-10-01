@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import About from './pages/About';
 import Dashboard from './pages/Dashboard';
 import ResearchList from './pages/ResearchList';
 import ResearchDetail from './pages/ResearchDetail';
@@ -19,8 +20,8 @@ import { GraduationCap, Menu } from 'lucide-react';
 
 function FullPageLoader() {
   return (
-    <div className="min-h-screen bg-[#0A2B1C] flex items-center justify-center">
-      <div className="text-lg font-semibold font-mono text-[#23CE6B]">Loading...</div>
+    <div className="flex min-h-screen items-center justify-center bg-[#093227]">
+      <div className="text-lg font-semibold text-[#BFE0D3]">Loading...</div>
     </div>
   );
 }
@@ -49,8 +50,7 @@ function PageBackdrop() {
 
 function PublicLayout({ children }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <PageBackdrop />
+    <div className="flex min-h-screen flex-col bg-cream">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
@@ -64,17 +64,17 @@ function AdminLayout({ children }) {
     <div className="min-h-screen">
       <PageBackdrop />
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 h-14 overflow-hidden bg-gradient-to-r from-[#0A2B1C] to-[#0F3A26] border-b border-[#23CE6B]/25">
-        <div className="pointer-events-none absolute -right-5 -top-10 h-24 w-24 rounded-full border border-[#23CE6B]/30" />
-        <div className="pointer-events-none absolute right-16 top-2 h-8 w-8 rotate-45 rounded-lg border border-[#9FEBBF]/20" />
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 h-14 overflow-hidden bg-gradient-to-r from-[#0d453a] to-[#08342b] border-b border-white/15">
+        <div className="pointer-events-none absolute -right-5 -top-10 h-24 w-24 rounded-full border border-white/20" />
+        <div className="pointer-events-none absolute right-16 top-2 h-8 w-8 rotate-45 rounded-lg border border-white/15" />
         <div className="relative z-10 flex h-full items-center justify-between px-4">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-2xl gradient-btn-invert flex items-center justify-center shrink-0 tilt-r-sm">
-              <GraduationCap className="h-4 w-4 text-[#062514]" />
+            <div className="h-8 w-8 rounded-full bg-emerald-brand flex items-center justify-center shrink-0">
+              <GraduationCap className="h-4 w-4 text-white" />
             </div>
-            <span className="font-display font-semibold text-white">Research<span className="text-[#23CE6B]">Hub</span></span>
+            <span className="font-display font-semibold text-white">ResearchHub</span>
           </div>
-          <button onClick={() => setSidebarOpen(true)} className="rounded-full p-2 text-[#EAFBF1] hover:bg-white/10">
+          <button onClick={() => setSidebarOpen(true)} aria-label="Open navigation" className="rounded-full p-2 text-[#EAF6F1] hover:bg-white/10">
             <Menu className="h-5 w-5" />
           </button>
         </div>
@@ -91,6 +91,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+      <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
       <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <Register />} />
       <Route path="/dashboard" element={<PrivateRoute><AdminLayout><Dashboard /></AdminLayout></PrivateRoute>} />

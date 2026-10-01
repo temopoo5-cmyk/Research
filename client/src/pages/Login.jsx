@@ -30,13 +30,13 @@ export default function Login() {
     <div className="min-h-screen gradient-bg relative overflow-hidden">
       <Navbar />
       <div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)] relative">
-        <div className="absolute -top-32 -left-32 h-96 w-96 blob-shape bg-[#23CE6B]/25 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 blob-shape-alt bg-[#7DD3FC]/25 blur-3xl" />
+        <div className="absolute -top-32 -left-32 h-96 w-96 blob-shape bg-[#08755B]/25 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 blob-shape-alt bg-[#8FB3A7]/25 blur-3xl" />
         <div className="absolute inset-0 dot-grid opacity-50" aria-hidden="true" />
         <div className="relative grid md:grid-cols-2 gap-8 max-w-5xl w-full items-center">
         <div className="hidden md:block">
           <div className="inline-flex h-14 w-14 rounded-2xl quirk-a gradient-btn items-center justify-center mb-5 tilt-l-sm">
-            <GraduationCap className="h-7 w-7 text-[#062514]" />
+            <GraduationCap className="h-7 w-7 text-[#FFFFFF]" />
           </div>
           <p className="eyebrow mb-3">Sign in</p>
           <h1 className="headline-xl text-5xl mb-4">
@@ -50,7 +50,7 @@ export default function Login() {
               const Icon = icon === 'BookOpen' ? BookOpen : icon === 'FolderOpen' ? FolderOpen : Search;
               return (
                 <div key={title} className={`flex items-start gap-4 p-4 rounded-2xl ${i % 2 ? 'quirk-b' : 'quirk-a'} glass card-lift`}>
-                  <div className="h-9 w-9 rounded-xl bg-[#23CE6B]/15 text-[#12854A] flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
+                  <div className="h-9 w-9 rounded-xl bg-[#08755B]/15 text-[#0C765E] flex items-center justify-center shrink-0"><Icon className="h-4 w-4" /></div>
                   <div><p className="font-display font-semibold text-base">{title}</p><p className="text-sm text-muted-foreground">{desc}</p></div>
                 </div>
               );
@@ -60,7 +60,7 @@ export default function Login() {
         <Card className="w-full max-w-md mx-auto quirk-c card-lift">
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-2 md:hidden mb-2">
-              <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#062514]" /></div>
+              <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center"><GraduationCap className="h-5 w-5 text-[#FFFFFF]" /></div>
               <span className="font-display font-semibold text-lg gradient-text">ResearchHub</span>
             </div>
             <p className="eyebrow">Member access</p>
@@ -81,10 +81,10 @@ export default function Login() {
               <Button type="submit" disabled={loading} className="w-full gradient-btn">{loading ? 'Signing in...' : 'Sign In'}</Button>
             </form>
             <div className="mt-5 text-center text-sm text-muted-foreground">
-              Don't have an account? <a href="/register" className="font-semibold text-[#12854A] hover:underline">Register</a>
+              Don't have an account? <a href="/register" className="font-semibold text-[#0C765E] hover:underline">Register</a>
             </div>
             <div className="mt-4 text-center text-xs text-muted-foreground bg-white/70 rounded-2xl quirk-b py-2.5 border border-border font-mono">
-              Demo admin: <strong className="text-[#12854A]">admin</strong> / <strong className="text-[#12854A]">admin123</strong>
+              Demo admin: <strong className="text-[#0C765E]">admin</strong> / <strong className="text-[#0C765E]">admin123</strong>
             </div>
           </CardContent>
         </Card>

@@ -1,190 +1,472 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../context/AuthContext';
-import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Badge } from '../components/ui/badge';
-import FloatingBooks, { BookPile } from '../components/FloatingBooks';
-import LockedAbstract from '../components/LockedAbstract';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen } from 'lucide-react';
+import {
+  Search, FileText, Folder, Landmark, BookOpen, ArrowRight, ChevronRight,
+  ChevronLeft, Globe, Shield, GraduationCap, Users, Settings, Leaf, MapPin,
+} from 'lucide-react';
 
-export default function Home() {
-  const navigate = useNavigate();
-  const [research, setResearch] = useState([]);
-  const [programs, setPrograms] = useState([]);
-  const [stats, setStats] = useState(null);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({ search: '', program: '', year: '' });
+const coverGradients = [
+  'linear-gradient(150deg,#0b6b52,#053f31)',
+  'linear-gradient(150deg,#0f8a6c,#075744)',
+  'linear-gradient(150deg,#2a9d8f,#0b6b52)',
+  'linear-gradient(150deg,#103f37,#0b6b52)',
+  'linear-gradient(150deg,#1b7f68,#093f31)',
+  'linear-gradient(150deg,#13876d,#075744)',
+];
 
-  const fetchData = () => {
-    setLoading(true);
-    const params = { ...filters, page, limit: 12 };
-    Object.keys(params).forEach(k => { if (!params[k]) delete params[k]; });
-    axios.get(`${API}/research/`, { params }).then(r => {
-      setResearch(Array.isArray(r.data?.data) ? r.data.data : []);
-      setTotalPages(Number.isFinite(r.data?.pages) ? r.data.pages : 1);
-      setLoading(false);
-    }).catch(() => { setResearch([]); setTotalPages(1); setLoading(false); });
+const categoryIcons = [Settings, Users, Leaf, Globe, BookOpen, GraduationCap];
+
+function formatDate(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function BookSlider({ items }) {
+  const [index, setIndex] = useState(0);
+  const timer = useRef(null);
+  const count = items.length;
+  const DELAY = 6000;
+
+  const go = (i) => setIndex(((i % count) + count) % count);
+
+  const restart = () => {
+    clearInterval(timer.current);
+    timer.current = setInterval(() => setIndex((i) => (i + 1) % count), DELAY);
   };
 
   useEffect(() => {
-    axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
-    axios.get(`${API}/stats/`).then(r => { if (r.data && typeof r.data === 'object' && !Array.isArray(r.data)) setStats(r.data); }).catch(() => {});
-  }, []);
+    if (count < 2) return undefined;
+    restart();
+    return () => clearInterval(timer.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
 
-  useEffect(() => { fetchData(); }, [page]);
-
-  const handleSearch = (e) => { if (e) e.preventDefault(); setPage(1); fetchData(); };
-  const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
+  if (!count) return null;
 
   return (
-    <div className="min-h-screen">
-      <section className="relative overflow-hidden border-b border-[#23CE6B]/25 bg-gradient-to-br from-[#0A2B1C] via-[#0E3A24] to-[#0A2418]">
-        <div className="pointer-events-none absolute inset-0 grid-lines opacity-20" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0A2418] to-transparent" aria-hidden="true" />
-        <FloatingBooks />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
-          <div className="grid lg:grid-cols-[1fr_auto] gap-12 items-center">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-[#23CE6B]/15 border border-[#23CE6B]/40 px-3.5 py-1.5 text-xs font-medium font-mono uppercase tracking-[0.18em] text-[#9FEBBF] mb-6">
-                <Sparkles className="h-3.5 w-3.5" /> Central research repository
-              </div>
-              <h1 className="headline-xl text-white text-5xl lg:text-[4.4rem] mb-5">
-                Discover research
-                <span className="block text-[#23CE6B] italic font-normal">works worth keeping.</span>
-              </h1>
-              <p className="text-[#9FEBBF]/85 text-lg mb-8 max-w-2xl">
-                Browse and search the institutional repository. Submissions are automatically cataloged with unique codes.
-              </p>
-              {stats && (
-                <div className="flex flex-wrap items-center gap-3">
-                  {[
-                    { label: 'Research Works', value: stats.total, icon: FileText },
-                    { label: 'Programs', value: stats.programs, icon: FolderOpen },
-                  ].map((s, i) => (
-                    <div key={s.label} className={`flex items-center gap-3 rounded-2xl ${i === 0 ? 'quirk-a' : 'quirk-b'} glass-green px-4 py-3 float-slow`} style={{ animationDelay: `${i * 0.6}s` }}>
-                      <div className="h-9 w-9 rounded-xl bg-[#23CE6B]/20 text-[#9FEBBF] flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
-                      <div>
-                        <p className="font-display text-2xl font-semibold text-white leading-none">{s.value}</p>
-                        <p className="text-xs text-[#9FEBBF]/70">{s.label}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div><BookPile /></div>
-          </div>
-        </div>
-        <div className="relative z-10 h-4 bg-[#D2E3CE] [clip-path:polygon(0_70%,8%_55%,18%_78%,30%_52%,42%_76%,56%_48%,70%_74%,84%_54%,100%_72%,100%_100%,0_100%)]" aria-hidden="true" />
-      </section>
+    <div>
+      <div className="relative flex items-center justify-center lg:justify-end lg:mr-[19px]">
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => { go(index - 1); restart(); }}
+            aria-label="Previous research"
+            className="slider-btn absolute right-full mr-3 top-1/2 z-10 -translate-y-1/2"
+          >
+            <ChevronLeft className="h-[17px] w-[17px]" />
+          </button>
 
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-        <Card className="quirk-c -mt-1 card-lift">
-          <CardContent className="p-6">
-            <form onSubmit={handleSearch}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-end">
-                <div className="space-y-2 xl:col-span-2">
-                  <Label className="eyebrow">Search</Label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Title, author, code, keywords..." value={filters.search} onChange={e => setFilters({...filters, search: e.target.value})} className="pl-9" />
+          <div className="relative w-[230px] overflow-hidden">
+            {items.map((r, i) => (
+              <article key={r.id} className={`hero-slide${i === index ? ' is-active' : ''}`}>
+                <div className="book-3d mx-auto h-[298px] w-[230px]">
+                  <div className="book-face">
+                    <span className="eyebrow block text-white/50">Featured</span>
+                    <span className="book-cover-title mt-2 block">
+                      {r.title?.length > 46 ? `${r.title.slice(0, 44).trimEnd()}…` : r.title}
+                    </span>
+                    <span className="mt-3 block text-[10.5px] font-normal text-white/80">
+                      {r.authors || 'Unattributed'}
+                    </span>
+                    <span className="book-spine" />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="eyebrow">Program</Label>
-                  <Select value={filters.program || 'all'} onValueChange={v => setFilters({...filters, program: v === 'all' ? '' : v})}>
-                    <SelectTrigger><SelectValue placeholder="All Programs" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Programs</SelectItem>
-                      {programs.map(p => <SelectItem key={p.id} value={p.code}>{p.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="eyebrow">Year</Label>
-                  <Select value={filters.year ? String(filters.year) : 'all'} onValueChange={v => setFilters({...filters, year: v === 'all' ? '' : v})}>
-                    <SelectTrigger><SelectValue placeholder="All Years" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Years</SelectItem>
-                      {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="eyebrow opacity-0 pointer-events-none">Go</Label>
-                  <Button type="submit" className="w-full gradient-btn"><Search className="h-4 w-4" /> Search</Button>
-                </div>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        <div className="mt-12 mb-6 flex items-end justify-between gap-4">
-          <div>
-            <p className="eyebrow mb-2">Fresh from the desk</p>
-            <h2 className="headline text-3xl lg:text-4xl">Latest <span className="gradient-text italic">Research</span></h2>
-          </div>
-          {research.length > 0 && <span className="code-tag sticker-mint bg-[#23CE6B]/20 text-[#12854A] shrink-0">{research.length} result{research.length !== 1 ? 's' : ''}</span>}
-        </div>
-
-        {loading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <Card key={i}><CardContent className="p-6 space-y-3"><div className="h-4 w-20 bg-muted rounded animate-pulse" /><div className="h-5 w-full bg-muted rounded animate-pulse" /><div className="h-4 w-2/3 bg-muted rounded animate-pulse" /></CardContent></Card>
+              </article>
             ))}
           </div>
-        ) : research.length === 0 ? (
-          <Card className="quirk-a">
-            <CardContent className="py-16 text-center">
-              <div className="h-14 w-14 mx-auto mb-4 rounded-2xl quirk-b bg-[#23CE6B]/15 text-[#12854A] flex items-center justify-center tilt-l-sm"><BookOpenIcon className="h-7 w-7" /></div>
-              <h3 className="font-display text-xl font-semibold mb-1">No research found</h3>
-              <p className="text-muted-foreground">Try adjusting your search filters</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {research.map((r, i) => (
-                  <Card key={r.id} className="card-lift cursor-pointer overflow-hidden"
-                    onClick={() => navigate(`/research/${r.id}`)}>
-                    <div className={`h-1.5 ${i % 3 === 0 ? 'bg-[#23CE6B]' : i % 3 === 1 ? 'bg-[#1B7A45]' : 'bg-[#7DD3FC]'}`} />
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="code-tag sticker bg-[#0B2E1B] text-[#9FEBBF] -rotate-2">{r.code}</span>
-                        <span className="text-[11px] font-mono text-muted-foreground">{r.year}</span>
-                      </div>
-                      <h3 className="font-display text-lg font-semibold leading-snug mb-2 line-clamp-2 transition-colors group-hover:text-[#12854A]">{r.title}</h3>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3"><Users className="h-3.5 w-3.5 text-[#12854A]" />{r.authors}</p>
-                      {r.abstract && (
-                        <div className="mb-4">
-                          <LockedAbstract text={r.abstract} compact />
-                        </div>
-                      )}
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-border">
-                        {r.program_name && <span className="font-medium text-[#12854A]">{r.program_name}</span>}
-                      </div>
-                    </CardContent>
-                  </Card>
+
+          <button
+            type="button"
+            onClick={() => { go(index + 1); restart(); }}
+            aria-label="Next research"
+            className="slider-btn absolute left-full ml-3 top-1/2 z-10 -translate-y-1/2"
+          >
+            <ChevronRight className="h-[17px] w-[17px]" />
+          </button>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-5 w-full max-w-[230px] lg:mx-0 lg:mr-[19px] lg:ml-auto">
+        <div className="flex items-center justify-center gap-2">
+          {items.map((r, i) => (
+            <button
+              key={r.id}
+              type="button"
+              onClick={() => { go(i); restart(); }}
+              aria-label={`Show featured research ${i + 1}`}
+              className={`hero-dot${i === index ? ' is-active' : ''}`}
+            />
+          ))}
+        </div>
+        <div className="mt-5 flex justify-center">
+          <Link to="/research" className="hero-cta">
+            <span>View Details</span>
+            <ArrowRight className="hero-arrow h-[14px] w-[14px]" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WorksCarousel({ items }) {
+  const viewportRef = useRef(null);
+  const trackRef = useRef(null);
+  const [offset, setOffset] = useState(0);
+  const [bounds, setBounds] = useState({ max: 0, step: 264 });
+
+  const measure = () => {
+    const track = trackRef.current;
+    if (!track || !track.children.length) return;
+    const card = track.children[0].getBoundingClientRect();
+    const step = card.width + 14;
+    setBounds({ step, max: Math.max(0, track.scrollWidth - viewportRef.current.clientWidth) });
+  };
+
+  useEffect(() => {
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [items.length]);
+
+  // Keep the offset inside bounds when the viewport resizes
+  useEffect(() => {
+    setOffset((o) => Math.min(o, bounds.max));
+  }, [bounds.max]);
+
+  if (!items.length) return null;
+
+  const step = Math.min(bounds.step, bounds.max || bounds.step);
+
+  return (
+    <div className="mt-[22px] flex items-center gap-2.5">
+      <button
+        type="button"
+        onClick={() => setOffset((o) => Math.max(0, o - step))}
+        disabled={offset <= 0}
+        aria-label="Previous research works"
+        className="carousel-button"
+      >
+        <ChevronLeft className="h-3 w-3" />
+      </button>
+
+      <div ref={viewportRef} className="carousel-viewport">
+        <div ref={trackRef} className="carousel-track" style={{ transform: `translateX(${-offset}px)` }}>
+          {items.map((r, i) => (
+            <Link key={r.id} to={`/research/${r.id}`} className="research-card">
+              <span className="research-cover" style={{ background: coverGradients[i % coverGradients.length] }}>
+                <span className="px-1 text-center font-display text-[12px] leading-tight text-white/95">
+                  {r.program_code || r.program_name || 'Research'}
+                </span>
+              </span>
+              <div className="min-w-0">
+                <h3 className="research-card-title">{r.title}</h3>
+                <p className="research-author">{r.authors || 'Unattributed'}</p>
+                {r.year && <span className="research-type">{r.year}</span>}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setOffset((o) => Math.min(bounds.max, o + step))}
+        disabled={offset >= bounds.max}
+        aria-label="Next research works"
+        className="carousel-button"
+      >
+        <ChevronRight className="h-3 w-3" />
+      </button>
+    </div>
+  );
+}
+
+export default function Home() {
+  const navigate = useNavigate();
+  const [stats, setStats] = useState(null);
+  const [programs, setPrograms] = useState([]);
+  const [featured, setFeatured] = useState([]);
+  const [latest, setLatest] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API}/stats/`)
+      .then(r => { if (r.data && typeof r.data === 'object' && !Array.isArray(r.data)) setStats(r.data); })
+      .catch(() => {});
+    axios.get(`${API}/programs/`)
+      .then(r => { if (Array.isArray(r.data)) setPrograms(r.data); })
+      .catch(() => {});
+    axios.get(`${API}/research/`, { params: { featured: 1, limit: 8 } })
+      .then(r => { if (Array.isArray(r.data?.data)) setFeatured(r.data.data); })
+      .catch(() => {});
+    axios.get(`${API}/research/`, { params: { limit: 4 } })
+      .then(r => { if (Array.isArray(r.data?.data)) setLatest(r.data.data); })
+      .catch(() => {});
+  }, []);
+
+  const sliderItems = useMemo(() => (featured.length ? featured : latest.slice(0, 2)), [featured, latest]);
+  const carouselItems = useMemo(() => (featured.length >= 4 ? featured : [...featured, ...latest].slice(0, 6)), [featured, latest]);
+
+  const totalWorks = stats?.total ?? latest.length;
+
+  return (
+    <div className="bg-cream">
+      {/* ================= HERO ================= */}
+      <section className="hero-image relative overflow-hidden">
+        <div className="container-page relative z-10 pb-24 pt-12 lg:pb-28 lg:pt-14">
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[47%_1fr] lg:gap-6">
+            <div>
+              <div className="eyebrow inline-flex items-center gap-2 rounded-full bg-[#E7F1EC] px-[11px] py-[7px] text-[#176653]">
+                <BookOpen className="h-3 w-3" />
+                <span>Central Research Repository</span>
+              </div>
+
+              <h1 className="hero-title mt-5">
+                Discover research
+                <br />
+                <em>works worth keeping.</em>
+              </h1>
+
+              <p className="mt-5 max-w-[390px] text-[13px] leading-[1.5] text-[#55736C]">
+                Browse and search the institutional repository. Submissions are automatically cataloged
+                with unique codes.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                <div className="stat-card flex h-16 w-[156px] items-center gap-3 px-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-soft-green">
+                    <FileText className="h-[18px] w-[18px] text-emerald-brand" />
+                  </span>
+                  <div>
+                    <div className="text-[21px] font-bold leading-none text-forest">{totalWorks}</div>
+                    <div className="mt-1 text-[9.5px] font-semibold text-muted-green">Research Works</div>
+                  </div>
+                </div>
+                <div className="stat-card flex h-16 w-[156px] items-center gap-3 px-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-soft-green">
+                    <Folder className="h-[18px] w-[18px] text-emerald-brand" />
+                  </span>
+                  <div>
+                    <div className="text-[21px] font-bold leading-none text-forest">{stats?.programs ?? programs.length}</div>
+                    <div className="mt-1 text-[9.5px] font-semibold text-muted-green">Programs</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative flex flex-col items-stretch">
+              <BookSlider items={sliderItems} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= QUICK ACCESS ================= */}
+      <section className="relative z-20">
+        <div className="container-page py-10">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-12">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-bold uppercase tracking-[0.10em] text-[#176653]">Quick Access</span>
+                <span className="h-px w-[28px] bg-[#8FB3A7]" />
+              </div>
+              <h2 className="section-title mt-3.5 text-[34px] leading-none">Explore. Read. Grow.</h2>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <Link to="/research" className="quick-card h-[72px] w-[108px]">
+                <span className="quick-icon"><BookOpen className="h-[17px] w-[17px]" /></span>
+                <span className="quick-label">Research Works</span>
+              </Link>
+              <a href="#programs" className="quick-card h-[72px] w-[108px]">
+                <span className="quick-icon"><Folder className="h-[17px] w-[17px]" /></span>
+                <span className="quick-label">Programs</span>
+              </a>
+              <Link to="/research" className="quick-card h-[72px] w-[108px]">
+                <span className="quick-icon"><Search className="h-[17px] w-[17px]" /></span>
+                <span className="quick-label">Browse Research</span>
+              </Link>
+              <Link to="/about" className="quick-card h-[72px] w-[108px]">
+                <span className="quick-icon"><Landmark className="h-[17px] w-[17px]" /></span>
+                <span className="quick-label !text-[10px] !leading-[1.2]">Institutional<br />Repository</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= ABOUT ================= */}
+      <section className="about-repository" id="about">
+        <div className="container-page relative z-[1] grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_auto]">
+          <div>
+            <div className="section-label">About the Repository</div>
+            <h2 className="about-title mt-4">
+              Preserving knowledge,
+              <br />
+              empowering futures.
+            </h2>
+            <p className="mt-4 max-w-[360px] text-[13px] leading-[1.55] text-[#52736A]">
+              The Central Research Repository is a digital library of academic and institutional research,
+              providing easy access to scholarly works, programs, and resources from our community.
+            </p>
+            <Link to="/about" className="hero-cta mt-6">
+              <span>Learn More</span>
+              <ArrowRight className="h-[13px] w-[13px]" />
+            </Link>
+          </div>
+
+          <div className="repository-features w-full lg:w-[468px]">
+            <div className="feature">
+              <span className="feature-icon"><Globe className="h-[18px] w-[18px]" /></span>
+              <h3 className="feature-title mt-3">Open Access</h3>
+              <p className="feature-description mt-1.5">Access quality research anytime, anywhere.</p>
+            </div>
+            <div className="feature">
+              <span className="feature-icon"><Shield className="h-[18px] w-[18px]" /></span>
+              <h3 className="feature-title mt-3">Trusted Repository</h3>
+              <p className="feature-description mt-1.5">Preserving authentic and credible works.</p>
+            </div>
+            <div className="feature">
+              <span className="feature-icon"><GraduationCap className="h-[18px] w-[18px]" /></span>
+              <h3 className="feature-title mt-3">Academic Excellence</h3>
+              <p className="feature-description mt-1.5">Supporting research, innovation, and discovery.</p>
+            </div>
+            <div className="feature">
+              <span className="feature-icon"><Users className="h-[18px] w-[18px]" /></span>
+              <h3 className="feature-title mt-3">Community Driven</h3>
+              <p className="feature-description mt-1.5">For students, faculty, and researchers.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= PROGRAMS ================= */}
+      <section className="programs-section" id="programs">
+        <div className="container-page relative z-[1]">
+          <div className="flex items-start justify-between gap-6">
+            <div>
+              <div className="eyebrow flex items-center gap-2 text-[#176653]">
+                <span>Browse by Category</span>
+                <span className="h-px w-[25px] bg-[#8FB3A7]" />
+              </div>
+              <h2 className="section-title mt-2 text-[33px]">Find research by program.</h2>
+            </div>
+            <Link to="/research" className="view-programs">
+              <span>View All Programs</span>
+              <ArrowRight className="view-arrow h-[13px] w-[13px]" />
+            </Link>
+          </div>
+
+          <div className="program-grid">
+            <Link to="/research" className="program-card">
+              <span className="program-icon"><BookOpen className="h-[17px] w-[17px]" /></span>
+              <span className="program-name">All Programs</span>
+              <span className="program-count">{totalWorks}</span>
+              <ChevronRight className="program-arrow h-[13px] w-[13px]" />
+            </Link>
+
+            {programs.map((p, i) => {
+              const Icon = categoryIcons[i % categoryIcons.length];
+              return (
+                <Link key={p.id} to={`/research?program=${encodeURIComponent(p.code)}`} className="program-card">
+                  <span className="program-icon"><Icon className="h-[17px] w-[17px]" /></span>
+                  <span className="program-name">{p.name}</span>
+                  <span className="program-count">{p.code}</span>
+                  <ChevronRight className="program-arrow h-[13px] w-[13px]" />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= FEATURED WORKS ================= */}
+      <section className="featured-section">
+        <div className="container-page">
+          <div className="flex items-start justify-between gap-6">
+            <div>
+              <div className="eyebrow flex items-center gap-2 text-[13px] text-[#176653]">
+                <span>Featured Collections</span>
+                <span className="h-px w-[25px] bg-[#8FB3A7]" />
+              </div>
+              <h2 className="section-title mt-2 text-[36px]">Featured Research Works</h2>
+            </div>
+            <Link to="/research" className="view-programs !text-[13px]">
+              <span>View All</span>
+              <ArrowRight className="view-arrow h-[13px] w-[13px]" />
+            </Link>
+          </div>
+
+          <WorksCarousel items={carouselItems} />
+        </div>
+      </section>
+
+      {/* ================= LATEST ADDED ================= */}
+      <section className="bg-[#F8F9F4] py-[45px] pb-[55px]">
+        <div className="container-page">
+          <div className="flex items-start justify-between gap-6">
+            <div>
+              <div className="eyebrow flex items-center gap-2 text-[13px] text-[#176653]">
+                <span>Recent Submissions</span>
+                <span className="h-px w-[25px] bg-[#8FB3A7]" />
+              </div>
+              <h2 className="section-title mt-1.5 text-[36px]">Latest Added Research</h2>
+            </div>
+            <Link to="/research" className="view-programs !text-[13px]">
+              <span>View All</span>
+              <ArrowRight className="view-arrow h-[13px] w-[13px]" />
+            </Link>
+          </div>
+
+          {latest.length === 0 ? (
+            <div className="research-table-wrapper px-6 py-14 text-center">
+              <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-soft-green text-emerald-brand">
+                <BookOpen className="h-6 w-6" />
+              </span>
+              <h3 className="section-title text-[20px]">No research catalogued yet</h3>
+              <p className="mx-auto mt-1.5 max-w-sm text-[13px] text-muted-green">
+                Submissions appear here as soon as an administrator approves them.
+              </p>
+              <button type="button" onClick={() => navigate('/research')} className="hero-cta mt-5">
+                <span>Browse the repository</span>
+                <ArrowRight className="hero-arrow h-[14px] w-[14px]" />
+              </button>
+            </div>
+          ) : (
+            <div className="research-table-wrapper">
+              <div className="research-row table-header">
+                <div>Title</div>
+                <div>Author</div>
+                <div>Program</div>
+                <div>Date Added</div>
+                <div>Year</div>
+                <div />
+              </div>
+
+              {latest.map(r => (
+                <Link key={r.id} to={`/research/${r.id}`} className="research-row">
+                  <div className="research-row-title">
+                    <FileText className="h-3 w-3 shrink-0" />
+                    <span>{r.title}</span>
+                  </div>
+                  <div className="research-row-author">{r.authors || 'Unattributed'}</div>
+                  <div>
+                    {r.program_name && <span className="program-badge">{r.program_name}</span>}
+                  </div>
+                  <div className="research-date">{formatDate(r.created_at) || '—'}</div>
+                  <div className="research-date">{r.year || '—'}</div>
+                  <div className="research-row-arrow">
+                    <ChevronRight className="h-[13px] w-[13px]" />
+                  </div>
+                </Link>
               ))}
             </div>
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-8">
-                <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}><ChevronLeft className="h-4 w-4" /> Prev</Button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 7).map(p => (
-                  <Button key={p} size="sm" variant={p === page ? 'default' : 'outline'} onClick={() => setPage(p)} className={p === page ? 'gradient-btn rounded-full' : 'rounded-full'}>{p}</Button>
-                ))}
-                <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next <ChevronRight className="h-4 w-4" /></Button>
-              </div>
-            )}
-          </>
-        )}
+          )}
+        </div>
       </section>
     </div>
   );

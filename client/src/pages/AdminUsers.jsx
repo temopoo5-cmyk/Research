@@ -64,7 +64,7 @@ export default function AdminUsers() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-[#23CE6B]/15 hover:bg-[#23CE6B]/20">
+                <TableRow className="bg-[#08755B]/15 hover:bg-[#08755B]/20">
                   <TableHead>ID</TableHead><TableHead>Username</TableHead><TableHead>Full Name</TableHead><TableHead>Role</TableHead><TableHead>Created</TableHead><TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>

@@ -55,7 +55,7 @@ export default function AdminPrograms() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-[#23CE6B]/15 hover:bg-[#23CE6B]/20">
+                <TableRow className="bg-[#08755B]/15 hover:bg-[#08755B]/20">
                   <TableHead>ID</TableHead><TableHead>Code</TableHead><TableHead>Name</TableHead><TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -63,7 +63,7 @@ export default function AdminPrograms() {
                 {programs.map(p => (
                   <TableRow key={p.id}>
                     <TableCell className="text-muted-foreground font-mono">{p.id}</TableCell>
-                    <TableCell><span className="code-tag sticker-mint bg-[#23CE6B]/20 text-[#12854A]">{p.code}</span></TableCell>
+                    <TableCell><span className="code-tag sticker-mint bg-[#08755B]/20 text-[#0C765E]">{p.code}</span></TableCell>
                     <TableCell>{p.name}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">

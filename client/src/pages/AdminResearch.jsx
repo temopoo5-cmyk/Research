@@ -10,7 +10,7 @@ import {
   Tabs, TabsList, TabsTrigger,
 } from '../components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { Search, CheckCircle2, XCircle, RotateCcw, Pencil, Trash2 } from 'lucide-react';
+import { Search, CheckCircle2, XCircle, RotateCcw, Pencil, Trash2, Star } from 'lucide-react';
 
 export default function AdminResearch() {
   const [research, setResearch] = useState([]);
@@ -19,7 +19,8 @@ export default function AdminResearch() {
 
   const fetchData = () => {
     const params = {};
-    if (filter !== 'all') params.status = filter;
+    if (filter === 'featured') params.featured = 1;
+    else if (filter !== 'all') params.status = filter;
     if (search) params.search = search;
     axios.get(`${API}/research/all`, { params }).then(r => { if (Array.isArray(r.data)) setResearch(r.data); }).catch(() => {});
   };
@@ -28,6 +29,10 @@ export default function AdminResearch() {
 
   const updateStatus = (id, status) => {
     axios.patch(`${API}/research/${id}/status`, { status }).then(() => fetchData());
+  };
+
+  const toggleFeatured = (item) => {
+    axios.patch(`${API}/research/${item.id}/featured`, { is_featured: !item.is_featured }).then(() => fetchData());
   };
 
   const handleDelete = async (id) => {
@@ -48,10 +53,11 @@ export default function AdminResearch() {
 
       <Tabs value={filter} onValueChange={setFilter} className="space-y-6">
         <TabsList className="rounded-full bg-white/70 border border-border shadow-sm">
-          <TabsTrigger value="all" className="rounded-full data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#062514]">All</TabsTrigger>
-          <TabsTrigger value="pending" className="rounded-full data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#062514]">Pending</TabsTrigger>
-          <TabsTrigger value="approved" className="rounded-full data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#062514]">Approved</TabsTrigger>
-          <TabsTrigger value="rejected" className="rounded-full data-[state=active]:bg-[#23CE6B] data-[state=active]:text-[#062514]">Rejected</TabsTrigger>
+          <TabsTrigger value="all" className="rounded-full data-[state=active]:bg-[#08755B] data-[state=active]:text-[#FFFFFF]">All</TabsTrigger>
+          <TabsTrigger value="pending" className="rounded-full data-[state=active]:bg-[#08755B] data-[state=active]:text-[#FFFFFF]">Pending</TabsTrigger>
+          <TabsTrigger value="approved" className="rounded-full data-[state=active]:bg-[#08755B] data-[state=active]:text-[#FFFFFF]">Approved</TabsTrigger>
+          <TabsTrigger value="rejected" className="rounded-full data-[state=active]:bg-[#08755B] data-[state=active]:text-[#FFFFFF]">Rejected</TabsTrigger>
+          <TabsTrigger value="featured" className="rounded-full data-[state=active]:bg-[#08755B] data-[state=active]:text-[#FFFFFF]">Featured</TabsTrigger>
         </TabsList>
 
         <Card className="quirk-c">
@@ -66,18 +72,29 @@ export default function AdminResearch() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[#23CE6B]/15 hover:bg-[#23CE6B]/20">
-                    <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Authors</TableHead><TableHead>Year</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-[#08755B]/15 hover:bg-[#08755B]/20">
+                    <TableHead>Code</TableHead><TableHead>Title</TableHead><TableHead>Authors</TableHead><TableHead>Year</TableHead><TableHead>Status</TableHead><TableHead className="text-center">Featured</TableHead><TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {research.map(r => (
                     <TableRow key={r.id}>
-                      <TableCell className="font-mono font-bold text-[#12854A] text-xs">{r.code}</TableCell>
-                       <TableCell><Link to={`/research/${r.id}`} className="font-medium hover:text-[#12854A] hover:underline">{r.title}</Link></TableCell>
+                      <TableCell className="font-mono font-bold text-[#0C765E] text-xs">{r.code}</TableCell>
+                       <TableCell><Link to={`/research/${r.id}`} className="font-medium hover:text-[#0C765E] hover:underline">{r.title}</Link></TableCell>
                       <TableCell className="text-muted-foreground">{r.authors}</TableCell>
                       <TableCell className="text-muted-foreground font-mono">{r.year}</TableCell>
                       <TableCell><Badge variant={r.status} className="capitalize">{r.status}</Badge></TableCell>
+                      <TableCell className="text-center">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => toggleFeatured(r)}
+                          title={r.is_featured ? 'Remove from featured books' : 'Feature on home page'}
+                          className={`rounded-full ${r.is_featured ? 'text-amber-500 hover:bg-amber-500/10' : 'text-muted-foreground hover:text-amber-500'}`}
+                        >
+                          <Star className={`h-4 w-4 ${r.is_featured ? 'fill-current' : ''}`} />
+                        </Button>
+                      </TableCell>
                       <TableCell>
                         <div className="flex justify-end gap-1.5 flex-wrap">
                           {r.status !== 'approved' && <Button size="sm" className="gradient-btn rounded-full" onClick={() => updateStatus(r.id, 'approved')}><CheckCircle2 className="h-3.5 w-3.5" /> Approve</Button>}
@@ -89,7 +106,7 @@ export default function AdminResearch() {
                       </TableCell>
                     </TableRow>
                   ))}
-                  {research.length === 0 && <TableRow><TableCell colSpan={7} className="text-center py-12 text-muted-foreground">No research found</TableCell></TableRow>}
+                  {research.length === 0 && <TableRow><TableCell colSpan={8} className="text-center py-12 text-muted-foreground">No research found</TableCell></TableRow>}
                 </TableBody>
               </Table>
             </div>

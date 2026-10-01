@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Button } from './ui/button';
-import { GraduationCap, Menu, X, LogOut } from 'lucide-react';
+import { GraduationCap, Menu, X, Search, LogOut, ChevronRight } from 'lucide-react';
 
 const publicItems = [
   { to: '/', label: 'Home', end: true },
   { to: '/research', label: 'Browse Research' },
+  { to: '/about', label: 'About' },
 ];
 
 const authItems = [
@@ -20,26 +20,20 @@ const adminItems = [
   { to: '/admin/programs', label: 'Manage Programs' },
 ];
 
-const linkClass = ({ isActive }) =>
-  `px-3 py-2 rounded-full text-sm font-medium transition-all ${
-    isActive
-      ? 'bg-[#23CE6B] text-[#062514] font-semibold'
-      : 'text-[#EAFBF1]/75 hover:bg-white/10 hover:text-white'
-  }`;
+const navLinkClass = ({ isActive }) =>
+  `nav-link${isActive ? ' is-active' : ''}`;
 
-const tickerItems = [
-  'RS-2026-0001',
-  'Auto-catalogued',
-  'Institutional Repository',
-  'Peer reviewed',
-  'Open access',
-  'Since 2019',
-];
+const menuLinkClass = ({ isActive }) =>
+  `flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-[13.5px] font-semibold transition ${
+    isActive ? 'bg-emerald-brand text-white' : 'text-muted-green hover:bg-soft-green hover:text-forest'
+  }`;
 
 export default function Navbar() {
   const { token, user, isAdmin, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [term, setTerm] = useState('');
   const navigate = useNavigate();
+  const [params] = useSearchParams();
 
   const close = () => setOpen(false);
 
@@ -49,78 +43,60 @@ export default function Navbar() {
     navigate('/');
   };
 
-  const rightSide = token ? (
-    <div className="flex items-center gap-2">
-      <div className="hidden sm:flex items-center gap-2.5">
-        <div className="h-8 w-8 rounded-full gradient-btn-invert flex items-center justify-center text-xs font-bold font-mono">
-          {(user?.full_name || 'U').charAt(0).toUpperCase()}
-        </div>
-        <div className="leading-tight">
-          <p className="text-xs font-semibold text-white truncate max-w-[140px]">{user?.full_name || 'User'}</p>
-          <p className="text-[10px] text-[#9FEBBF]">{isAdmin ? 'Administrator' : 'User'}</p>
-        </div>
-      </div>
-      <Button variant="outline" size="sm" className="rounded-full border-white/30 bg-transparent text-white hover:bg-[#23CE6B]/15 hover:text-white" onClick={handleLogout}>
-        <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign Out</span>
-      </Button>
-    </div>
-  ) : null;
+  const submitSearch = (e) => {
+    e.preventDefault();
+    const q = term.trim();
+    close();
+    if (!params.get('q')) return;
+    navigate(q ? `/research?q=${encodeURIComponent(q)}` : '/research');
+  };
 
-  const mobileLinks = (
-    <>
-      {publicItems.map(item => (
-        <NavLink key={item.to} to={item.to} end={item.end} onClick={close} className={linkClass}>
-          {item.label}
-        </NavLink>
-      ))}
-      {token && (
-        <>
-          {authItems.map(item => (
-            <NavLink key={item.to} to={item.to} onClick={close} className={linkClass}>
-              {item.label}
-            </NavLink>
-          ))}
-          <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wider text-[#EAFBF1]/40">Administration</p>
-          {adminItems.map(item => (
-            <NavLink key={item.to} to={item.to} onClick={close} className={linkClass}>
-              {item.label}
-            </NavLink>
-          ))}
-        </>
-      )}
-    </>
+  const searchField = (
+    <form onSubmit={submitSearch} className="relative ml-auto w-[200px] sm:w-[250px] lg:w-[320px]">
+      <label htmlFor="site-search" className="sr-only">Search research</label>
+      <input
+        id="site-search"
+        type="search"
+        value={term}
+        onChange={(e) => setTerm(e.target.value)}
+        placeholder="Search research, authors, keywords..."
+        className="header-search"
+      />
+      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-brand pointer-events-none">
+        <Search className="h-[18px] w-[18px]" />
+      </span>
+    </form>
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#23CE6B]/25 bg-gradient-to-r from-[#0A2B1C] via-[#0F3A26] to-[#0A2B1C] shadow-[0_10px_40px_-18px_rgba(6,26,17,0.9)]">
-      <div className="mx-auto max-w-7xl flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
-        <div className="flex items-center gap-3">
-          <button onClick={() => { close(); navigate('/'); }} className="flex items-center gap-3 group">
-            <div className="h-9 w-9 rounded-2xl gradient-btn-invert flex items-center justify-center shrink-0 tilt-r-sm group-hover:rotate-0 transition-transform">
-              <GraduationCap className="h-5 w-5 text-[#062514]" />
-            </div>
-            <span className="font-display font-semibold text-lg tracking-tight text-white">
-              Research<span className="text-[#23CE6B]">Hub</span>
-            </span>
-          </button>
-        </div>
+    <header className="sticky top-0 z-50 border-b border-[#E6EDE9] bg-ivory/95 backdrop-blur">
+      <div className="container-page grid h-[60px] grid-cols-[1fr_auto] items-center gap-4 md:grid-cols-[1fr_auto_1fr] lg:gap-8">
+        {/* Brand */}
+        <NavLink to="/" onClick={close} className="flex shrink-0 items-center gap-3 justify-self-start">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#08735A]">
+            <GraduationCap className="h-[19px] w-[19px] text-white" />
+          </span>
+          <span className="font-display text-[30px] font-bold leading-none tracking-[-0.02em] text-[#123F38]">
+            ResearchHub
+          </span>
+        </NavLink>
 
-        <nav className="hidden xl:flex items-center gap-1">
+        {/* Nav */}
+        <nav className="hidden items-center gap-8 justify-self-center md:flex">
           {publicItems.map(item => (
-            <NavLink key={item.to} to={item.to} end={item.end} className={linkClass}>
+            <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClass}>
               {item.label}
             </NavLink>
           ))}
           {token && (
             <>
               {authItems.map(item => (
-                <NavLink key={item.to} to={item.to} className={linkClass}>
+                <NavLink key={item.to} to={item.to} className={navLinkClass}>
                   {item.label}
                 </NavLink>
               ))}
-              <span className="hidden xl:inline-flex items-center px-3 text-[11px] font-semibold uppercase tracking-wider text-[#EAFBF1]/40">Administration</span>
-              {adminItems.map(item => (
-                <NavLink key={item.to} to={item.to} className={linkClass}>
+              {isAdmin && adminItems.map(item => (
+                <NavLink key={item.to} to={item.to} className={navLinkClass}>
                   {item.label}
                 </NavLink>
               ))}
@@ -128,27 +104,88 @@ export default function Navbar() {
           )}
         </nav>
 
-        {rightSide && <div className="hidden xl:flex items-center">{rightSide}</div>}
-
-        <button onClick={() => setOpen(!open)} className="xl:hidden rounded-full p-2 text-[#EAFBF1] hover:bg-white/10">
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-
-      <div className="marquee-mask overflow-hidden border-t border-[#23CE6B]/20 bg-[#06180E]/40 py-1.5">
-        <div className="ticker-track font-mono text-[10px] uppercase tracking-[0.3em] text-[#9FEBBF]/80">
-          {[...tickerItems, ...tickerItems].map((item, i) => (
-            <span key={i} className="px-6 whitespace-nowrap">{item} <span className="text-[#23CE6B]">✦</span></span>
-          ))}
+        {/* Account + search */}
+        <div className="col-start-2 flex w-full shrink-0 items-center justify-end gap-3 md:col-start-3">
+          {token ? (
+            <div className="hidden shrink-0 items-center gap-2 md:flex">
+              <div className="text-right leading-tight">
+                <p className="max-w-[140px] truncate text-[12.5px] font-semibold text-forest">
+                  {user?.full_name || 'User'}
+                </p>
+                <p className="text-[10.5px] font-semibold uppercase tracking-[0.09em] text-muted-green">
+                  {isAdmin ? 'Administrator' : 'Member'}
+                </p>
+              </div>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-brand text-[13px] font-bold text-white">
+                {(user?.full_name || 'U').charAt(0).toUpperCase()}
+              </span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                aria-label="Sign out"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-[#DCEBE5] text-muted-green transition hover:border-[#B9D4CA] hover:bg-soft-green hover:text-forest"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : null}
+          <div className="hidden shrink-0 md:block">{searchField}</div>
+          <button
+            type="button"
+            onClick={() => setOpen(!open)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#DCEBE5] text-forest transition hover:bg-soft-green md:hidden"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
 
       {open && (
-        <div className="xl:hidden border-t border-[#23CE6B]/20 bg-[#0A2B1C]/98 px-4 py-3">
-          <nav className="flex flex-col gap-1 pb-3">{mobileLinks}</nav>
+        <div className="border-t border-[#E6EDE9] bg-ivory px-4 py-4 md:hidden">
+          <nav className="flex flex-col gap-1">
+            {publicItems.map(item => (
+              <NavLink key={item.to} to={item.to} end={item.end} onClick={close} className={menuLinkClass}>
+                {item.label}
+                <ChevronRight className="h-4 w-4 opacity-50" />
+              </NavLink>
+            ))}
+            {token && (
+              <>
+                {authItems.map(item => (
+                  <NavLink key={item.to} to={item.to} onClick={close} className={menuLinkClass}>
+                    {item.label}
+                    <ChevronRight className="h-4 w-4 opacity-50" />
+                  </NavLink>
+                ))}
+                {isAdmin && adminItems.map(item => (
+                  <NavLink key={item.to} to={item.to} onClick={close} className={menuLinkClass}>
+                    {item.label}
+                    <ChevronRight className="h-4 w-4 opacity-50" />
+                  </NavLink>
+                ))}
+              </>
+            )}
+          </nav>
+
+          <div className="mt-4">{searchField}</div>
+
           {token && (
-            <div className="border-t border-[#23CE6B]/20 pt-3">
-              {rightSide}
+            <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#E6EDE9] pt-4">
+              <div className="min-w-0">
+                <p className="truncate text-[13px] font-semibold text-forest">{user?.full_name || 'User'}</p>
+                <p className="text-[10.5px] font-semibold uppercase tracking-[0.09em] text-muted-green">
+                  {isAdmin ? 'Administrator' : 'Member'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 rounded-full border border-[#DCEBE5] px-3.5 py-2 text-[12.5px] font-semibold text-forest transition hover:bg-soft-green"
+              >
+                <LogOut className="h-4 w-4" /> Sign Out
+              </button>
             </div>
           )}
         </div>

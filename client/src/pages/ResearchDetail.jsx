@@ -12,7 +12,7 @@ import { ArrowLeft, Users, Award, FolderTree, Calendar, FileText, Tags, CheckCir
 
 const rowMeta = {
   adviser: { icon: Award, tint: 'bg-amber-100 text-amber-700' },
-  program: { icon: FolderTree, tint: 'bg-[#23CE6B]/15 text-[#12854A]' },
+  program: { icon: FolderTree, tint: 'bg-[#08755B]/15 text-[#0C765E]' },
   year: { icon: Calendar, tint: 'bg-sky-100 text-sky-700' },
   code: { icon: FileText, tint: 'bg-orange-100 text-orange-700' },
 };
@@ -80,11 +80,11 @@ export default function ResearchDetail() {
         </div>
 
         <Card className="quirk-c overflow-hidden">
-          <div className="h-1.5 bg-gradient-to-r from-[#23CE6B] via-[#1B7A45] to-[#7DD3FC]" />
+          <div className="h-1.5 bg-gradient-to-r from-[#08755B] via-[#0C765E] to-[#8FB3A7]" />
           <CardHeader className="pb-4">
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <Badge variant={research.status} className="capitalize">{research.status}</Badge>
-              <span className="code-tag sticker bg-[#0B2E1B] text-[#9FEBBF] -rotate-2">{research.code}</span>
+              <span className="code-tag sticker bg-[#0A3B2E] text-[#BFE0D3] -rotate-2">{research.code}</span>
             </div>
             <p className="eyebrow mb-2">Catalogued work</p>
             <CardTitle className="font-display text-3xl leading-tight">{research.title}</CardTitle>
@@ -92,7 +92,7 @@ export default function ResearchDetail() {
           <CardContent className="space-y-6">
             <div className="grid sm:grid-cols-2 gap-4">
               {detailRows.map((row, i) => {
-                const meta = rowMeta[row.key] || { icon: FileText, tint: 'bg-[#23CE6B]/15 text-[#12854A]' };
+                const meta = rowMeta[row.key] || { icon: FileText, tint: 'bg-[#08755B]/15 text-[#0C765E]' };
                 const Icon = meta.icon;
                 return (
                   <div key={row.key} className={`flex items-start gap-3 p-3.5 rounded-2xl ${i % 2 ? 'quirk-b' : 'quirk-a'} bg-white/70 border border-border`}>
@@ -111,7 +111,7 @@ export default function ResearchDetail() {
               <div className="flex flex-wrap gap-2">
                 {authors.map((a, i) => (
                   <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-border shadow-sm text-sm font-medium">
-                    <span className="h-5 w-5 rounded-full bg-[#23CE6B]/20 text-[#12854A] flex items-center justify-center text-[10px] font-bold font-mono">{a.charAt(0).toUpperCase()}</span>
+                    <span className="h-5 w-5 rounded-full bg-[#08755B]/20 text-[#0C765E] flex items-center justify-center text-[10px] font-bold font-mono">{a.charAt(0).toUpperCase()}</span>
                     {a}
                   </span>
                 ))}
@@ -123,7 +123,7 @@ export default function ResearchDetail() {
                 <p className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1.5"><Tags className="h-3.5 w-3.5" /> Keywords</p>
                 <div className="flex flex-wrap gap-2">
                   {keywords.map((k, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-[#23CE6B]/15 text-[#12854A] text-xs font-medium">{k}</span>
+                    <span key={i} className="px-3 py-1 rounded-full bg-[#08755B]/15 text-[#0C765E] text-xs font-medium">{k}</span>
                   ))}
                 </div>
               </div>
@@ -132,7 +132,7 @@ export default function ResearchDetail() {
             {research.abstract && (
               <div>
                 <Separator className="mb-4" />
-                <p className="text-sm font-semibold text-[#12854A] mb-2 flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Abstract</p>
+                <p className="text-sm font-semibold text-[#0C765E] mb-2 flex items-center gap-1.5"><BookOpen className="h-4 w-4" /> Abstract</p>
                 <LockedAbstract text={research.abstract} />
               </div>
             )}

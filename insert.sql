@@ -13,6 +13,10 @@ ON CONFLICT DO NOTHING;
 -- 2) Store the library call numbers in their own column
 ALTER TABLE research ADD COLUMN IF NOT EXISTS call_number TEXT;
 
+-- 2b) Admin-curated "featured book" flag (drives the Featured Books shelf)
+ALTER TABLE research ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS idx_research_featured ON research (is_featured) WHERE is_featured;
+
 -- 3) Insert the research works
 --    code format matches the app: RS-<year>-<sequence>
 WITH src (code, title, authors, year, call_number, abstract) AS (
@@ -671,7 +675,19 @@ FROM numbered n
 ON CONFLICT (code) DO NOTHING;
 
 -- ============================================================
+-- 4) Seed the Featured Books shelf
+--    Admins can change this any time from Manage Research.
+-- ============================================================
+UPDATE research
+SET is_featured = true
+WHERE code IN (
+  'RS-2025-0001', 'RS-2025-0002', 'RS-2025-0003',
+  'RS-2025-0004', 'RS-2025-0005', 'RS-2025-0006'
+);
+
+-- ============================================================
 -- Done. Verify with:
 --   SELECT COUNT(*) FROM research;
 --   SELECT code, title, year, call_number FROM research ORDER BY code LIMIT 20;
+--   SELECT code, title FROM research WHERE is_featured ORDER BY code;
 -- ============================================================

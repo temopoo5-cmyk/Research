@@ -38,11 +38,13 @@ CREATE TABLE IF NOT EXISTS research (
   keywords      TEXT NOT NULL DEFAULT '',        -- comma-separated keywords
   submitted_by  BIGINT REFERENCES users(id),
   status        TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('approved', 'pending', 'rejected')),
+  is_featured   BOOLEAN NOT NULL DEFAULT false,   -- admin-curated "featured book" shelf
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Indexes used by the search / filter queries
 CREATE INDEX IF NOT EXISTS idx_research_status    ON research (status);
+CREATE INDEX IF NOT EXISTS idx_research_featured  ON research (is_featured) WHERE is_featured;
 CREATE INDEX IF NOT EXISTS idx_research_year      ON research (year);
 CREATE INDEX IF NOT EXISTS idx_research_program   ON research (program_id);
 CREATE INDEX IF NOT EXISTS idx_users_role         ON users (role);

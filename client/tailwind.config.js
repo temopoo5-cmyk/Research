@@ -7,9 +7,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["'Space Grotesk'", "Inter", "'Segoe UI'", "system-ui", "sans-serif"],
-        display: ["Fraunces", "Georgia", "'Times New Roman'", "serif"],
-        mono: ["'Space Mono'", "ui-monospace", "SFMono-Regular", "monospace"]
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ['"Cormorant Garamond"', '"Playfair Display"', "Georgia", "serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
       },
       colors: {
         border: "hsl(var(--border))",
@@ -17,6 +17,19 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+
+        /* Design tokens (mirrors the @theme block in Design/*.html) */
+        forest: "#103F37",
+        "emerald-brand": "#08755B",
+        "deep-green": "#075744",
+        "muted-green": "#557A70",
+        cream: "#F7F8F3",
+        ivory: "#FBFBF7",
+        "soft-green": "#EAF3EF",
+        "pale-green": "#EEF5F1",
+        "mint-dark": "#D5EAE2",
+        line: "#DCEBE5",
+
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))"
@@ -46,16 +59,18 @@ export default {
           foreground: "hsl(var(--card-foreground))"
         },
         brand: {
-          DEFAULT: "#23CE6B",
-          hover: "#1CB85C",
-          dark: "#0A122A",
-          slate: "#4F6D7A",
-          olive: "#243010",
-          burgundy: "#2B061E",
-          ink: "#0B2E1B",
-          paper: "#FBFDF8",
-          moss: "#1B7A45",
-          deep: "#0A2B1C"
+          DEFAULT: "#08755B",
+          hover: "#06684F",
+          deep: "#075744",
+          forest: "#103F37",
+          muted: "#557A70",
+          ivory: "#FBFBF7",
+          cream: "#F7F8F3",
+          soft: "#EAF3EF",
+          pale: "#EEF5F1",
+          line: "#DCEBE5",
+          ink: "#062514",
+          slate: "#176653"
         }
       },
       borderRadius: {

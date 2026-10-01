@@ -1,222 +1,513 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../context/AuthContext';
-import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
+import { coverGradient, formatDate, pluralize } from '../lib/format';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '../components/ui/select';
-import { Badge } from '../components/ui/badge';
-import { Search, FileText, ChevronLeft, ChevronRight, Users, BookOpen as BookOpenIcon, Sparkles, FolderOpen, Lock, MapPin } from 'lucide-react';
-import FloatingBooks from '../components/FloatingBooks';
-import LockedAbstract from '../components/LockedAbstract';
+  Landmark, Search, SlidersHorizontal, FileText, FolderTree, BookOpen,
+  ArrowRight, ChevronLeft, ChevronRight, Users, X,
+} from 'lucide-react';
+
+const PAGE_SIZE = 10;
+
+const SORTS = [
+  { value: 'recent', label: 'Most Recent' },
+  { value: 'title', label: 'Title A-Z' },
+  { value: 'author', label: 'Author A-Z' },
+  { value: 'year', label: 'Newest Year' },
+];
+
+function Pagination({ page, pages, onChange }) {
+  if (pages < 1) return null;
+
+  const visible = [];
+  const push = (n) => { if (!visible.includes(n)) visible.push(n); };
+
+  push(1);
+  for (let p = page - 1; p <= page + 1; p += 1) if (p > 1 && p < pages) push(p);
+  if (pages > 1) push(pages);
+  visible.sort((a, b) => a - b);
+
+  const items = [];
+  visible.forEach((p, i) => {
+    if (i > 0 && p - visible[i - 1] > 1) items.push('gap');
+    items.push(p);
+  });
+
+  return (
+    <nav className="pagination" aria-label="Pagination">
+      <button
+        type="button"
+        className="page-btn"
+        aria-label="Previous page"
+        disabled={page <= 1}
+        onClick={() => onChange(page - 1)}
+      >
+        <ChevronLeft className="h-3.5 w-3.5" />
+      </button>
+
+      {items.map((item, i) =>
+        item === 'gap' ? (
+          <span key={`gap-${i}`} className="page-btn" aria-hidden="true">…</span>
+        ) : (
+          <button
+            key={item}
+            type="button"
+            className={`page-btn${item === page ? ' is-active' : ''}`}
+            aria-current={item === page ? 'page' : undefined}
+            onClick={() => onChange(item)}
+          >
+            {item}
+          </button>
+        )
+      )}
+
+      <button
+        type="button"
+        className="page-btn"
+        aria-label="Next page"
+        disabled={page >= pages}
+        onClick={() => onChange(page + 1)}
+      >
+        <ChevronRight className="h-3.5 w-3.5" />
+      </button>
+    </nav>
+  );
+}
 
 export default function ResearchList() {
-  const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
+
+  const q = params.get('q') || '';
+  const program = params.get('program') || '';
+  const year = params.get('year') || '';
+
+  const [draft, setDraft] = useState(q);
+  const [sort, setSort] = useState('recent');
+  const [showFilters, setShowFilters] = useState(false);
+
   const [research, setResearch] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [stats, setStats] = useState(null);
+  const [featured, setFeatured] = useState([]);
+  const [counts, setCounts] = useState({});
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({ search: '', program: '', year: '' });
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const fetchData = () => {
-    setLoading(true);
-    const params = { ...filters, page, limit: 12 };
-    Object.keys(params).forEach(k => { if (!params[k]) delete params[k]; });
-    axios.get(`${API}/research/`, { params }).then(r => {
-      setResearch(Array.isArray(r.data?.data) ? r.data.data : []);
-      setTotalPages(Number.isFinite(r.data?.pages) ? r.data.pages : 1);
-      setLoading(false);
-    }).catch(() => { setResearch([]); setTotalPages(1); setLoading(false); });
-  };
+  // Keep the hero input in sync when the URL changes from elsewhere (header/footer search)
+  useEffect(() => { setDraft(q); }, [q]);
 
   useEffect(() => {
     axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
-    axios.get(`${API}/stats/`).then(r => { if (r.data && typeof r.data === 'object' && !Array.isArray(r.data)) setStats(r.data); }).catch(() => {});
+    axios.get(`${API}/stats/`).then(r => { if (r.data && !Array.isArray(r.data)) setStats(r.data); }).catch(() => {});
+    axios.get(`${API}/research/`, { params: { featured: 1, limit: 4 } })
+      .then(r => { if (Array.isArray(r.data?.data)) setFeatured(r.data.data); })
+      .catch(() => {});
+
+    // One wide fetch to build per-program counts for the sidebar
+    axios.get(`${API}/research/`, { params: { limit: 500 } })
+      .then(r => {
+        const rows = Array.isArray(r.data?.data) ? r.data.data : [];
+        setCounts(rows.reduce((acc, row) => {
+          if (row.program_code) acc[row.program_code] = (acc[row.program_code] || 0) + 1;
+          return acc;
+        }, {}));
+      })
+      .catch(() => {});
   }, []);
 
-  useEffect(() => { fetchData(); }, [page]);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    const query = { page, limit: PAGE_SIZE };
+    if (q) query.search = q;
+    if (program) query.program = program;
+    if (year) query.year = year;
 
-  const handleSearch = (e) => { if (e) e.preventDefault(); setPage(1); fetchData(); };
-  const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
+    axios.get(`${API}/research/`, { params: query })
+      .then(r => {
+        if (cancelled) return;
+        setResearch(Array.isArray(r.data?.data) ? r.data.data : []);
+        setPages(Number.isFinite(r.data?.pages) ? Math.max(1, r.data.pages) : 1);
+        setTotal(Number.isFinite(r.data?.total) ? r.data.total : 0);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setResearch([]);
+        setPages(1);
+        setTotal(0);
+        setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [q, program, year, page]);
+
+  const applySearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    setParams(next => {
+      const p = new URLSearchParams(next);
+      if (draft.trim()) p.set('q', draft.trim());
+      else p.delete('q');
+      return p;
+    });
+  };
+
+  const setFilter = (key, value) => {
+    setPage(1);
+    setParams(next => {
+      const p = new URLSearchParams(next);
+      if (value) p.set(key, value);
+      else p.delete(key);
+      return p;
+    });
+  };
+
+  const clearAll = () => {
+    setDraft('');
+    setPage(1);
+    setParams({});
+  };
+
+  const years = useMemo(
+    () => Array.from({ length: 12 }, (_, i) => new Date().getFullYear() - i),
+    []
+  );
+
+  const sorted = useMemo(() => {
+    const rows = [...research];
+    switch (sort) {
+      case 'title':
+        return rows.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      case 'author':
+        return rows.sort((a, b) => (a.authors || '').localeCompare(b.authors || ''));
+      case 'year':
+        return rows.sort((a, b) => (b.year || 0) - (a.year || 0));
+      default:
+        return rows;
+    }
+  }, [research, sort]);
+
+  const goToPage = useCallback((p) => {
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const hasFilters = Boolean(q || program || year);
 
   return (
-    <div className="min-h-screen">
-      <section className="relative overflow-hidden border-b border-[#23CE6B]/25 bg-gradient-to-br from-[#0A2B1C] via-[#0E3A24] to-[#0A2418]">
-        <div className="pointer-events-none absolute inset-0 grid-lines opacity-20" aria-hidden="true" />
-        <FloatingBooks />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-14 lg:py-20">
-          <div className="grid gap-12 lg:grid-cols-[1fr_auto] items-center">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#23CE6B]/15 border border-[#23CE6B]/40 px-3.5 py-1.5 text-xs font-medium font-mono uppercase tracking-[0.18em] text-[#9FEBBF] mb-6">
-              <Sparkles className="h-3.5 w-3.5" /> Index of works
+    <div className="bg-cream">
+      {/* ================= CATALOG HERO ================= */}
+      <section className="catalog-hero">
+        <div className="container-page relative z-10 pb-24 pt-12 lg:pb-28 lg:pt-14">
+          <div className="max-w-[640px]">
+            <div className="eyebrow inline-flex items-center gap-2 text-[#176653]">
+              <Landmark className="h-[13px] w-[13px]" />
+              <span>Central Research Repository</span>
             </div>
-            <h1 className="headline-xl text-white text-5xl lg:text-[4.2rem] mb-5">
-              Browse the
-              <span className="block text-[#23CE6B] italic font-normal">whole archive.</span>
-            </h1>
-            <p className="text-[#9FEBBF]/85 text-lg mb-8 max-w-2xl">
-              Search the repository by code, title, author, program, year, or keywords.
+
+            <h1 className="catalog-title mt-4">Browse Research Catalog</h1>
+
+            <p className="mt-4 max-w-[540px] text-[13.5px] leading-[1.55] text-[#52736A]">
+              Discover credible research, academic papers, and scholarly resources from our institution.
             </p>
-            {stats && (
-              <div className="flex flex-wrap items-center gap-3">
-                {[
-                  { label: 'Research Works', value: stats.total, icon: FileText },
-                  { label: 'Programs', value: stats.programs, icon: FolderOpen },
-                ].map((s, i) => (
-                  <div key={s.label} className={`flex items-center gap-3 rounded-2xl ${i === 0 ? 'quirk-a' : 'quirk-b'} glass-green px-4 py-3 float-slow`} style={{ animationDelay: `${i * 0.6}s` }}>
-                    <div className="h-9 w-9 rounded-xl bg-[#23CE6B]/20 text-[#9FEBBF] flex items-center justify-center"><s.icon className="h-4 w-4" /></div>
-                    <div>
-                      <p className="font-display text-2xl font-semibold text-white leading-none">{s.value}</p>
-                      <p className="text-xs text-[#9FEBBF]/70">{s.label}</p>
-                    </div>
+
+            <form onSubmit={applySearch} className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="relative flex-1 sm:flex-none">
+                <label htmlFor="catalog-search" className="sr-only">Search all works</label>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0C765E]">
+                  <Search className="h-[17px] w-[17px]" />
+                </span>
+                <input
+                  id="catalog-search"
+                  type="search"
+                  value={draft}
+                  onChange={e => setDraft(e.target.value)}
+                  placeholder="Search all works, authors, or keywords..."
+                  className="catalog-search-input w-full !pl-11 sm:w-[410px]"
+                />
+              </div>
+              <button
+                type="button"
+                className="advanced-filter-button justify-center"
+                aria-expanded={showFilters}
+                aria-controls="advanced-filters"
+                onClick={() => setShowFilters(v => !v)}
+              >
+                <SlidersHorizontal className="h-[15px] w-[15px]" />
+                <span>Advanced Filters</span>
+              </button>
+            </form>
+
+            {showFilters && (
+              <div id="advanced-filters" className="latest-research-card mt-4 !p-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="filter-program" className="eyebrow mb-1.5 block">Program</label>
+                    <select
+                      id="filter-program"
+                      className="sort-select w-full"
+                      value={program}
+                      onChange={e => setFilter('program', e.target.value)}
+                    >
+                      <option value="">All Programs</option>
+                      {programs.map(p => <option key={p.id} value={p.code}>{p.name}</option>)}
+                    </select>
                   </div>
-                  ))}
+                  <div>
+                    <label htmlFor="filter-year" className="eyebrow mb-1.5 block">Year</label>
+                    <select
+                      id="filter-year"
+                      className="sort-select w-full"
+                      value={year}
+                      onChange={e => setFilter('year', e.target.value)}
+                    >
+                      <option value="">All Years</option>
+                      {years.map(y => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#EFF4F1] pt-3">
+                  <button type="submit" onClick={applySearch} className="hero-cta">Apply Filters</button>
+                  {hasFilters && (
+                    <button
+                      type="button"
+                      onClick={clearAll}
+                      className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-muted-green transition hover:text-forest"
+                    >
+                      <X className="h-3.5 w-3.5" /> Clear all
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-7 flex flex-wrap gap-2.5">
+              <div className="stat-pill">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#EAF3EF]">
+                  <FileText className="h-[14px] w-[14px] text-[#0C765E]" />
+                </span>
+                <div>
+                  <div className="stat-number">{stats?.total ?? total}</div>
+                  <div className="stat-label">Total Works</div>
+                </div>
+              </div>
+              <div className="stat-pill">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#EAF3EF]">
+                  <Users className="h-[14px] w-[14px] text-[#0C765E]" />
+                </span>
+                <div>
+                  <div className="stat-number">{stats?.users ?? '—'}</div>
+                  <div className="stat-label">Contributors</div>
+                </div>
+              </div>
+              <div className="stat-pill">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#EAF3EF]">
+                  <FolderTree className="h-[14px] w-[14px] text-[#0C765E]" />
+                </span>
+                <div>
+                  <div className="stat-number">{stats?.programs ?? programs.length}</div>
+                  <div className="stat-label">Programs</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= CATALOG CONTENT ================= */}
+      <main className="relative z-10 -mt-6">
+        <div className="container-page py-10">
+          <div className="catalog-layout">
+            {/* ---------- RESULTS ---------- */}
+            <section className="latest-research-card">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="icon-disc">
+                    <FileText className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <h2 className="section-title text-[21px]">Latest Research</h2>
+                    <p className="section-sub">Explore the most recent research works from our community.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label htmlFor="sort" className="text-[10.5px] text-[#607B72]">Sort by:</label>
+                  <select
+                    id="sort"
+                    className="sort-select"
+                    value={sort}
+                    onChange={e => setSort(e.target.value)}
+                  >
+                    {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {hasFilters && (
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <span className="text-[11.5px] text-[#607B72]">Active filters:</span>
+                  {q && (
+                    <button type="button" onClick={() => setFilter('q', '')} className="program-badge gap-1">
+                      “{q}” <X className="h-3 w-3" />
+                    </button>
+                  )}
+                  {program && (
+                    <button type="button" onClick={() => setFilter('program', '')} className="program-badge gap-1">
+                      {program} <X className="h-3 w-3" />
+                    </button>
+                  )}
+                  {year && (
+                    <button type="button" onClick={() => setFilter('year', '')} className="program-badge gap-1">
+                      {year} <X className="h-3 w-3" />
+                    </button>
+                  )}
                 </div>
               )}
 
-          </div>
-            <aside className="w-full lg:w-[23rem]">
-              <div className="quirk-a glass-green p-6 float-slow">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="code-tag sticker bg-[#23CE6B] text-[#062514]">Lab notice</span>
-                  <Lock className="h-4 w-4 text-[#23CE6B]" />
-                </div>
-                <h2 className="headline text-2xl text-white">The full texts live in the lab.</h2>
-                <p className="mt-3 text-sm leading-relaxed text-[#9FEBBF]/85">
-                  Abstracts are blurred here on purpose. To read a complete manuscript, head to the{' '}
-                  <span className="font-semibold text-[#23CE6B]">Research Laboratory of De La Salle John Bosco College</span>{' '}
-                  and ask the staff for the call number of the work you need.
-                </p>
-                <ul className="mt-5 space-y-2.5 text-xs text-[#9FEBBF]">
-                  {[
-                    'Find the title here and note its RS code',
-                    'Visit the Research Laboratory on campus',
-                    'Ask for the call number, then read on site',
-                  ].map((step, i) => (
-                    <li key={step} className="flex items-start gap-2.5">
-                      <span className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#23CE6B]/20 text-[10px] font-bold font-mono text-[#9FEBBF]">{i + 1}</span>
-                      {step}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-5 flex items-center gap-2 border-t border-white/15 pt-4 text-[11px] font-mono uppercase tracking-[0.18em] text-[#9FEBBF]/70">
-                  <MapPin className="h-3.5 w-3.5 text-[#23CE6B]" /> De La Salle John Bosco College
-                </p>
+              <div className="table-scroll mt-4">
+                {loading ? (
+                  <div className="space-y-3 py-4">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="h-12 w-[38px] animate-pulse rounded bg-soft-green" />
+                        <div className="h-4 flex-1 animate-pulse rounded bg-soft-green" />
+                        <div className="hidden h-4 w-32 animate-pulse rounded bg-soft-green sm:block" />
+                      </div>
+                    ))}
+                  </div>
+                ) : sorted.length === 0 ? (
+                  <div className="py-14 text-center">
+                    <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-soft-green text-emerald-brand">
+                      <BookOpen className="h-6 w-6" />
+                    </span>
+                    <h3 className="section-title text-[20px]">No research found</h3>
+                    <p className="mx-auto mt-1.5 max-w-sm text-[13px] text-muted-green">
+                      {hasFilters
+                        ? 'Try a different search term, or clear the active filters.'
+                        : 'Nothing has been catalogued yet.'}
+                    </p>
+                    {hasFilters && (
+                      <button type="button" onClick={clearAll} className="hero-cta mt-5">
+                        <span>Clear filters</span>
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <table className="research-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: 52 }}><span className="sr-only">Cover</span></th>
+                        <th>Title</th>
+                        <th>Author(s)</th>
+                        <th>Program</th>
+                        <th>Year</th>
+                        <th>Date Added</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sorted.map((r, i) => (
+                        <tr key={r.id}>
+                          <td>
+                            <div className="thumb" style={{ background: coverGradient(i) }}>
+                              <BookOpen className="h-4 w-4 text-white/80" />
+                            </div>
+                          </td>
+                          <td>
+                            <div className="cell-title">{r.title}</div>
+                            {r.adviser && <div className="cell-author">Adviser: {r.adviser}</div>}
+                          </td>
+                          <td><div className="cell-author">{r.authors || 'Unattributed'}</div></td>
+                          <td>
+                            {r.program_name
+                              ? <span className="program-pill">{r.program_name}</span>
+                              : <span className="text-[11.5px] text-[#A3B5AF]">—</span>}
+                          </td>
+                          <td><span className="text-[12.5px]">{r.year || '—'}</span></td>
+                          <td><span className="text-[12.5px]">{formatDate(r.created_at) || '—'}</span></td>
+                          <td>
+                            <Link to={`/research/${r.id}`} className="view-details inline-flex items-center gap-1 text-[12px] font-semibold">
+                              View Details <ArrowRight className="h-3 w-3" />
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
+
+              {!loading && sorted.length > 0 && (
+                <>
+                  <p className="results-count">
+                    {pluralize(total, 'research result')} · page {page} of {pages}
+                  </p>
+                  <Pagination page={page} pages={pages} onChange={goToPage} />
+                </>
+              )}
+            </section>
+
+            {/* ---------- SIDEBAR ---------- */}
+            <aside className="flex flex-col gap-5">
+              <section className="sidebar-card">
+                <h2 className="section-title text-[21px]">Featured Collections</h2>
+                <p className="section-sub">Curated research works, hand-picked by the archive.</p>
+
+                <div className="mt-3">
+                  {featured.length === 0 ? (
+                    <p className="py-4 text-[12.5px] text-muted-green">
+                      No featured works yet.
+                    </p>
+                  ) : featured.map((r, i) => (
+                    <Link key={r.id} to={`/research/${r.id}`} className="collection-row">
+                      <span className="thumb !h-[46px] !w-[36px]" style={{ background: coverGradient(i) }}>
+                        <BookOpen className="h-3.5 w-3.5 text-white/80" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="collection-title block truncate">{r.title}</span>
+                        <span className="collection-count block">{r.authors || 'Unattributed'}</span>
+                      </span>
+                      <ArrowRight className="collection-arrow h-3.5 w-3.5 shrink-0" />
+                    </Link>
+                  ))}
+                </div>
+              </section>
+
+              <section className="sidebar-card">
+                <h2 className="section-title text-[21px]">Browse by Program</h2>
+                <p className="section-sub">Filter the catalog by a specific program.</p>
+
+                <div className="mt-3">
+                  {programs.length === 0 ? (
+                    <p className="py-4 text-[12.5px] text-muted-green">No programs yet.</p>
+                  ) : programs.map((p, i) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setFilter('program', program === p.code ? '' : p.code)}
+                      className={`collection-row w-full text-left ${program === p.code ? 'is-active' : ''}`}
+                    >
+                      <span className="thumb !h-[46px] !w-[36px]" style={{ background: coverGradient(i + 1) }}>
+                        <FolderTree className="h-3.5 w-3.5 text-white/80" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="collection-title block truncate">{p.name}</span>
+                        <span className="collection-count block">{pluralize(counts[p.code] || 0, 'work')}</span>
+                      </span>
+                      <ArrowRight className="collection-arrow h-3.5 w-3.5 shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              </section>
             </aside>
           </div>
         </div>
-        <div className="relative z-10 h-4 bg-[#D2E3CE] [clip-path:polygon(0_70%,10%_50%,22%_76%,36%_54%,50%_78%,64%_50%,78%_74%,90%_52%,100%_70%,100%_100%,0_100%)]" aria-hidden="true" />
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-        <Card className="quirk-c -mt-1 card-lift">
-          <CardContent className="p-6">
-            <form onSubmit={handleSearch}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-end">
-                <div className="space-y-2 sm:col-span-2 xl:col-span-2">
-                  <Label className="eyebrow">Search</Label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Title, author, code, keywords..." value={filters.search} onChange={e => setFilters({...filters, search: e.target.value})} className="pl-9" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="eyebrow">Program</Label>
-                  <Select value={filters.program || 'all'} onValueChange={v => setFilters({...filters, program: v === 'all' ? '' : v})}>
-                    <SelectTrigger><SelectValue placeholder="All Programs" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Programs</SelectItem>
-                      {programs.map(p => <SelectItem key={p.id} value={p.code}>{p.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="eyebrow">Year</Label>
-                  <Select value={filters.year ? String(filters.year) : 'all'} onValueChange={v => setFilters({...filters, year: v === 'all' ? '' : v})}>
-                    <SelectTrigger><SelectValue placeholder="All Years" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Years</SelectItem>
-                      {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="eyebrow opacity-0 pointer-events-none">Go</Label>
-                  <Button type="submit" className="w-full gradient-btn"><Search className="h-4 w-4" /> Search</Button>
-                </div>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        <div className="mt-12 mb-6 flex items-end justify-between gap-4">
-          <div>
-            <p className="eyebrow mb-2">Catalogued entries</p>
-            <h2 className="headline text-3xl lg:text-4xl">Latest <span className="gradient-text italic">Research</span></h2>
-          </div>
-          {research.length > 0 && <span className="code-tag sticker-mint bg-[#23CE6B]/20 text-[#12854A] shrink-0">{research.length} result{research.length !== 1 ? 's' : ''}</span>}
-        </div>
-
-      {loading ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-              <Card key={i}><CardContent className="p-6 space-y-3"><div className="h-4 w-20 bg-muted rounded animate-pulse" /><div className="h-5 w-full bg-muted rounded animate-pulse" /><div className="h-4 w-2/3 bg-muted rounded animate-pulse" /></CardContent></Card>
-          ))}
-        </div>
-      ) : research.length === 0 ? (
-          <Card className="quirk-a">
-            <CardContent className="py-16 text-center">
-              <div className="h-14 w-14 mx-auto mb-4 rounded-2xl quirk-b bg-[#23CE6B]/15 text-[#12854A] flex items-center justify-center tilt-r-sm"><BookOpenIcon className="h-7 w-7" /></div>
-            <h3 className="font-display text-xl font-semibold mb-1">No research found</h3>
-            <p className="text-muted-foreground">Try adjusting your search filters</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-{research.map((r, i) => (
-                  <Card key={r.id} className="card-lift cursor-pointer overflow-hidden"
-                  onClick={() => navigate(`/research/${r.id}`)}>
-                  <div className={`h-1.5 ${i % 3 === 0 ? 'bg-[#23CE6B]' : i % 3 === 1 ? 'bg-[#1B7A45]' : 'bg-[#7DD3FC]'}`} />
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="code-tag sticker bg-[#0B2E1B] text-[#9FEBBF] -rotate-2">{r.code}</span>
-                      <span className="text-[11px] font-mono text-muted-foreground">{r.year}</span>
-                    </div>
-                      <h3 className="font-display text-lg font-semibold leading-snug mb-2 line-clamp-2">{r.title}</h3>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3"><Users className="h-3.5 w-3.5 text-[#12854A]" />{r.authors}</p>
-                    {r.abstract && (
-                      <div className="mb-4">
-                        <LockedAbstract text={r.abstract} compact />
-                      </div>
-                    )}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pt-3 border-t border-border">
-                      {r.program_name && <span className="font-medium text-[#12854A]">{r.program_name}</span>}
-                    </div>
-                    {r.adviser && <p className="text-xs text-muted-foreground mt-2">Adviser: {r.adviser}</p>}
-                  </CardContent>
-                </Card>
-            ))}
-          </div>
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 pt-8">
-              <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}><ChevronLeft className="h-4 w-4" /> Prev</Button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 7).map(p => (
-                <Button key={p} size="sm" variant={p === page ? 'default' : 'outline'} onClick={() => setPage(p)} className={p === page ? 'gradient-btn rounded-full' : 'rounded-full'}>{p}</Button>
-              ))}
-              <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next <ChevronRight className="h-4 w-4" /></Button>
-            </div>
-          )}
-        </>
-      )}
-      </section>
+      </main>
     </div>
   );
 }

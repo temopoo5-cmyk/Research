@@ -60,19 +60,19 @@ export default function SubmitResearch() {
           <p className="text-muted-foreground mt-1">{isEdit ? 'Update the research record' : 'Submit a new research work to the institutional repository'}</p>
         </div>
         <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
-          <div className="pointer-events-none absolute inset-0 rounded-full border border-[#23CE6B]/35" aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-2 rotate-45 rounded-[0.8rem] border border-[#12854A]/30" aria-hidden="true" />
-          <span className="code-tag sticker relative z-10 bg-[#0B2E1B] px-1.5 py-1 text-center text-[9px] leading-tight text-[#9FEBBF] -rotate-1">RS / INTAKE FORM</span>
+          <div className="pointer-events-none absolute inset-0 rounded-full border border-[#08755B]/35" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-2 rotate-45 rounded-[0.8rem] border border-[#0C765E]/30" aria-hidden="true" />
+          <span className="code-tag sticker relative z-10 bg-[#0A3B2E] px-1.5 py-1 text-center text-[9px] leading-tight text-[#BFE0D3] -rotate-1">RS / INTAKE FORM</span>
         </div>
       </div>
 
       <Card className="quirk-c overflow-hidden">
-        <div className="h-1.5 bg-gradient-to-r from-[#23CE6B] via-[#1B7A45] to-[#7DD3FC]" />
+        <div className="h-1.5 bg-gradient-to-r from-[#08755B] via-[#0C765E] to-[#8FB3A7]" />
         <CardContent className="p-6 md:p-8">
           {error && <div className="mb-5 rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">{error}</div>}
-          <div className="mb-6 flex items-center gap-3 text-sm text-muted-foreground p-4 rounded-2xl quirk-b bg-[#23CE6B]/10 border border-[#23CE6B]/30">
-            <Info className="h-4 w-4 text-[#12854A] shrink-0" />
-            <span>A unique research code (e.g. <strong className="text-[#12854A] font-mono">RS-2026-0001</strong>) will be automatically assigned when submitted.</span>
+          <div className="mb-6 flex items-center gap-3 text-sm text-muted-foreground p-4 rounded-2xl quirk-b bg-[#08755B]/10 border border-[#08755B]/30">
+            <Info className="h-4 w-4 text-[#0C765E] shrink-0" />
+            <span>A unique research code (e.g. <strong className="text-[#0C765E] font-mono">RS-2026-0001</strong>) will be automatically assigned when submitted.</span>
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">

@@ -29,13 +29,13 @@ export default function Register() {
     <div className="min-h-screen gradient-bg relative overflow-hidden">
       <Navbar />
       <div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)] relative">
-        <div className="absolute -top-32 -right-32 h-96 w-96 blob-shape bg-[#23CE6B]/25 blur-3xl" />
+        <div className="absolute -top-32 -right-32 h-96 w-96 blob-shape bg-[#08755B]/25 blur-3xl" />
         <div className="absolute -bottom-32 -left-32 h-96 w-96 blob-shape-alt bg-[#C4B5FD]/25 blur-3xl" />
         <div className="absolute inset-0 dot-grid opacity-50" aria-hidden="true" />
         <Card className="w-full max-w-md mx-auto quirk-c card-lift relative">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2 mb-2">
-            <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center tilt-r-sm"><GraduationCap className="h-5 w-5 text-[#062514]" /></div>
+            <div className="h-9 w-9 rounded-xl gradient-btn flex items-center justify-center tilt-r-sm"><GraduationCap className="h-5 w-5 text-[#FFFFFF]" /></div>
             <span className="font-display font-semibold text-lg gradient-text">ResearchHub</span>
           </div>
           <p className="eyebrow">New member</p>
@@ -60,7 +60,7 @@ export default function Register() {
             <Button type="submit" disabled={loading} className="w-full gradient-btn">{loading ? 'Creating...' : 'Create Account'}</Button>
           </form>
           <div className="mt-5 text-center text-sm text-muted-foreground">
-            Already have an account? <a href="/login" className="font-semibold text-[#12854A] hover:underline">Sign In</a>
+            Already have an account? <a href="/login" className="font-semibold text-[#0C765E] hover:underline">Sign In</a>
           </div>
         </CardContent>
       </Card>
