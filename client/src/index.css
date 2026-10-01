@@ -1174,11 +1174,6 @@
   /* ================================================================
      Footer
      ================================================================ */
-  .footer-wave {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
   .footer-brand-name {
     font-family: "Cormorant Garamond", "Playfair Display", serif;
     font-size: 26px;

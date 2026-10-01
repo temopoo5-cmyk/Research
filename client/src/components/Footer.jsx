@@ -24,14 +24,9 @@ export default function Footer() {
 
   return (
     <footer
-      className="relative mt-10 overflow-hidden pb-7 pt-16 text-[#F5F8F2]"
-      style={{ background: 'linear-gradient(180deg,#08604B 0%,#064C3B 100%)' }}
+      className="relative mt-10 pb-7 pt-16 text-[#F5F8F2]"
+      style={{ background: '#075744' }}
     >
-      {/* Wave that blends into the page background */}
-      <svg className="footer-wave" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
-        <path fill="#F7F8F3" d="M0,70 C260,18 520,10 760,26 C1000,42 1220,54 1440,34 L1440,70 Z" />
-      </svg>
-
       <div className="container-page relative z-10">
         <div className="flex flex-col items-center justify-between gap-7 border-b border-white/10 pb-8 lg:flex-row">
           <div className="flex items-center gap-3">
