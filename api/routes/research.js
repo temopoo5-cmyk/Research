@@ -15,12 +15,13 @@ const SELECT_TAIL = `p.name AS program_name, p.code AS program_code,
   LEFT JOIN users u ON u.id = r.submitted_by`;
 
 let featuredSupported = false;
+let migrationAttempted = false;
 
 // The is_featured column arrived in a later migration than the rest of the schema.
-// Probe for it until it exists so an un-migrated database degrades to an empty
-// featured shelf instead of failing every research query with a 500. Once found it
-// is cached for the life of the instance, so applying the migration takes effect
-// without a redeploy.
+// Probe for it and, if it is missing, apply the idempotent migration so the
+// admin-curated featured shelf works without a manual database step. If the
+// database user lacks DDL rights the probe keeps returning false and the featured
+// shelf stays empty rather than failing every research query with a 500.
 async function loadSchema() {
   if (featuredSupported) return;
   try {
@@ -33,7 +34,14 @@ async function loadSchema() {
        ) AS present`
     );
     featuredSupported = Boolean(r.rows[0] && r.rows[0].present);
-  } catch {
+    if (!featuredSupported && !migrationAttempted) {
+      migrationAttempted = true;
+      await pool.query('ALTER TABLE research ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false');
+      await pool.query('CREATE INDEX IF NOT EXISTS idx_research_featured ON research (is_featured) WHERE is_featured');
+      featuredSupported = true;
+    }
+  } catch (err) {
+    console.error('[api/research] is_featured migration failed:', err && err.message ? err.message : err);
     featuredSupported = false;
   }
 }

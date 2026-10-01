@@ -311,7 +311,7 @@ export default function Home() {
     () => (featured.length ? featured.slice(0, HERO_SLIDES) : latest),
     [featured, latest],
   );
-  const carouselItems = useMemo(() => (featured.length >= 4 ? featured : [...featured, ...latest].slice(0, 6)), [featured, latest]);
+  const carouselItems = useMemo(() => featured.slice(0, 6), [featured]);
 
   const totalWorks = stats?.total ?? latest.length;
 
@@ -493,25 +493,27 @@ export default function Home() {
       </section>
 
       {/* ================= FEATURED WORKS ================= */}
-      <section className="featured-section">
-        <div className="container-page">
-          <div className="flex items-start justify-between gap-6">
-            <div>
-              <div className="eyebrow flex items-center gap-2 text-[14.5px] text-[#176653]">
-                <span>Featured Collections</span>
-                <span className="h-px w-[25px] bg-[#8FB3A7]" />
+      {featured.length > 0 && (
+        <section className="featured-section">
+          <div className="container-page">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <div className="eyebrow flex items-center gap-2 text-[14.5px] text-[#176653]">
+                  <span>Featured Collections</span>
+                  <span className="h-px w-[25px] bg-[#8FB3A7]" />
+                </div>
+                <h2 className="section-title mt-2 text-[40px]">Featured Research Works</h2>
               </div>
-              <h2 className="section-title mt-2 text-[40px]">Featured Research Works</h2>
+              <Link to="/research" className="view-programs !text-[14.5px]">
+                <span>View All</span>
+                <ArrowRight className="view-arrow h-[13px] w-[13px]" />
+              </Link>
             </div>
-            <Link to="/research" className="view-programs !text-[14.5px]">
-              <span>View All</span>
-              <ArrowRight className="view-arrow h-[13px] w-[13px]" />
-            </Link>
-          </div>
 
-          <WorksCarousel items={carouselItems} />
-        </div>
-      </section>
+            <WorksCarousel items={carouselItems} />
+          </div>
+        </section>
+      )}
 
       {/* ================= LATEST ADDED ================= */}
       <section className="bg-[#F8F9F4] py-[45px] pb-[55px]">
