@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Research Catalog - ResearchHub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style type="text/tailwindcss">
+        @theme {
+            --color-forest: #0B4038;
+            --color-emerald-brand: #08775F;
+            --color-deep-green: #075743;
+            --color-muted-green: #5C766E;
+            --color-cream: #F7F9F4;
+            --color-ivory: #FBFBF7;
+            --color-soft-green: #E6F2ED;
+            --color-mint-dark: #D5EAE2;
+            --color-line: #DCEBE5;
+
+            --font-display: "Cormorant Garamond", "Playfair Display", serif;
+            --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        }
+    </style>
+
+    <style>
+        :root {
+            --forest: #075743;
+            --deep-green: #064C3B;
+            --emerald: #08785F;
+            --text: #103F37;
+            --muted: #5C766E;
+            --cream: #F7F9F4;
+            --mint: #E6F2ED;
+            --mint-dark: #D5EAE2;
+            --border: #DCEBE5;
+        }
+
+        body {
+            font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-display { font-family: "Cormorant Garamond", "Playfair Display", serif; }
+
+        /* ============ HEADER ============ */
+        .nav-link {
+            position: relative;
+            font-size: 14px;
+            font-weight: 600;
+            color: #557A70;
+            transition: color .2s ease;
+        }
+        .nav-link:hover { color: #103F37; }
+        .nav-link.is-active { color: #0B4038; }
+        .nav-link.is-active::after {
+            content: "";
+            position: absolute;
+            left: -6px;
+            right: -6px;
+            bottom: -7px;
+            height: 2px;
+            background: #075744;
+            border-radius: 2px;
+        }
+
+        /* ============ CATALOG HERO ============ */
+        .catalog-hero {
+            position: relative;
+            min-height: 546px;
+            background-image: url('Background.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .repository-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 13px;
+            border-radius: 999px;
+            background: rgba(225,240,233,.85);
+            font-family: "Inter", sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .04em;
+            color: #176653;
+        }
+
+        .catalog-title {
+            margin-top: 16px;
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: 48px;
+            font-weight: 700;
+            line-height: .95;
+            letter-spacing: -.025em;
+            color: #0B4038;
+        }
+
+        .catalog-description {
+            max-width: 470px;
+            margin-top: 13px;
+            font-family: "Inter", sans-serif;
+            font-size: 15px;
+            line-height: 1.55;
+            color: #315E55;
+        }
+
+        .catalog-search-input {
+            height: 48px;
+            width: 410px;
+            max-width: 100%;
+            border-radius: 999px;
+            background: rgba(255,255,255,.96);
+            border: 2px solid #0C765E;
+            padding: 0 20px;
+            font-family: "Inter", sans-serif;
+            font-size: 13px;
+            color: #103F37;
+            outline: none;
+            transition: box-shadow 200ms ease;
+        }
+        .catalog-search-input::placeholder { color: #6B857C; }
+        .catalog-search-input:focus {
+            box-shadow: 0 0 0 4px rgba(12,118,94,.12);
+        }
+
+        .advanced-filter-button {
+            height: 48px;
+            padding: 0 20px;
+            border-radius: 999px;
+            background: #08775F;
+            color: #FFFFFF;
+            font-family: "Inter", sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: background 200ms ease;
+        }
+        .advanced-filter-button:hover { background: #07654F; }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 15px 9px 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.78);
+            border: 1px solid rgba(255,255,255,.9);
+            box-shadow: 0 4px 14px -10px rgba(11,64,56,.5);
+        }
+        .stat-number {
+            font-family: "Inter", sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #145848;
+            line-height: 1;
+        }
+        .stat-label {
+            font-family: "Inter", sans-serif;
+            font-size: 10px;
+            color: #607B72;
+            margin-top: 2px;
+        }
+
+
+        /* ============ LAYOUT ============ */
+        .catalog-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 300px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .latest-research-card {
+            background: rgba(255,255,255,.75);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .sidebar-card {
+            background: rgba(255,255,255,.72);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(20,80,65,.04);
+        }
+
+        .section-heading {
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: 25px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -.02em;
+            color: #0B4038;
+        }
+        .section-sub {
+            font-size: 11px;
+            color: #607B72;
+            margin-top: 3px;
+        }
+
+        .icon-disc {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #0B4038;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sort-select {
+            height: 34px;
+            padding: 0 32px 0 14px;
+            border-radius: 999px;
+            background: #FFFFFF;
+            border: 1px solid #C7E2D8;
+            font-family: "Inter", sans-serif;
+            font-size: 10.5px;
+            color: #245D50;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2308775F' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        /* ============ TABLE ============ */
+        .research-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .research-table thead th {
+            background: #E9F5F0;
+            color: #176653;
+            font-family: "Inter", sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 9px 10px;
+            white-space: nowrap;
+        }
+        .research-table thead th:first-child { border-radius: 6px 0 0 6px; }
+        .research-table thead th:last-child { border-radius: 0 6px 6px 0; }
+
+        .research-table tbody tr {
+            transition: background 160ms ease;
+            cursor: pointer;
+        }
+        .research-table tbody tr:hover { background: rgba(227,240,234,.4); }
+        .research-table tbody td {
+            padding: 9px 10px;
+            border-bottom: 1px solid rgba(25,80,65,.07);
+            vertical-align: middle;
+        }
+
+        .thumb {
+            width: 38px;
+            height: 48px;
+            border-radius: 3px;
+            box-shadow: 0 3px 8px rgba(20,70,55,.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .cell-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #245D50;
+            line-height: 1.3;
+        }
+        .cell-author { font-size: 11px; color: #667C75; }
+        .cell-date { font-size: 10.5px; color: #6B857C; white-space: nowrap; }
+        .cell-dl {
+            font-size: 11px;
+            color: #55756B;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .program-pill {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 600;
+            background: #DDF2EA;
+            color: #176653;
+            white-space: nowrap;
+        }
+        .type-tag { font-size: 10.5px; color: #55756B; white-space: nowrap; }
+        .dash { color: #A9BDB6; }
+
+        .view-details {
+            color: #14745D;
+            font-size: 9.5px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        .view-details:hover { color: #0B4038; }
+        .view-details svg { transition: transform 160ms ease; }
+        .view-details:hover svg { transform: translateX(2px); }
+
+        .results-count {
+            font-size: 10.5px;
+            color: #607B72;
+            padding: 12px 2px 0;
+        }
+
+        /* ============ PAGINATION ============ */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding-top: 16px;
+        }
+        .page-btn {
+            min-width: 28px;
+            height: 28px;
+            padding: 0 6px;
+            border-radius: 6px;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            font-family: "Inter", sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: #3E6B60;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 160ms ease, color 160ms ease;
+        }
+        .page-btn:hover { background: #EAF3EF; }
+        .page-btn.is-active {
+            background: #0B4038;
+            border-color: #0B4038;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        /* ============ SIDEBAR ============ */
+        .collection-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(25,80,65,.07);
+            transition: transform 160ms ease;
+        }
+        .collection-row:last-child { border-bottom: 0; padding-bottom: 0; }
+        .collection-row:hover { transform: translateX(2px); }
+        .collection-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #245D50;
+            line-height: 1.25;
+        }
+        .collection-count { font-size: 9.5px; color: #7A9189; margin-top: 2px; }
+        .collection-arrow { color: #4B8073; margin-left: auto; flex-shrink: 0; }
+
+        .download-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 0;
+        }
+        .rank-badge {
+            width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            background: #0B4038;
+            color: #FFFFFF;
+            font-size: 9px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .download-name {
+            font-size: 10.5px;
+            color: #3E6B60;
+            line-height: 1.25;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .download-count {
+            margin-left: auto;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #0B4038;
+            flex-shrink: 0;
+        }
+
+        /* ============ FOOTER ============ */
+        .footer-wave {
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 100%;
+            height: 54px;
+            pointer-events: none;
+        }
+        .footer-brand-name {
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.1;
+            color: #F5F8F2;
+        }
+        .footer-brand-subtitle {
+            margin-top: 2px;
+            font-size: 10px;
+            color: rgba(245,250,247,.62);
+        }
+        .footer-nav { display: flex; align-items: center; gap: 28px; }
+        .footer-nav a {
+            font-size: 12px;
+            color: rgba(245,250,247,.78);
+            text-decoration: none;
+            position: relative;
+            transition: color 200ms ease;
+        }
+        .footer-nav a:hover { color: #FFFFFF; }
+        .footer-nav a.active::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; bottom: -6px;
+            height: 1px;
+            background: #D9EDE5;
+        }
+        .footer-search {
+            width: 300px;
+            height: 38px;
+            padding: 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 999px;
+            background: rgba(255,255,255,.06);
+        }
+        .footer-search input {
+            flex: 1;
+            min-width: 0;
+            border: 0;
+            outline: none;
+            background: transparent;
+            font-family: "Inter", sans-serif;
+            font-size: 11px;
+            color: #FFFFFF;
+        }
+        .footer-search input::placeholder { color: rgba(240,250,245,.55); }
+        .footer-search button {
+            border: 0;
+            background: transparent;
+            color: #D7EDE4;
+            cursor: pointer;
+            display: flex;
+            padding: 0;
+        }
+        .botanical {
+            position: absolute;
+            width: 190px;
+            opacity: .14;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .botanical-left { left: -30px; bottom: -20px; }
+        .botanical-right { right: -30px; bottom: -20px; }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1024px) {
+            .catalog-layout { grid-template-columns: minmax(0, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .catalog-title { font-size: 38px; }
+            .catalog-description { font-size: 14px; }
+            .catalog-search-input { width: 100%; }
+            .hero-search-row { flex-direction: column; align-items: stretch; }
+            .advanced-filter-button { justify-content: center; }
+            .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .research-table { min-width: 720px; }
+            .footer-nav { flex-wrap: wrap; gap: 18px; }
+            .footer-search { width: 100%; }
+            .botanical { display: none; }
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+<!-- ================= HEADER ================= -->
+<header class="sticky top-0 z-50 bg-ivory/95 backdrop-blur border-b border-[#E6EDE9]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] grid grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center gap-4 lg:gap-8">
+
+        <a href="index.html" class="flex items-center gap-3 shrink-0 justify-self-start">
+            <span class="w-[40px] h-[40px] rounded-full bg-[#08735A] flex items-center justify-center">
+                <i data-lucide="graduation-cap" class="w-[19px] h-[19px] text-white"></i>
+            </span>
+            <span class="font-display text-[32px] leading-none font-bold tracking-[-0.02em] text-[#123F38]">ResearchHub</span>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8 justify-self-center">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="browse.html" class="nav-link is-active">Browse Research</a>
+            <a href="about.html" class="nav-link">About</a>
+        </nav>
+
+        <div class="shrink-0 justify-self-end col-start-2 md:col-start-3 w-full md:w-auto">
+            <div class="relative ml-auto w-[200px] sm:w-[250px] lg:w-[320px]">
+                <input type="text" placeholder="Search research, authors, keywords..."
+                       class="w-full h-9 pl-5 pr-11 rounded-full bg-pale-green text-[14px] text-forest placeholder:text-muted-green/80 border border-transparent focus:outline-none focus:border-[#08755B]/40 focus:bg-white transition">
+                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#08755B] pointer-events-none">
+                    <i data-lucide="search" class="w-[18px] h-[18px]"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ================= CATALOG HERO ================= -->
+<section class="catalog-hero">
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 lg:pt-14 lg:pb-28">
+        <div class="max-w-[640px]">
+
+            <div class="repository-label">
+                <i data-lucide="landmark" class="w-[13px] h-[13px]"></i>
+                <span>Central Research Repository</span>
+            </div>
+
+            <h1 class="catalog-title">Browse Research Catalog</h1>
+
+            <p class="catalog-description">
+                Discover credible research, academic papers, and scholarly resources from our institution.
+            </p>
+
+            <div class="hero-search-row mt-6 flex items-center gap-3">
+                <div class="relative">
+                    <input type="text" class="catalog-search-input" placeholder="Search all works, authors, or keywords...">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#0C765E] pointer-events-none">
+                        <i data-lucide="search" class="w-[17px] h-[17px]"></i>
+                    </span>
+                </div>
+                <button type="button" class="advanced-filter-button">
+                    <i data-lucide="sliders-horizontal" class="w-[15px] h-[15px]"></i>
+                    <span>Advanced Filters</span>
+                </button>
+            </div>
+
+            <div class="mt-7 flex flex-wrap gap-2.5">
+                <div class="stat-pill">
+                    <span class="w-7 h-7 rounded-full bg-[#EAF3EF] flex items-center justify-center">
+                        <i data-lucide="file-text" class="w-[14px] h-[14px] text-[#0C765E]"></i>
+                    </span>
+                    <div>
+                        <div class="stat-number">10,532+</div>
+                        <div class="stat-label">Total Works</div>
+                    </div>
+                </div>
+                <div class="stat-pill">
+                    <span class="w-7 h-7 rounded-full bg-[#EAF3EF] flex items-center justify-center">
+                        <i data-lucide="user" class="w-[14px] h-[14px] text-[#0C765E]"></i>
+                    </span>
+                    <div>
+                        <div class="stat-number">1,248+</div>
+                        <div class="stat-label">Authors</div>
+                    </div>
+                </div>
+                <div class="stat-pill">
+                    <span class="w-7 h-7 rounded-full bg-[#EAF3EF] flex items-center justify-center">
+                        <i data-lucide="building-2" class="w-[14px] h-[14px] text-[#0C765E]"></i>
+                    </span>
+                    <div>
+                        <div class="stat-number">16</div>
+                        <div class="stat-label">Departments</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+<!-- ================= CATALOG CONTENT ================= -->
+<main class="relative z-10 -mt-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <div class="catalog-layout">
+
+            <!-- ============ LATEST RESEARCH ============ -->
+            <section class="latest-research-card">
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <span class="icon-disc">
+                            <i data-lucide="file-text" class="w-[16px] h-[16px]"></i>
+                        </span>
+                        <div>
+                            <h2 class="section-heading">Latest Research</h2>
+                            <p class="section-sub">Explore the most recent research works from our community.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10.5px] text-[#607B72]">Sort by:</span>
+                        <select class="sort-select" aria-label="Sort research">
+                            <option>Most Recent</option>
+                            <option>Most Downloaded</option>
+                            <option>Title A-Z</option>
+                            <option>Author A-Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-scroll mt-4">
+                    <table class="research-table">
+                        <thead>
+                            <tr>
+                                <th style="width:52px"></th>
+                                <th>Title</th>
+                                <th>Author(s)</th>
+                                <th>Program</th>
+                                <th>Type</th>
+                                <th>Date Added</th>
+                                <th>Downloads</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#0b6b52,#053f31)"><i data-lucide="book-open" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">Artificial Intelligence in Education</div></td>
+                                <td><div class="cell-author">Tech, John D.</div></td>
+                                <td><span class="program-pill">STEM</span></td>
+                                <td><span class="type-tag">Research Paper</span></td>
+                                <td><span class="cell-date">Aug 12, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>24</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#0f8a6c,#075744)"><i data-lucide="book-open" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">The Role of Social Media in Youth Development</div></td>
+                                <td><div class="cell-author">Garcia, Angela M.</div></td>
+                                <td><span class="program-pill">HUMSS</span></td>
+                                <td><span class="type-tag">Research Paper</span></td>
+                                <td><span class="cell-date">Aug 10, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>18</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#2a9d8f,#0b6b52)"><i data-lucide="book-open" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">Business Strategies for Sustainable Growth</div></td>
+                                <td><div class="cell-author">Tan, Miguel S.</div></td>
+                                <td><span class="dash">—</span></td>
+                                <td><span class="type-tag">Thesis</span></td>
+                                <td><span class="cell-date">Aug 8, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>12</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#103f37,#0b6b52)"><i data-lucide="file-text" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">Creative Expression in the Digital Age</div></td>
+                                <td><div class="cell-author">Villanueva, Sophia L.</div></td>
+                                <td><span class="dash">—</span></td>
+                                <td><span class="type-tag">Article</span></td>
+                                <td><span class="cell-date">Aug 6, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>6</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#1b7f68,#093f31)"><i data-lucide="book-open" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">Quantum Algorithms in Cryptography</div></td>
+                                <td><div class="cell-author">Smith, A. J. Q. A.</div></td>
+                                <td><span class="dash">—</span></td>
+                                <td><span class="type-tag">Research Paper</span></td>
+                                <td><span class="cell-date">Aug 1, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>45</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#13876d,#075744)"><i data-lucide="book-open" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">Impact of Local Policies on Waste Management</div></td>
+                                <td><div class="cell-author">Reyes, Ana</div></td>
+                                <td><span class="dash">—</span></td>
+                                <td><span class="type-tag">Thesis</span></td>
+                                <td><span class="cell-date">Jul 25, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>29</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#0b6b52,#053f31)"><i data-lucide="folder-open" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">Socioeconomic Effects of Microfinance in Urban Areas</div></td>
+                                <td><div class="cell-author">Various</div></td>
+                                <td><span class="dash">—</span></td>
+                                <td><span class="type-tag">Case Study</span></td>
+                                <td><span class="cell-date">Jul 20, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>52</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#0f8a6c,#075744)"><i data-lucide="book-open" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">Analyzing Portfolio Diversification Strategies</div></td>
+                                <td><div class="cell-author">Tan, Miguel S.</div></td>
+                                <td><span class="dash">—</span></td>
+                                <td><span class="type-tag">Research Paper</span></td>
+                                <td><span class="cell-date">Jul 20, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>31</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#2a9d8f,#0b6b52)"><i data-lucide="book-open" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">Analyzing Portfolio Diversification Strategies</div></td>
+                                <td><div class="cell-author">Tan, Miguel S.</div></td>
+                                <td><span class="dash">—</span></td>
+                                <td><span class="type-tag">Research Paper</span></td>
+                                <td><span class="cell-date">Jul 15, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>31</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td><div class="thumb" style="background:linear-gradient(150deg,#103f37,#0b6b52)"><i data-lucide="file-text" class="w-4 h-4 text-white/80"></i></div></td>
+                                <td><div class="cell-title">The Impact of Renewable Energy on Economic Growth</div></td>
+                                <td><div class="cell-author">Santos, Paolo R.</div></td>
+                                <td><span class="program-pill">STEM</span></td>
+                                <td><span class="type-tag">Article</span></td>
+                                <td><span class="cell-date">Jul 10, 2025</span></td>
+                                <td><span class="cell-dl"><i data-lucide="download" class="w-3 h-3"></i>22</span></td>
+                                <td><a href="research.html" class="view-details">View Details <i data-lucide="arrow-right" class="w-3 h-3"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="results-count">10 research results</div>
+
+                <nav class="pagination" aria-label="Pagination">
+                    <button type="button" class="page-btn" aria-label="Previous page"><i data-lucide="chevron-left" class="w-3.5 h-3.5"></i></button>
+                    <button type="button" class="page-btn is-active">1</button>
+                    <button type="button" class="page-btn">2</button>
+                    <button type="button" class="page-btn">3</button>
+                    <button type="button" class="page-btn">…</button>
+                    <button type="button" class="page-btn">14</button>
+                    <button type="button" class="page-btn" aria-label="Next page"><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+                </nav>
+            </section>
+
+            <!-- ============ SIDEBAR ============ -->
+            <aside class="flex flex-col gap-5">
+
+                <section class="sidebar-card">
+                    <h2 class="section-heading" style="font-size:21px">Featured Collections</h2>
+                    <p class="section-sub">Curated research collections for easy access.</p>
+
+                    <div class="mt-3">
+                        <a href="research.html" class="collection-row">
+                            <span class="thumb" style="background:linear-gradient(150deg,#0b6b52,#053f31)"><i data-lucide="book-open" class="w-3.5 h-3.5 text-white/80"></i></span>
+                            <span class="min-w-0">
+                                <span class="collection-title block">Research Methods for the Real World</span>
+                                <span class="collection-count block">124 works</span>
+                            </span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 collection-arrow"></i>
+                        </a>
+
+                        <a href="research.html" class="collection-row">
+                            <span class="thumb" style="background:linear-gradient(150deg,#0f8a6c,#075744)"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-white/80"></i></span>
+                            <span class="min-w-0">
+                                <span class="collection-title block">Quantitative Research and Analytics</span>
+                                <span class="collection-count block">98 works</span>
+                            </span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 collection-arrow"></i>
+                        </a>
+
+                        <a href="research.html" class="collection-row">
+                            <span class="thumb" style="background:linear-gradient(150deg,#2a9d8f,#0b6b52)"><i data-lucide="microscope" class="w-3.5 h-3.5 text-white/80"></i></span>
+                            <span class="min-w-0">
+                                <span class="collection-title block">Qualitative Research and Analysis</span>
+                                <span class="collection-count block">76 works</span>
+                            </span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 collection-arrow"></i>
+                        </a>
+
+                        <a href="research.html" class="collection-row">
+                            <span class="thumb" style="background:linear-gradient(150deg,#103f37,#0b6b52)"><i data-lucide="scale" class="w-3.5 h-3.5 text-white/80"></i></span>
+                            <span class="min-w-0">
+                                <span class="collection-title block">Research Ethics and Integrity</span>
+                                <span class="collection-count block">64 works</span>
+                            </span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 collection-arrow"></i>
+                        </a>
+                    </div>
+                </section>
+
+                <section class="sidebar-card">
+                    <h2 class="section-heading" style="font-size:21px">Top Downloads</h2>
+                    <p class="section-sub">Most accessed research works this month.</p>
+
+                    <div class="mt-3">
+                        <div class="download-item">
+                            <span class="rank-badge">1</span>
+                            <span class="download-name">Most Accessed Research Works</span>
+                            <span class="download-count">44</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">2</span>
+                            <span class="download-name">Research Paper</span>
+                            <span class="download-count">34</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">3</span>
+                            <span class="download-name">Research Paper</span>
+                            <span class="download-count">18</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">4</span>
+                            <span class="download-name">Research Paper</span>
+                            <span class="download-count">18</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">5</span>
+                            <span class="download-name">Research Paper</span>
+                            <span class="download-count">29</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">6</span>
+                            <span class="download-name">Research Paper</span>
+                            <span class="download-count">29</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">7</span>
+                            <span class="download-name">Nov 12, 2025</span>
+                            <span class="download-count">6</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">8</span>
+                            <span class="download-name">Research Paper</span>
+                            <span class="download-count">1</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">9</span>
+                            <span class="download-name">Top Viewed Research Works</span>
+                            <span class="download-count">19</span>
+                        </div>
+                        <div class="download-item">
+                            <span class="rank-badge">10</span>
+                            <span class="download-name">Top Viewed Research Works</span>
+                            <span class="download-count">25</span>
+                        </div>
+                    </div>
+                </section>
+
+            </aside>
+        </div>
+    </div>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="relative overflow-hidden mt-10 pt-16 pb-7" style="background:linear-gradient(180deg,#08604B 0%,#064C3B 100%);color:#F5F8F2">
+    <svg class="footer-wave" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
+        <path fill="#F7F9F4" d="M0,70 C260,18 520,10 760,26 C1000,42 1220,54 1440,34 L1440,70 Z"></path>
+    </svg>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="flex flex-col lg:flex-row justify-between items-center gap-7">
+
+            <div class="flex items-center gap-3">
+                <span class="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center">
+                    <i data-lucide="graduation-cap" class="w-[20px] h-[20px] text-white"></i>
+                </span>
+                <div>
+                    <div class="footer-brand-name">ResearchHub</div>
+                    <div class="footer-brand-subtitle">Research. Discover. Make an Impact.</div>
+                </div>
+            </div>
+
+            <nav class="footer-nav">
+                <a href="index.html" class="active">Home</a>
+                <a href="browse.html">Browse Research</a>
+                <a href="about.html">About</a>
+            </nav>
+
+            <form class="footer-search" onsubmit="return false;">
+                <input type="text" placeholder="Search research, authors, keywords...">
+                <button type="submit" aria-label="Search">
+                    <i data-lucide="search" class="w-[15px] h-[15px]"></i>
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-7 mb-5 h-px" style="background:rgba(255,255,255,.12)"></div>
+
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p class="text-[11px]" style="color:rgba(245,250,247,.55)">&copy; 2025 ResearchHub. All rights reserved.</p>
+            <div class="flex items-center gap-4">
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="flex" style="color:rgba(245,250,247,.82)" aria-label="Facebook"><i data-lucide="facebook" class="w-[15px] h-[15px]"></i></a>
+                <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="flex" style="color:rgba(245,250,247,.82)" aria-label="X"><i data-lucide="x" class="w-[15px] h-[15px]"></i></a>
+                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="flex" style="color:rgba(245,250,247,.82)" aria-label="YouTube"><i data-lucide="youtube" class="w-[15px] h-[15px]"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botanical line art -->
+    <svg class="botanical botanical-left" viewBox="0 0 190 190" fill="none" aria-hidden="true">
+        <path d="M20 190 C50 150 78 122 110 100 C132 84 156 70 176 60" stroke="#D9EDE5" stroke-width="1.3"></path>
+        <path d="M62 130 C48 118 42 102 44 86 C60 92 70 108 62 130 Z" stroke="#D9EDE5" stroke-width="1.3"></path>
+        <path d="M96 108 C88 94 90 80 98 68 C108 80 108 96 96 108 Z" stroke="#D9EDE5" stroke-width="1.3"></path>
+        <path d="M128 84 C120 72 122 58 130 48 C140 60 140 74 128 84 Z" stroke="#D9EDE5" stroke-width="1.3"></path>
+        <circle cx="160" cy="66" r="4" stroke="#D9EDE5" stroke-width="1.3"></circle>
+    </svg>
+
+    <svg class="botanical botanical-right" viewBox="0 0 190 190" fill="none" aria-hidden="true">
+        <path d="M170 190 C140 150 112 122 80 100 C58 84 34 70 14 60" stroke="#D9EDE5" stroke-width="1.3"></path>
+        <path d="M128 130 C142 118 148 102 146 86 C130 92 120 108 128 130 Z" stroke="#D9EDE5" stroke-width="1.3"></path>
+        <path d="M94 108 C102 94 100 80 92 68 C82 80 82 96 94 108 Z" stroke="#D9EDE5" stroke-width="1.3"></path>
+        <path d="M62 84 C70 72 68 58 60 48 C50 60 50 74 62 84 Z" stroke="#D9EDE5" stroke-width="1.3"></path>
+        <circle cx="30" cy="66" r="4" stroke="#D9EDE5" stroke-width="1.3"></circle>
+    </svg>
+</footer>
+
+<script>
+    lucide.createIcons();
+
+    (function () {
+        const nav = document.querySelector('.pagination');
+        if (!nav) return;
+        nav.addEventListener('click', function (e) {
+            const btn = e.target.closest('.page-btn');
+            if (!btn || btn.querySelector('svg')) return;
+            nav.querySelectorAll('.page-btn').forEach(function (b) { b.classList.remove('is-active'); });
+            btn.classList.add('is-active');
+        });
+    })();
+</script>
+
+</body>
+</html>

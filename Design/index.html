@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResearchHub - Central Research Repository</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style type="text/tailwindcss">
+        @theme {
+            --color-forest: #103F37;
+            --color-emerald-brand: #08755B;
+            --color-deep-green: #075744;
+            --color-muted-green: #557A70;
+            --color-cream: #F7F8F3;
+            --color-ivory: #FBFBF7;
+            --color-soft-green: #EAF3EF;
+            --color-pale-green: #EEF5F1;
+
+            --font-display: "Cormorant Garamond", "Playfair Display", serif;
+            --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        }
+    </style>
+
+    <style>
+        body {
+            font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+            background: #F7F8F3;
+            color: #103F37;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-display { font-family: "Cormorant Garamond", "Playfair Display", serif; }
+
+        .eyebrow {
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .01em;
+            color: #557A70;
+            transition: color .2s ease;
+        }
+        .nav-link:hover { color: #103F37; }
+        .nav-link.is-active {
+            color: #103F37;
+            font-weight: 700;
+            position: relative;
+        }
+        .nav-link.is-active::after {
+            content: "";
+            position: absolute;
+            left: -6px;
+            right: -6px;
+            bottom: -7px;
+            height: 2px;
+            background: #075744;
+            border-radius: 2px;
+        }
+
+/* Hero */
+        .hero {
+            position: relative;
+            min-height: 390px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-title {
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: clamp(44px, 7vw, 72px);
+            line-height: .92;
+            font-weight: 700;
+            letter-spacing: -.038em;
+            color: #103F37;
+        }
+        .hero-title em {
+            font-style: italic;
+            font-weight: 600;
+            color: #08755B;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,.8);
+            border-radius: 13px;
+            box-shadow: 0 6px 18px -12px rgba(16,63,55,.35);
+        }
+
+        /* Slider */
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(18px);
+            transition: opacity 500ms ease, transform 500ms ease, visibility 500ms;
+        }
+        .hero-slide.is-active {
+            position: relative;
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .book-3d {
+            perspective: 900px;
+        }
+        .book-face {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #0b6b52 0%, #075744 55%, #053f31 100%);
+            border-radius: 3px 8px 8px 3px;
+            padding: 26px 22px;
+            transform: rotateY(11deg);
+            transform-style: preserve-3d;
+            box-shadow: -8px 14px 28px -14px rgba(7,87,68,.7), 0 30px 50px -28px rgba(7,87,68,.65);
+            overflow: hidden;
+        }
+        .book-face::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 42%);
+        }
+        .book-cover-title {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 23px;
+            font-weight: 600;
+            line-height: 1.05;
+            color: #F7F8F3;
+        }
+        .book-spine {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 7px;
+            background: rgba(0,0,0,.22);
+            box-shadow: inset -1px 0 0 rgba(255,255,255,.08);
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #08755B;
+            color: #FFFFFF;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: .03em;
+            padding: 9px 17px;
+            border-radius: 999px;
+            transition: background 200ms ease, transform 200ms ease;
+        }
+        .hero-cta:hover { background: #06684f; transform: translateY(-1px); }
+        .hero-cta .hero-arrow { transition: transform 200ms ease; }
+        .hero-cta:hover .hero-arrow { transform: translateX(3px); }
+
+        .slider-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #EAF6F1;
+            background: linear-gradient(145deg, rgba(11,107,82,.55) 0%, rgba(5,63,49,.45) 100%);
+            border: 1px solid rgba(255,255,255,.28);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 10px 22px -12px rgba(5,63,49,.6);
+            transition: transform 200ms ease, background 200ms ease, box-shadow 200ms ease;
+        }
+        .slider-btn:hover {
+            background: linear-gradient(145deg, rgba(11,107,82,.75) 0%, rgba(5,63,49,.65) 100%);
+            transform: translateY(-1px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 14px 26px -12px rgba(5,63,49,.7);
+        }
+        .slider-btn:active { transform: translateY(0); }
+
+        .hero-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(8,117,91,.22);
+            transition: background 300ms ease, width 300ms ease;
+        }
+        .hero-dot.is-active { background: #08755B; width: 18px; }
+
+        .section-title {
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 700;
+            letter-spacing: -.026em;
+            color: #103F37;
+        }
+
+        .panel {
+            background: #FFFFFF;
+            border: 1px solid #E6EDE9;
+            border-radius: 18px;
+        }
+
+        /* Quick Access */
+        .quick-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #FFFFFF;
+            border: 1px solid #E9EFEB;
+            border-radius: 11px;
+            box-shadow: 0 8px 20px -16px rgba(16,63,55,.4);
+            transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+        }
+        .quick-card:hover {
+            transform: translateY(-2px);
+            background: #FBFDFC;
+            box-shadow: 0 14px 26px -16px rgba(16,63,55,.45);
+        }
+        .quick-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #E8F3EE;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #08755B;
+            transition: background 200ms ease;
+        }
+        .quick-card:hover .quick-icon { background: #DBEDE4; }
+        .quick-label {
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: #315F54;
+            text-align: center;
+        }
+
+        /* About the Repository */
+        .about-repository {
+            position: relative;
+            min-height: 300px;
+            padding: 55px 0;
+            background-image: url("Background-preserving.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .about-repository::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(248,249,244,.72);
+            pointer-events: none;
+        }
+        .about-repository-inner {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 40px;
+            align-items: center;
+        }
+        @media (min-width: 640px) {
+            .about-repository-inner { padding: 0 24px; }
+        }
+        @media (min-width: 1024px) {
+            .about-repository-inner { padding: 0 32px; }
+        }
+        @media (max-width: 900px) {
+            .about-repository-inner {
+                grid-template-columns: 1fr;
+                gap: 36px;
+            }
+            .repository-features { width: 100%; }
+        }
+
+        .about-title {
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: 33px;
+            font-weight: 700;
+            line-height: .98;
+            letter-spacing: -.026em;
+            color: #103F37;
+        }
+        .about-description {
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.55;
+            color: #52736A;
+            max-width: 360px;
+        }
+        .learn-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 15px;
+            border-radius: 999px;
+            background: #08755B;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 700;
+            transition: background 200ms ease, transform 200ms ease;
+        }
+        .learn-more:hover { background: #06684F; transform: translateY(-1px); }
+
+        .repository-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 468px;
+            background: rgba(255,255,255,.45);
+            border: 1px solid rgba(20,80,65,.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .feature {
+            padding: 22px 28px;
+        }
+        .feature:nth-child(2),
+        .feature:nth-child(4) { border-left: 1px solid rgba(20,80,65,.08); }
+        .feature:nth-child(3),
+        .feature:nth-child(4) { border-top: 1px solid rgba(20,80,65,.08); }
+
+        .feature-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #E5F1EC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #08755B;
+        }
+        .feature-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #245D50;
+        }
+        .feature-description {
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.45;
+            color: #617C74;
+        }
+
+        /* Browse by Program */
+        .programs-section {
+            position: relative;
+            padding: 48px 0 55px;
+            background-image: url("bg-works.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .programs-section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(248,249,244,.65);
+            pointer-events: none;
+        }
+        .programs-inner {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1280px;
+            margin-inline: auto;
+            padding: 0 16px;
+        }
+        @media (min-width: 640px) {
+            .programs-inner { padding: 0 24px; }
+        }
+        @media (min-width: 1024px) {
+            .programs-inner { padding: 0 32px; }
+        }
+
+        .programs-label {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: #176653;
+        }
+        .programs-title {
+            margin-top: 8px;
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: 33px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -.026em;
+            color: #103F37;
+        }
+        .view-programs {
+            font-size: 11px;
+            font-weight: 600;
+            color: #176653;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+            white-space: nowrap;
+            transition: color 200ms ease;
+        }
+        .view-programs:hover { color: #08755B; }
+        .view-programs .view-arrow { transition: transform 200ms ease; }
+        .view-programs:hover .view-arrow { transform: translateX(3px); }
+
+        .program-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 22px;
+        }
+        @media (max-width: 900px) {
+            .program-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .program-card {
+            position: relative;
+            height: 88px;
+            min-width: 0;
+            padding: 14px 18px;
+            border-radius: 10px;
+            background: rgba(255,255,255,.55);
+            border: 1px solid rgba(25,85,70,.07);
+            box-shadow: 0 2px 8px rgba(20,70,55,.025);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+        }
+        .program-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,.8);
+            box-shadow: 0 5px 15px rgba(20,70,55,.07);
+        }
+
+        .program-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #E5F1EC;
+            color: #08755B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .program-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: #245D50;
+            margin-top: 9px;
+        }
+        .program-count {
+            font-size: 10px;
+            font-weight: 400;
+            color: #55766D;
+            margin-top: 2px;
+        }
+        .program-arrow {
+            position: absolute;
+            right: 14px;
+            bottom: 14px;
+            color: #176653;
+        }
+
+        /* Featured Research Works */
+        .featured-research {
+            background: #F8F9F4;
+            padding: 48px 0 55px;
+        }
+        .featured-inner {
+            width: 100%;
+            max-width: 1280px;
+            margin-inline: auto;
+            padding: 0 16px;
+        }
+        @media (min-width: 640px) {
+            .featured-inner { padding: 0 24px; }
+        }
+        @media (min-width: 1024px) {
+            .featured-inner { padding: 0 32px; }
+        }
+        .featured-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: #176653;
+        }
+        .featured-title {
+            margin-top: 8px;
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -.026em;
+            color: #103F37;
+        }
+        .featured-view-all {
+            font-size: 13px;
+            font-weight: 600;
+            color: #176653;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+            white-space: nowrap;
+            transition: color 200ms ease;
+        }
+        .featured-view-all:hover { color: #08755B; }
+        .featured-view-all .view-arrow { transition: transform 200ms ease; }
+        .featured-view-all:hover .view-arrow { transform: translateX(3px); }
+
+        .featured-carousel {
+            margin-top: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .research-viewport { overflow: hidden; flex: 1; min-width: 0; }
+        .research-track {
+            display: flex;
+            gap: 14px;
+            transition: transform 450ms ease;
+        }
+        .research-card {
+            flex: 0 0 auto;
+            width: 250px;
+            height: 126px;
+            padding: 14px 16px;
+            display: flex;
+            gap: 12px;
+            background: rgba(255,255,255,.7);
+            border: 1px solid rgba(20,80,65,.08);
+            border-radius: 9px;
+            box-shadow: 0 2px 8px rgba(20,70,55,.03);
+            transition: background 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+        }
+        .research-card:hover {
+            background: rgba(255,255,255,.95);
+            box-shadow: 0 8px 20px rgba(20,70,55,.09);
+            transform: translateY(-2px);
+        }
+        .research-cover {
+            width: 64px;
+            height: 92px;
+            flex-shrink: 0;
+            border-radius: 2px;
+            box-shadow: 0 4px 10px rgba(20,70,55,.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .research-card-title {
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.12;
+            color: #155144;
+        }
+        .research-author {
+            font-size: 12px;
+            font-weight: 400;
+            color: #668078;
+            margin-top: 4px;
+        }
+        .research-type {
+            display: inline-flex;
+            margin-top: 6px;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: #E8F2ED;
+            font-size: 11px;
+            font-weight: 600;
+            color: #276456;
+        }
+
+        .carousel-button {
+            width: 25px;
+            height: 25px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,.75);
+            border: 1px solid rgba(20,80,65,.08);
+            color: #397568;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 200ms ease, color 200ms ease, transform 200ms ease;
+        }
+        .carousel-button:hover { background: #FFFFFF; color: #08755B; transform: translateY(-1px); }
+        .carousel-button:disabled { opacity: .35; cursor: default; transform: none; }
+
+        @media (max-width: 768px) {
+            .research-card { width: 260px; }
+            .research-viewport {
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            .research-track { transform: none !important; }
+            .research-card { scroll-snap-align: start; }
+        }
+
+        /* Latest Added Research */
+        .latest-research {
+            background: #F8F9F4;
+            padding: 45px 0 55px;
+        }
+        .latest-inner {
+            width: 100%;
+            max-width: 1280px;
+            margin-inline: auto;
+            padding: 0 16px;
+        }
+        @media (min-width: 640px) {
+            .latest-inner { padding: 0 24px; }
+        }
+        @media (min-width: 1024px) {
+            .latest-inner { padding: 0 32px; }
+        }
+        .latest-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: #176653;
+        }
+        .latest-title {
+            margin-top: 7px;
+            font-family: "Cormorant Garamond", "Playfair Display", serif;
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -.026em;
+            color: #103F37;
+        }
+        .latest-view-all {
+            font-size: 13px;
+            font-weight: 600;
+            color: #176653;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+            white-space: nowrap;
+            transition: color 200ms ease;
+        }
+        .latest-view-all:hover { color: #08755B; }
+        .latest-view-all .view-arrow { transition: transform 200ms ease; }
+        .latest-view-all:hover .view-arrow { transform: translateX(3px); }
+
+        .research-table-wrapper {
+            margin-top: 22px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(255,255,255,.65);
+            border: 1px solid rgba(20,80,65,.07);
+        }
+        .research-row {
+            display: grid;
+            grid-template-columns: 36% 18% 14% 16% 12% 4%;
+            align-items: center;
+            min-height: 44px;
+            padding: 0 16px;
+            gap: 10px;
+            transition: background 160ms ease;
+            cursor: pointer;
+        }
+        .research-row + .research-row { border-top: 1px solid rgba(25,80,65,.06); }
+        .research-row:not(.table-header):hover { background: rgba(227,240,234,.35); }
+
+        .table-header {
+            height: 36px;
+            min-height: 36px;
+            background: rgba(225,239,233,.45);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+            color: #5D766E;
+        }
+
+        .research-row-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #245D50;
+            min-width: 0;
+        }
+        .research-row-title i { color: #08755B; }
+        .research-row-title span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .research-row-author {
+            font-size: 12px;
+            font-weight: 400;
+            color: #667C75;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .program-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: #E4F0EB;
+            font-size: 11px;
+            font-weight: 700;
+            color: #286254;
+        }
+        .research-date {
+            font-size: 11.5px;
+            font-weight: 400;
+            color: #667C75;
+        }
+        .research-downloads {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11.5px;
+            color: #55756B;
+        }
+        .research-row-arrow {
+            display: flex;
+            justify-content: flex-end;
+            color: #4B8073;
+            transition: transform 160ms ease;
+        }
+        .research-row:hover .research-row-arrow { transform: translateX(2px); }
+
+        @media (max-width: 700px) {
+            .research-row { grid-template-columns: 1fr auto auto; }
+            .research-row > .research-date,
+            .research-row > .research-downloads { display: none; }
+            .table-header { display: none; }
+        }
+    </style>
+</head>
+
+<body class="bg-cream text-forest antialiased">
+
+    <!-- ================= TOP NAVIGATION ================= -->
+    <header class="sticky top-0 z-50 bg-ivory/95 backdrop-blur border-b border-[#E6EDE9]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] grid grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center gap-4 lg:gap-8">
+
+            <!-- Brand -->
+            <a href="index.html" class="flex items-center gap-3 shrink-0 justify-self-start">
+                <span class="w-[40px] h-[40px] rounded-full bg-[#08735A] flex items-center justify-center">
+                    <i data-lucide="graduation-cap" class="w-[19px] h-[19px] text-white"></i>
+                </span>
+                <span class="font-display text-[32px] leading-none font-bold tracking-[-0.02em] text-[#123F38]">ResearchHub</span>
+            </a>
+
+            <!-- Nav -->
+            <nav class="hidden md:flex items-center gap-8 justify-self-center">
+                <a href="index.html" class="nav-link is-active">Home</a>
+                <a href="browse.html" class="nav-link">Browse Research</a>
+                <a href="about.html" class="nav-link">About</a>
+            </nav>
+
+            <!-- Search -->
+        <div class="shrink-0 justify-self-end col-start-2 md:col-start-3 w-full md:w-auto">
+            <div class="relative ml-auto w-[200px] sm:w-[250px] lg:w-[320px]">
+                    <input type="text" placeholder="Search research, authors, keywords..."
+                           class="w-full h-9 pl-5 pr-11 rounded-full bg-pale-green text-[14px] text-forest placeholder:text-muted-green/80 border border-transparent focus:outline-none focus:border-[#08755B]/40 focus:bg-white transition">
+                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#08755B] pointer-events-none">
+                        <i data-lucide="search" class="w-[18px] h-[18px]"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= HERO ================= -->
+    <section class="hero bg-[url('Background.png')] bg-cover bg-center overflow-hidden">
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 lg:pt-14 lg:pb-28">
+            <div class="grid grid-cols-1 lg:grid-cols-[47%_1fr] gap-10 lg:gap-6 items-center">
+
+                <!-- Left: copy -->
+                <div>
+                    <div class="inline-flex items-center gap-2 rounded-full bg-[#E7F1EC] px-[11px] py-[7px] eyebrow text-[#176653]">
+                        <i data-lucide="book-open" class="w-[12px] h-[12px]"></i>
+                        <span>Central Research Repository</span>
+                    </div>
+
+                    <h1 class="hero-title mt-5">
+                        Discover research<br>
+                        <em>works worth keeping.</em>
+                    </h1>
+
+                    <p class="mt-5 max-w-[390px] text-[13px] leading-[1.5] text-[#55736C]">
+                        Browse and search the institutional repository. Submissions are automatically cataloged with unique codes.
+                    </p>
+
+                    <!-- Stats -->
+                    <div class="mt-7 flex flex-wrap gap-3">
+                        <div class="stat-card w-[156px] h-[64px] px-4.5 flex items-center gap-3">
+                            <span class="w-10 h-10 shrink-0 rounded-full bg-soft-green flex items-center justify-center">
+                                <i data-lucide="file-text" class="w-[18px] h-[18px] text-[#08755B]"></i>
+                            </span>
+                            <div>
+                                <div class="text-[21px] leading-none font-bold text-forest">103</div>
+                                <div class="mt-1 text-[9.5px] font-semibold text-muted-green">Research Works</div>
+                            </div>
+                        </div>
+                        <div class="stat-card w-[156px] h-[64px] px-4.5 flex items-center gap-3">
+                            <span class="w-10 h-10 shrink-0 rounded-full bg-soft-green flex items-center justify-center">
+                                <i data-lucide="folder" class="w-[18px] h-[18px] text-[#08755B]"></i>
+                            </span>
+                            <div>
+                                <div class="text-[21px] leading-none font-bold text-forest">3</div>
+                                <div class="mt-1 text-[9.5px] font-semibold text-muted-green">Programs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: featured research slider -->
+                <div class="relative flex flex-col items-stretch">
+                    <div class="flex items-center justify-center lg:justify-end translate-y-3 lg:mr-[19px]">
+                    <div class="relative shrink-0">
+                    <button id="heroPrev" type="button" aria-label="Previous research"
+                            class="slider-btn absolute right-full mr-3 top-1/2 -translate-y-1/2 z-10 w-[38px] h-[38px]">
+                        <i data-lucide="arrow-left" class="w-[17px] h-[17px]"></i>
+                    </button>
+
+                    <div id="heroSlider" class="relative overflow-hidden w-[230px]">
+
+                        <!-- Slides -->
+                        <article class="hero-slide is-active">
+                            <div class="book-3d w-[230px] h-[298px] mx-auto">
+                                <div class="book-face">
+                                    <span class="eyebrow text-white/50 block">Featured</span>
+                                    <span class="book-cover-title block mt-2">The Impact of<br>Technology on<br>Student Learning</span>
+                                    <span class="block mt-3 text-[10.5px] text-white/80 font-normal">Juan Dela Cruz</span>
+                                    <span class="book-spine"></span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="hero-slide">
+                            <div class="book-3d w-[230px] h-[298px] mx-auto">
+                                <div class="book-face">
+                                    <span class="eyebrow text-white/50 block">Featured</span>
+                                    <span class="book-cover-title block mt-2">A Study on<br>Community<br>Engagement</span>
+                                    <span class="block mt-3 text-[10.5px] text-white/80 font-normal">Ana Reyes</span>
+                                    <span class="book-spine"></span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <button id="heroNext" type="button" aria-label="Next research"
+                            class="slider-btn absolute left-full ml-3 top-1/2 -translate-y-1/2 z-10 w-[38px] h-[38px]">
+                        <i data-lucide="arrow-right" class="w-[17px] h-[17px]"></i>
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Dots + CTA -->
+                <div class="mt-5 w-full max-w-[230px] mx-auto lg:mx-0 lg:ml-auto lg:mr-[19px]">
+                    <div id="heroDots" class="flex items-center justify-center gap-2"></div>
+
+                    <!-- CTA -->
+                    <div class="mt-5 flex justify-center">
+                        <a href="browse.html" class="hero-cta">
+                            <span>View Details</span>
+                            <i data-lucide="arrow-right" class="w-[14px] h-[14px] hero-arrow"></i>
+                        </a>
+                    </div>
+                </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= QUICK ACCESS ================= -->
+    <section class="relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-12 items-center">
+
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[11px] font-bold tracking-[.10em] uppercase text-[#176653]">Quick Access</span>
+                        <span class="h-px w-[28px] bg-[#8FB3A7]"></span>
+                    </div>
+                    <h2 class="section-title text-[34px] leading-none mt-3.5">Explore. Read. Grow.</h2>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <a href="browse.html" class="quick-card w-[108px] h-[72px]">
+                        <span class="quick-icon"><i data-lucide="book-open" class="w-[17px] h-[17px]"></i></span>
+                        <span class="quick-label">Research Works</span>
+                    </a>
+                    <a href="#programs" class="quick-card w-[108px] h-[72px]">
+                        <span class="quick-icon"><i data-lucide="folder" class="w-[17px] h-[17px]"></i></span>
+                        <span class="quick-label">Programs</span>
+                    </a>
+                    <a href="browse.html" class="quick-card w-[108px] h-[72px]">
+                        <span class="quick-icon"><i data-lucide="search" class="w-[17px] h-[17px]"></i></span>
+                        <span class="quick-label">Browse Research</span>
+                    </a>
+                    <a href="#about" class="quick-card w-[108px] h-[72px]">
+                        <span class="quick-icon"><i data-lucide="landmark" class="w-[17px] h-[17px]"></i></span>
+                        <span class="quick-label !text-[10px] !leading-[1.2]">Institutional<br>Repository</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+    <section class="about-repository" id="about">
+        <div class="about-repository-inner">
+            <div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[11px] font-bold tracking-[.09em] uppercase text-[#176653]">About the Repository</span>
+                    <span class="h-px w-[25px] bg-[#8FB3A7]"></span>
+                </div>
+
+                <h2 class="about-title mt-4">
+                    Preserving knowledge,<br>empowering futures.
+                </h2>
+
+                <p class="about-description mt-4">
+                    The Central Research Repository is a digital library of academic and institutional research, providing easy access to scholarly works, programs, and resources from our community.
+                </p>
+
+                <a href="#programs" class="learn-more mt-6">
+                    <span>Learn More</span>
+                    <i data-lucide="arrow-right" class="w-[13px] h-[13px]"></i>
+                </a>
+            </div>
+
+            <div class="repository-features">
+                <div class="feature">
+                    <span class="feature-icon"><i data-lucide="globe" class="w-[18px] h-[18px]"></i></span>
+                    <h3 class="feature-title mt-3">Open Access</h3>
+                    <p class="feature-description mt-1.5">Access quality research anytime, anywhere.</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon"><i data-lucide="shield" class="w-[18px] h-[18px]"></i></span>
+                    <h3 class="feature-title mt-3">Trusted Repository</h3>
+                    <p class="feature-description mt-1.5">Preserving authentic and credible works.</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon"><i data-lucide="graduation-cap" class="w-[18px] h-[18px]"></i></span>
+                    <h3 class="feature-title mt-3">Academic Excellence</h3>
+                    <p class="feature-description mt-1.5">Supporting research, innovation, and discovery.</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon"><i data-lucide="users" class="w-[18px] h-[18px]"></i></span>
+                    <h3 class="feature-title mt-3">Community Driven</h3>
+                    <p class="feature-description mt-1.5">For students, faculty, and researchers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CATEGORIES ================= -->
+    <section class="programs-section" id="programs">
+        <div class="programs-inner">
+
+            <div class="flex justify-between items-start gap-6">
+                <div>
+                    <div class="programs-label">
+                        <span>Browse by Category</span>
+                        <span class="h-px w-[25px] bg-[#8FB3A7]"></span>
+                    </div>
+                    <h2 class="programs-title">Find research by program.</h2>
+                </div>
+                <a href="browse.html" class="view-programs">
+                    <span>View All Programs</span>
+                    <i data-lucide="arrow-right" class="w-[13px] h-[13px] view-arrow"></i>
+                </a>
+            </div>
+
+            <div class="program-grid">
+                <a href="browse.html" class="program-card">
+                    <span class="program-icon"><i data-lucide="book-open" class="w-[17px] h-[17px]"></i></span>
+                    <span class="program-name !font-semibold">All Programs</span>
+                    <span class="program-count">3</span>
+                    <i data-lucide="chevron-right" class="w-[13px] h-[13px] program-arrow"></i>
+                </a>
+                <a href="browse.html" class="program-card">
+                    <span class="program-icon"><i data-lucide="settings" class="w-[17px] h-[17px]"></i></span>
+                    <span class="program-name">STEM</span>
+                    <span class="program-count">1</span>
+                    <i data-lucide="chevron-right" class="w-[13px] h-[13px] program-arrow"></i>
+                </a>
+                <a href="browse.html" class="program-card">
+                    <span class="program-icon"><i data-lucide="users" class="w-[17px] h-[17px]"></i></span>
+                    <span class="program-name">HUMSS</span>
+                    <span class="program-count">1</span>
+                    <i data-lucide="chevron-right" class="w-[13px] h-[13px] program-arrow"></i>
+                </a>
+                <a href="browse.html" class="program-card">
+                    <span class="program-icon"><i data-lucide="leaf" class="w-[17px] h-[17px]"></i></span>
+                    <span class="program-name">ABM</span>
+                    <span class="program-count">1</span>
+                    <i data-lucide="chevron-right" class="w-[13px] h-[13px] program-arrow"></i>
+                </a>
+                <a href="browse.html" class="program-card">
+                    <span class="program-icon"><i data-lucide="globe" class="w-[17px] h-[17px]"></i></span>
+                    <span class="program-name">GAS</span>
+                    <span class="program-count">0</span>
+                    <i data-lucide="chevron-right" class="w-[13px] h-[13px] program-arrow"></i>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================= FEATURED WORKS ================= -->
+    <section class="featured-research" id="featured">
+        <div class="featured-inner">
+
+            <div class="flex justify-between items-start gap-6">
+                <div>
+                    <div class="featured-eyebrow">
+                        <span>Featured Collections</span>
+                        <span class="h-px w-[25px] bg-[#8FB3A7]"></span>
+                    </div>
+                    <h2 class="featured-title">Featured Research Works</h2>
+                </div>
+                <a href="browse.html" class="featured-view-all">
+                    <span>View All</span>
+                    <i data-lucide="arrow-right" class="w-[13px] h-[13px] view-arrow"></i>
+                </a>
+            </div>
+
+            <div class="featured-carousel">
+                <button type="button" class="carousel-button prev" id="worksPrev" aria-label="Previous research works">
+                    <i data-lucide="arrow-left" class="w-[12px] h-[12px]"></i>
+                </button>
+
+                <div class="research-viewport" id="worksViewport">
+                    <div class="research-track" id="worksTrack">
+
+                        <a href="browse.html" class="research-card">
+                            <span class="research-cover" style="background:linear-gradient(150deg,#0b6b52,#053f31)"><span class="font-display text-[12px] leading-tight text-white/95 px-1 text-center">Research Methods</span></span>
+                            <div class="min-w-0">
+                                <h3 class="research-card-title">Research Methods for the Real World</h3>
+                                <p class="research-author">A. J. Q. A. Smith</p>
+                                <span class="research-type">Research Paper</span>
+                            </div>
+                        </a>
+
+                        <a href="browse.html" class="research-card">
+                            <span class="research-cover" style="background:linear-gradient(150deg,#0f8a6c,#075744)"><span class="font-display text-[12px] leading-tight text-white/95 px-1 text-center">Sustainable Practices</span></span>
+                            <div class="min-w-0">
+                                <h3 class="research-card-title">Sustainable Practices in Education</h3>
+                                <p class="research-author">Maria Santos</p>
+                                <span class="research-type">Thesis</span>
+                            </div>
+                        </a>
+
+                        <a href="browse.html" class="research-card">
+                            <span class="research-cover" style="background:linear-gradient(150deg,#2a9d8f,#0b6b52)"><span class="font-display text-[12px] leading-tight text-white/95 px-1 text-center">Impact of Technology</span></span>
+                            <div class="min-w-0">
+                                <h3 class="research-card-title">The Impact of Technology on Student Learning</h3>
+                                <p class="research-author">Juan Dela Cruz</p>
+                                <span class="research-type">Research Paper</span>
+                            </div>
+                        </a>
+
+                        <a href="browse.html" class="research-card">
+                            <span class="research-cover" style="background:linear-gradient(150deg,#103f37,#0b6b52)"><span class="font-display text-[12px] leading-tight text-white/95 px-1 text-center">Community Engagement</span></span>
+                            <div class="min-w-0">
+                                <h3 class="research-card-title">A Study on Community Engagement</h3>
+                                <p class="research-author">Ana Reyes</p>
+                                <span class="research-type">Research Paper</span>
+                            </div>
+                        </a>
+
+                        <a href="browse.html" class="research-card">
+                            <span class="research-cover" style="background:linear-gradient(150deg,#1b7f68,#093f31)"><span class="font-display text-[12px] leading-tight text-white/95 px-1 text-center">Digital Assessment</span></span>
+                            <div class="min-w-0">
+                                <h3 class="research-card-title">Digital Assessment in Hybrid Classrooms</h3>
+                                <p class="research-author">Paolo Mendoza</p>
+                                <span class="research-type">Research Paper</span>
+                            </div>
+                        </a>
+
+                        <a href="browse.html" class="research-card">
+                            <span class="research-cover" style="background:linear-gradient(150deg,#13876d,#075744)"><span class="font-display text-[12px] leading-tight text-white/95 px-1 text-center">Green Finance</span></span>
+                            <div class="min-w-0">
+                                <h3 class="research-card-title">Green Finance and Local Development</h3>
+                                <p class="research-author">Liza Bautista</p>
+                                <span class="research-type">Thesis</span>
+                            </div>
+                        </a>
+
+                    </div>
+                </div>
+
+                <button type="button" class="carousel-button next" id="worksNext" aria-label="Next research works">
+                    <i data-lucide="arrow-right" class="w-[12px] h-[12px]"></i>
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+<!-- ================= RECENT SUBMISSIONS ================= -->
+    <section class="latest-research" id="latest">
+        <div class="latest-inner">
+
+            <div class="flex justify-between items-start gap-6">
+                <div>
+                    <div class="latest-eyebrow">
+                        <span>Recent Submissions</span>
+                        <span class="h-px w-[25px] bg-[#8FB3A7]"></span>
+                    </div>
+                    <h2 class="latest-title">Latest Added Research</h2>
+                </div>
+                <a href="browse.html" class="latest-view-all">
+                    <span>View All</span>
+                    <i data-lucide="arrow-right" class="w-[13px] h-[13px] view-arrow"></i>
+                </a>
+            </div>
+
+            <div class="research-table-wrapper">
+                <div class="research-row table-header">
+                    <div>Title</div>
+                    <div>Author</div>
+                    <div>Program</div>
+                    <div>Date Added</div>
+                    <div>Downloads</div>
+                    <div></div>
+                </div>
+
+                <a href="browse.html" class="research-row">
+                    <div class="research-row-title">
+                        <i data-lucide="file-text" class="w-3 h-3 shrink-0"></i>
+                        <span>Artificial Intelligence in Education</span>
+                    </div>
+                    <div class="research-row-author">Tech, John D.</div>
+                    <div><span class="program-badge">STEM</span></div>
+                    <div class="research-date">Aug 12, 2025</div>
+                    <div class="research-downloads"><i data-lucide="download" class="w-[10px] h-[10px]"></i><span>24</span></div>
+                    <div class="research-row-arrow"><i data-lucide="chevron-right" class="w-[13px] h-[13px]"></i></div>
+                </a>
+
+                <a href="browse.html" class="research-row">
+                    <div class="research-row-title">
+                        <i data-lucide="file-text" class="w-3 h-3 shrink-0"></i>
+                        <span>The Role of Social Media in Youth Development</span>
+                    </div>
+                    <div class="research-row-author">Garcia, Angela M.</div>
+                    <div><span class="program-badge">HUMSS</span></div>
+                    <div class="research-date">Aug 10, 2025</div>
+                    <div class="research-downloads"><i data-lucide="download" class="w-[10px] h-[10px]"></i><span>18</span></div>
+                    <div class="research-row-arrow"><i data-lucide="chevron-right" class="w-[13px] h-[13px]"></i></div>
+                </a>
+
+                <a href="browse.html" class="research-row">
+                    <div class="research-row-title">
+                        <i data-lucide="file-text" class="w-3 h-3 shrink-0"></i>
+                        <span>Business Strategies for Sustainable Growth</span>
+                    </div>
+                    <div class="research-row-author">Tan, Miguel S.</div>
+                    <div><span class="program-badge">ABM</span></div>
+                    <div class="research-date">Aug 8, 2025</div>
+                    <div class="research-downloads"><i data-lucide="download" class="w-[10px] h-[10px]"></i><span>12</span></div>
+                    <div class="research-row-arrow"><i data-lucide="chevron-right" class="w-[13px] h-[13px]"></i></div>
+                </a>
+
+                <a href="browse.html" class="research-row">
+                    <div class="research-row-title">
+                        <i data-lucide="file-text" class="w-3 h-3 shrink-0"></i>
+                        <span>Creative Expression in the Digital Age</span>
+                    </div>
+                    <div class="research-row-author">Villanueva, Sophia L.</div>
+                    <div><span class="program-badge">GAS</span></div>
+                    <div class="research-date">Aug 5, 2025</div>
+                    <div class="research-downloads"><i data-lucide="download" class="w-[10px] h-[10px]"></i><span>6</span></div>
+                    <div class="research-row-arrow"><i data-lucide="chevron-right" class="w-[13px] h-[13px]"></i></div>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-[#075744] text-white mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-7 pb-8 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <i data-lucide="graduation-cap" class="w-[18px] h-[18px] text-white"></i>
+                    </span>
+                    <div>
+                        <span class="font-display text-[26px] leading-none font-bold">ResearchHub</span>
+                        <p class="mt-1 text-[12.5px] text-emerald-200/70 font-normal">Central Research Repository</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-7 text-[14px] text-emerald-100/80">
+                    <a href="index.html" class="hover:text-white transition">Home</a>
+                    <a href="browse.html" class="hover:text-white transition">Browse Research</a>
+                    <a href="about.html" class="hover:text-white transition">About</a>
+                </div>
+
+                <div class="flex items-center gap-2.5">
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"><i data-lucide="facebook" class="w-[15px] h-[15px]"></i></a>
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="X" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"><i data-lucide="x" class="w-[15px] h-[15px]"></i></a>
+                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"><i data-lucide="youtube" class="w-[15px] h-[15px]"></i></a>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 text-[12.5px] text-emerald-200/50">
+                <p>&copy; 2026 ResearchHub. All rights reserved.</p>
+                <div class="flex gap-5">
+                    <a href="privacy.html" class="hover:underline">Privacy Policy</a>
+                    <a href="terms.html" class="hover:underline">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        (function () {
+            const slider = document.getElementById('heroSlider');
+            if (!slider) return;
+
+            const slides = Array.from(slider.querySelectorAll('.hero-slide'));
+            const dotsWrap = document.getElementById('heroDots');
+            const prev = document.getElementById('heroPrev');
+            const next = document.getElementById('heroNext');
+            const DELAY = 6000;
+
+            let index = 0;
+            let timer = null;
+            const dots = [];
+
+            if (dotsWrap) {
+                slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.type = 'button';
+                    dot.className = 'hero-dot';
+                    dot.setAttribute('aria-label', 'Show featured research ' + (i + 1));
+                    dot.addEventListener('click', () => { go(i); restart(); });
+                    dotsWrap.appendChild(dot);
+                    dots.push(dot);
+                });
+            }
+
+            function go(nextIndex) {
+                index = (nextIndex + slides.length) % slides.length;
+                slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
+                dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+            }
+
+            function start() { timer = setInterval(() => go(index + 1), DELAY); }
+            function restart() { clearInterval(timer); start(); }
+
+            if (prev) prev.addEventListener('click', () => { go(index - 1); restart(); });
+            if (next) next.addEventListener('click', () => { go(index + 1); restart(); });
+
+            slider.addEventListener('mouseenter', () => clearInterval(timer));
+            slider.addEventListener('mouseleave', start);
+
+            go(0);
+            start();
+        })();
+
+        (function () {
+            const track = document.getElementById('worksTrack');
+            const viewport = document.getElementById('worksViewport');
+            const prev = document.getElementById('worksPrev');
+            const next = document.getElementById('worksNext');
+            if (!track || !viewport) return;
+
+            const GAP = 14;
+            const DELAY = 6000;
+            const COPIES = 3;
+            const originals = Array.from(track.children);
+            const N = originals.length;
+
+            const step = () => originals[0].getBoundingClientRect().width + GAP;
+
+            // Active window runs through the middle copy only, so the first and
+            // last copies act as buffer for the wrap.
+            const last = (COPIES - 1) * N - 1;
+            let pos = N;
+            let timer = null;
+
+            function build() {
+                track.querySelectorAll('[data-clone]').forEach(n => n.remove());
+                for (let copy = 1; copy < COPIES; copy++) {
+                    originals.forEach(card => {
+                        const clone = card.cloneNode(true);
+                        clone.setAttribute('data-clone', String(copy));
+                        clone.setAttribute('aria-hidden', 'true');
+                        track.appendChild(clone);
+                    });
+                }
+                pos = N;
+            }
+
+            function paint(animate) {
+                if (!animate) {
+                    track.style.transition = 'none';
+                    track.style.transform = 'translateX(' + (-pos * step()) + 'px)';
+                    void track.offsetWidth;
+                    track.style.transition = '';
+                } else {
+                    track.style.transform = 'translateX(' + (-pos * step()) + 'px)';
+                }
+            }
+
+            function goNext() {
+                if (pos >= last) {
+                    pos = N - 1;
+                    paint(false);
+                    requestAnimationFrame(() => { pos = N; paint(true); });
+                } else {
+                    pos += 1;
+                    paint(true);
+                }
+            }
+
+            function goPrev() {
+                if (pos <= 0) {
+                    pos = 2 * N;
+                    paint(false);
+                    requestAnimationFrame(() => { pos = 2 * N - 1; paint(true); });
+                } else {
+                    pos -= 1;
+                    paint(true);
+                }
+            }
+
+            function start() { timer = setInterval(goNext, DELAY); }
+            function restart() { clearInterval(timer); start(); }
+
+            if (prev) prev.addEventListener('click', () => { goPrev(); restart(); });
+            if (next) next.addEventListener('click', () => { goNext(); restart(); });
+
+            viewport.addEventListener('mouseenter', () => clearInterval(timer));
+            viewport.addEventListener('mouseleave', start);
+
+            window.addEventListener('resize', () => paint(false));
+
+            viewport.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') { goNext(); restart(); }
+                if (e.key === 'ArrowLeft') { goPrev(); restart(); }
+            });
+
+            build();
+            paint(false);
+            start();
+        })();
+    </script>
+</body>
+</html>
