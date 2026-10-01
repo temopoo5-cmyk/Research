@@ -380,17 +380,6 @@
   .about-repository {
     position: relative;
     padding: 55px 0;
-    background-image: url("/img/Background-preserving.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  .about-repository::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(248, 249, 244, 0.72);
-    pointer-events: none;
   }
 
   .about-title {
@@ -440,17 +429,6 @@
   .programs-section {
     position: relative;
     padding: 48px 0 55px;
-    background-image: url("/img/bg-works.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  .programs-section::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(248, 249, 244, 0.65);
-    pointer-events: none;
   }
 
   .view-programs {

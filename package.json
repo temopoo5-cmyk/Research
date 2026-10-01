@@ -6,7 +6,8 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "cd client && npm install && npm run build"
+    "build": "node scripts/check-env.js && cd client && npm install && npm run build",
+    "build:local": "cd client && npm install && npm run build"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

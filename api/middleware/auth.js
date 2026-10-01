@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'research-system-secret-key-2026';
+if (!process.env.JWT_SECRET) {
+  throw new Error(
+    'JWT_SECRET is not set. Add it to your environment (see .env.example). ' +
+    'Refusing to start with the hardcoded fallback secret.'
+  );
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
