@@ -192,6 +192,7 @@ export default function Home() {
   const [programs, setPrograms] = useState([]);
   const [featured, setFeatured] = useState([]);
   const [latest, setLatest] = useState([]);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     axios.get(`${API}/stats/`)
@@ -202,10 +203,10 @@ export default function Home() {
       .catch(() => {});
     axios.get(`${API}/research/`, { params: { featured: 1, limit: 8 } })
       .then(r => { if (Array.isArray(r.data?.data)) setFeatured(r.data.data); })
-      .catch(() => {});
+      .catch(() => setLoadError(true));
     axios.get(`${API}/research/`, { params: { limit: 4 } })
       .then(r => { if (Array.isArray(r.data?.data)) setLatest(r.data.data); })
-      .catch(() => {});
+      .catch(() => setLoadError(true));
   }, []);
 
   const sliderItems = useMemo(() => (featured.length ? featured : latest.slice(0, 2)), [featured, latest]);
@@ -215,6 +216,12 @@ export default function Home() {
 
   return (
     <div className="bg-cream">
+      {loadError && (
+        <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-900">
+          <span className="font-semibold">Could not load the research catalog.</span>{' '}
+          The repository is temporarily unavailable — please try again shortly.
+        </div>
+      )}
       {/* ================= HERO ================= */}
       <section className="hero-image relative overflow-hidden">
         <div className="container-page relative z-10 pb-24 pt-12 lg:pb-28 lg:pt-14">
