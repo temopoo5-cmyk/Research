@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API } from '../context/AuthContext';
@@ -154,17 +155,30 @@ function WorksCarousel({ items }) {
     rafRef.current = requestAnimationFrame(() => setInstant(false));
     measure();
     window.addEventListener('resize', measure);
+    // Card widths depend on Cormorant Garamond, which arrives after first paint.
+    // Re-measuring keeps every translateX landing on a real card boundary.
+    let cancelled = false;
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        if (!cancelled) measure();
+      }).catch(() => {});
+    }
     return () => {
+      cancelled = true;
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', measure);
     };
   }, [n]);
 
   // Skip the transition for the invisible half of a wrap, then animate the
-  // single visible step. Mirrors the mockup's paint(false) + rAF + paint(true).
+  // single visible step. flushSync is what makes this seamless: without it the
+  // browser can coalesce both updates into one paint and animate the entire
+  // distance across the track instead of one card.
   const jumpTo = (hidden, visible) => {
-    setInstant(true);
-    commit(hidden);
+    flushSync(() => {
+      setInstant(true);
+      commit(hidden);
+    });
     cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
       setInstant(false);
