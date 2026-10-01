@@ -4,27 +4,64 @@ const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-const SELECT = `
-  SELECT r.id::int AS id, r.code, r.title, r.authors, r.adviser,
+const SELECT_FIELDS = `r.id::int AS id, r.code, r.title, r.authors, r.adviser,
          r.program_id, r.year,
-         r.abstract, r.keywords, r.submitted_by, r.status, r.created_at,
-         COALESCE(r.is_featured, false) AS is_featured,
-         p.name AS program_name, p.code AS program_code,
+         r.abstract, r.keywords, r.submitted_by, r.status, r.created_at`;
+
+const SELECT_TAIL = `p.name AS program_name, p.code AS program_code,
          u.full_name AS submitted_by_name
   FROM research r
   LEFT JOIN programs p ON p.id = r.program_id
   LEFT JOIN users u ON u.id = r.submitted_by`;
 
+let schemaPromise = null;
+let featuredSupported = false;
+
+// The is_featured column arrived in a later migration than the rest of the schema.
+// Probe for it once so an un-migrated database degrades to an empty featured
+// shelf instead of failing every research query with a 500.
+function loadSchema() {
+  if (!schemaPromise) {
+    schemaPromise = pool.query(
+      `SELECT EXISTS (
+         SELECT 1 FROM information_schema.columns
+         WHERE table_schema = current_schema()
+           AND table_name = 'research'
+           AND column_name = 'is_featured'
+       ) AS present`
+    )
+      .then(r => { featuredSupported = Boolean(r.rows[0] && r.rows[0].present); })
+      .catch(() => { featuredSupported = false; });
+  }
+  return schemaPromise;
+}
+
+async function getSelect() {
+  await loadSchema();
+  const featuredField = featuredSupported
+    ? 'COALESCE(r.is_featured, false) AS is_featured'
+    : 'false AS is_featured';
+  return `
+  SELECT ${SELECT_FIELDS},
+         ${featuredField},
+         ${SELECT_TAIL}`;
+}
+
 const TRUTHY = ['1', 'true', 'yes', 'on'];
 
-function whereFromQuery(q, values) {
+function whereFromQuery(q, values, withFeatured = true) {
   const conds = [];
   const push = (cond) => conds.push(cond);
 
   const reqStatus = q.status || 'approved';
   if (['approved', 'pending', 'rejected'].includes(reqStatus)) { values.push(reqStatus); push(`r.status = $${values.length}`); }
 
-  if (TRUTHY.includes(String(q.featured).toLowerCase())) push('COALESCE(r.is_featured, false) = true');
+  if (TRUTHY.includes(String(q.featured).toLowerCase())) {
+    // Without the column nothing can be featured, so return an honest empty
+    // set instead of silently dropping the filter and labelling every row.
+    if (withFeatured) push('COALESCE(r.is_featured, false) = true');
+    else push('FALSE');
+  }
   if (q.search) { values.push(`%${q.search}%`); push(`(r.title ILIKE $${values.length} OR r.authors ILIKE $${values.length} OR r.code ILIKE $${values.length} OR r.keywords ILIKE $${values.length} OR r.abstract ILIKE $${values.length})`); }
   if (q.code) { values.push(`%${q.code}%`); push(`r.code ILIKE $${values.length}`); }
   if (q.title) { values.push(`%${q.title}%`); push(`r.title ILIKE $${values.length}`); }
@@ -37,8 +74,9 @@ function whereFromQuery(q, values) {
 
 router.get('/', async (req, res) => {
   try {
+    const SELECT = await getSelect();
     const values = [];
-    const where = whereFromQuery(req.query, values);
+    const where = whereFromQuery(req.query, values, featuredSupported);
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const total = await pool.query(`SELECT COUNT(*)::int AS total FROM research r${where}`, values);
@@ -55,10 +93,14 @@ router.get('/all', authenticateToken, async (req, res) => {
   const values = [];
   const conds = [];
   if (req.query.status) { values.push(req.query.status); conds.push(`r.status = $${values.length}`); }
-  if (TRUTHY.includes(String(req.query.featured).toLowerCase())) conds.push('COALESCE(r.is_featured, false) = true');
   if (req.query.search) { values.push(`%${req.query.search}%`); conds.push(`(r.title ILIKE $${values.length} OR r.authors ILIKE $${values.length} OR r.code ILIKE $${values.length})`); }
-  const where = conds.length ? ` WHERE ${conds.join(' AND ')}` : '';
   try {
+    const SELECT = await getSelect();
+    if (TRUTHY.includes(String(req.query.featured).toLowerCase())) {
+      if (featuredSupported) conds.push('COALESCE(r.is_featured, false) = true');
+      else conds.push('FALSE');
+    }
+    const where = conds.length ? ` WHERE ${conds.join(' AND ')}` : '';
     const { rows } = await pool.query(`${SELECT}${where} ORDER BY r.created_at DESC`, values);
     res.json(rows);
   } catch (err) {
@@ -69,6 +111,7 @@ router.get('/all', authenticateToken, async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
+    const SELECT = await getSelect();
     const { rows } = await pool.query(`${SELECT} WHERE r.id = $1`, [req.params.id]);
     if (!rows[0]) return res.status(404).json({ error: 'Not found' });
     res.json(rows[0]);
@@ -122,6 +165,7 @@ router.patch('/:id/status', authenticateToken, requireAdmin, async (req, res) =>
   try {
     const updated = await pool.query('UPDATE research SET status = $1 WHERE id = $2 RETURNING id', [status, req.params.id]);
     if (!updated.rows[0]) return res.status(404).json({ error: 'Not found' });
+    const SELECT = await getSelect();
     const { rows } = await pool.query(`${SELECT} WHERE r.id = $1`, [req.params.id]);
     res.json(rows[0]);
   } catch (err) {
@@ -134,6 +178,10 @@ router.patch('/:id/featured', authenticateToken, requireAdmin, async (req, res) 
   const featured = req.body.is_featured;
   const next = typeof featured === 'string' ? TRUTHY.includes(featured.toLowerCase()) : Boolean(featured);
   try {
+    const SELECT = await getSelect();
+    if (!featuredSupported) {
+      return res.status(409).json({ error: 'Featured books are unavailable until the is_featured migration is applied' });
+    }
     const updated = await pool.query('UPDATE research SET is_featured = $1 WHERE id = $2 RETURNING id', [next, req.params.id]);
     if (!updated.rows[0]) return res.status(404).json({ error: 'Not found' });
     const { rows } = await pool.query(`${SELECT} WHERE r.id = $1`, [req.params.id]);
