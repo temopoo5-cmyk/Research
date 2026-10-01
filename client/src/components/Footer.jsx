@@ -79,23 +79,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
-      {/* Botanical line art */}
-      <svg className="botanical botanical-left" viewBox="0 0 190 190" fill="none" aria-hidden="true">
-        <path d="M20 190 C50 150 78 122 110 100 C132 84 156 70 176 60" stroke="#D9EDE5" strokeWidth="1.3" />
-        <path d="M62 130 C48 118 42 102 44 86 C60 92 70 108 62 130 Z" stroke="#D9EDE5" strokeWidth="1.3" />
-        <path d="M96 108 C88 94 90 80 98 68 C108 80 108 96 96 108 Z" stroke="#D9EDE5" strokeWidth="1.3" />
-        <path d="M128 84 C120 72 122 58 130 48 C140 60 140 74 128 84 Z" stroke="#D9EDE5" strokeWidth="1.3" />
-        <circle cx="160" cy="66" r="4" stroke="#D9EDE5" strokeWidth="1.3" />
-      </svg>
-
-      <svg className="botanical botanical-right" viewBox="0 0 190 190" fill="none" aria-hidden="true">
-        <path d="M170 190 C140 150 112 122 80 100 C58 84 34 70 14 60" stroke="#D9EDE5" strokeWidth="1.3" />
-        <path d="M128 130 C142 118 148 102 146 86 C130 92 120 108 128 130 Z" stroke="#D9EDE5" strokeWidth="1.3" />
-        <path d="M94 108 C102 94 100 80 92 68 C82 80 82 96 94 108 Z" stroke="#D9EDE5" strokeWidth="1.3" />
-        <path d="M62 84 C70 72 68 58 60 48 C50 60 50 74 62 84 Z" stroke="#D9EDE5" strokeWidth="1.3" />
-        <circle cx="30" cy="66" r="4" stroke="#D9EDE5" strokeWidth="1.3" />
-      </svg>
     </footer>
   );
 }

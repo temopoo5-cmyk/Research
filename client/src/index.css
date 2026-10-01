@@ -1250,25 +1250,6 @@
     background: rgba(255, 255, 255, 0.22);
   }
 
-  .botanical {
-    position: absolute;
-    bottom: 0;
-    width: 190px;
-    height: auto;
-    pointer-events: none;
-  }
-  .botanical-left {
-    left: -30px;
-  }
-  .botanical-right {
-    right: -30px;
-  }
-  @media (max-width: 768px) {
-    .botanical {
-      display: none;
-    }
-  }
-
   /* ================================================================
      Shared surfaces still used by the dashboard / admin pages
      ================================================================ */
