@@ -12,7 +12,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { UserPlus, Pencil, Trash2 } from 'lucide-react';
+import { UserPlus, Pencil, Trash2, Users } from 'lucide-react';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
