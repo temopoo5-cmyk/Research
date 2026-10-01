@@ -14,26 +14,28 @@ const SELECT_TAIL = `p.name AS program_name, p.code AS program_code,
   LEFT JOIN programs p ON p.id = r.program_id
   LEFT JOIN users u ON u.id = r.submitted_by`;
 
-let schemaPromise = null;
 let featuredSupported = false;
 
 // The is_featured column arrived in a later migration than the rest of the schema.
-// Probe for it once so an un-migrated database degrades to an empty featured
-// shelf instead of failing every research query with a 500.
-function loadSchema() {
-  if (!schemaPromise) {
-    schemaPromise = pool.query(
+// Probe for it until it exists so an un-migrated database degrades to an empty
+// featured shelf instead of failing every research query with a 500. Once found it
+// is cached for the life of the instance, so applying the migration takes effect
+// without a redeploy.
+async function loadSchema() {
+  if (featuredSupported) return;
+  try {
+    const r = await pool.query(
       `SELECT EXISTS (
          SELECT 1 FROM information_schema.columns
          WHERE table_schema = current_schema()
            AND table_name = 'research'
            AND column_name = 'is_featured'
        ) AS present`
-    )
-      .then(r => { featuredSupported = Boolean(r.rows[0] && r.rows[0].present); })
-      .catch(() => { featuredSupported = false; });
+    );
+    featuredSupported = Boolean(r.rows[0] && r.rows[0].present);
+  } catch {
+    featuredSupported = false;
   }
-  return schemaPromise;
 }
 
 async function getSelect() {

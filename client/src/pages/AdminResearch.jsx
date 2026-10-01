@@ -30,8 +30,16 @@ export default function AdminResearch() {
     axios.patch(`${API}/research/${id}/status`, { status }).then(() => fetchData());
   };
 
-  const toggleFeatured = (item) => {
-    axios.patch(`${API}/research/${item.id}/featured`, { is_featured: !item.is_featured }).then(() => fetchData());
+  const toggleFeatured = async (item) => {
+    const next = !item.is_featured;
+    setResearch(prev => prev.map(r => (r.id === item.id ? { ...r, is_featured: next } : r)));
+    try {
+      await axios.patch(`${API}/research/${item.id}/featured`, { is_featured: next });
+      fetchData();
+    } catch (err) {
+      setResearch(prev => prev.map(r => (r.id === item.id ? { ...r, is_featured: item.is_featured } : r)));
+      alert(err.response?.data?.error || 'Could not update featured status');
+    }
   };
 
   const handleDelete = async (id) => {
