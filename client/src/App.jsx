@@ -9,6 +9,7 @@ import Legal from './pages/Legal';
 import Dashboard from './pages/Dashboard';
 import ResearchList from './pages/ResearchList';
 import ResearchDetail from './pages/ResearchDetail';
+import AuthorDetail from './pages/AuthorDetail';
 import SubmitResearch from './pages/SubmitResearch';
 import AdminUsers from './pages/AdminUsers';
 import AdminResearch from './pages/AdminResearch';
@@ -90,6 +91,7 @@ function AppRoutes() {
       <Route path="/dashboard" element={<PrivateRoute><AdminLayout><Dashboard /></AdminLayout></PrivateRoute>} />
       <Route path="/research" element={<PublicLayout><ResearchList /></PublicLayout>} />
       <Route path="/research/:id" element={<PublicLayout><ResearchDetail /></PublicLayout>} />
+      <Route path="/author/:id" element={<PublicLayout><AuthorDetail /></PublicLayout>} />
       <Route path="/submit" element={<AdminRoute><AdminLayout><SubmitResearch /></AdminLayout></AdminRoute>} />
       <Route path="/edit-research/:id" element={<AdminRoute><AdminLayout><SubmitResearch /></AdminLayout></AdminRoute>} />
       <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />

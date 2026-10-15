@@ -50,6 +50,7 @@ export default function ResearchDetail() {
 
   const keywords = research.keywords ? research.keywords.split(',').map(k => k.trim()).filter(Boolean) : [];
   const authors = research.authors ? research.authors.split(',').map(a => a.trim()).filter(Boolean) : [];
+  const authorDetails = research.author_details || [];
   const statusInfo = statusConfig[research.status] || statusConfig.pending;
 
   const detailRows = [
@@ -183,14 +184,25 @@ export default function ResearchDetail() {
             <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
               <span className="text-[#607B72]">By</span>
               <div className="flex flex-wrap gap-2">
-                {authors.map((a, i) => (
-                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-border shadow-sm text-sm font-medium">
-                    <span className="h-5 w-5 rounded-full bg-[#08755B]/20 text-[#0C765E] flex items-center justify-center text-[10px] font-bold font-mono">
-                      {a.charAt(0).toUpperCase()}
+                {authorDetails.length > 0 ? (
+                  authorDetails.map((ad, i) => (
+                    <Link key={ad.id} to={`/author/${ad.id}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-border shadow-sm text-sm font-medium hover:bg-soft-green hover:text-forest transition">
+                      <span className="h-5 w-5 rounded-full bg-[#08755B]/20 text-[#0C765E] flex items-center justify-center text-[10px] font-bold font-mono">
+                        {ad.name.charAt(0).toUpperCase()}
+                      </span>
+                      {ad.name}
+                    </Link>
+                  ))
+                ) : (
+                  authors.map((a, i) => (
+                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-border shadow-sm text-sm font-medium">
+                      <span className="h-5 w-5 rounded-full bg-[#08755B]/20 text-[#0C765E] flex items-center justify-center text-[10px] font-bold font-mono">
+                        {a.charAt(0).toUpperCase()}
+                      </span>
+                      {a}
                     </span>
-                    {a}
-                  </span>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </CardHeader>
