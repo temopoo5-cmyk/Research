@@ -690,4 +690,46 @@ WHERE code IN (
 --   SELECT COUNT(*) FROM research;
 --   SELECT code, title, year, call_number FROM research ORDER BY code LIMIT 20;
 --   SELECT code, title FROM research WHERE is_featured ORDER BY code;
+
+-- ============================================================
+-- 5) MIGRATE: Populate authors & research_authors from existing data
+--    Run this AFTER the research insert above.
+--    Uses the same logic as supabase.sql migration.
+-- ============================================================
+DO $$
+DECLARE
+  r RECORD;
+  author_name TEXT;
+  author_id BIGINT;
+  order_num INTEGER;
+BEGIN
+  FOR r IN SELECT id, authors FROM research WHERE authors IS NOT NULL AND authors != '' LOOP
+    order_num := 1;
+    FOR author_name IN SELECT trim(unnest(string_to_array(r.authors, ','))) LOOP
+      IF author_name != '' THEN
+        INSERT INTO authors (name)
+        VALUES (author_name)
+        ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+        RETURNING id INTO author_id;
+        
+        INSERT INTO research_authors (research_id, author_id, author_order)
+        VALUES (r.id, author_id, order_num)
+        ON CONFLICT (research_id, author_id) DO NOTHING;
+        
+        order_num := order_num + 1;
+      END IF;
+    END LOOP;
+  END LOOP;
+END $$;
+
+-- ============================================================
+-- Verify author migration:
+--   SELECT COUNT(*) FROM authors;
+--   SELECT COUNT(*) FROM research_authors;
+--   SELECT a.name, COUNT(ra.research_id) as pub_count
+--   FROM authors a
+--   LEFT JOIN research_authors ra ON a.id = ra.author_id
+--   GROUP BY a.id, a.name
+--   ORDER BY pub_count DESC, a.name
+--   LIMIT 20;
 -- ============================================================
