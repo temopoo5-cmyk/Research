@@ -1,7 +1,7 @@
 import React from 'react';
 import { GraduationCap } from 'lucide-react';
 
-function BookHalf({ side }) {
+function BookHalf({ side, title, authors, type }) {
   return (
     <>
       <div className={`book-leaf book-page book-leaf-${side}`} />
@@ -9,6 +9,9 @@ function BookHalf({ side }) {
         <div className="book-cover-text">
           <GraduationCap className="h-8 w-8" strokeWidth={1.6} />
           <span className="book-cover-brand">ResearchHub</span>
+          {title && <span className="book-cover-title" style={{ fontSize: 'clamp(14px, 3vw, 22px)' }}>{title}</span>}
+          {authors && <span className="book-cover-authors" style={{ fontSize: 'clamp(10px, 2vw, 13px)' }}>{authors}</span>}
+          {type && <span className="book-cover-type" style={{ fontSize: 'clamp(8px, 1.5vw, 10px)' }}>{type}</span>}
         </div>
       </div>
     </>
@@ -27,8 +30,8 @@ export default function BookOpening({ title, authors, type }) {
     <div className={`book-overlay${leaving ? ' book-leaving' : ''}`} role="status" aria-label="Opening research">
       <div className="book-scene">
         <div className="book-wrap">
-          <BookHalf side="left" />
-          <BookHalf side="right" />
+          <BookHalf side="left" title={title} authors={authors} type={type} />
+          <BookHalf side="right" title={title} authors={authors} type={type} />
         </div>
       </div>
       <div className="book-caption">

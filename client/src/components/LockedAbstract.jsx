@@ -18,11 +18,15 @@ export function LabNotice({ compact = false }) {
   );
 }
 
-export default function LockedAbstract({ text, compact = false }) {
+export default function LockedAbstract({ text, compact = false, maxLines }) {
   if (!text) return null;
 
   const previewLength = compact ? 140 : 240;
   const preview = text.length > previewLength ? `${text.slice(0, previewLength).trimEnd()}…` : text;
+
+  const isFull = maxLines && maxLines > 10;
+  const displayText = isFull ? text : preview;
+  const lineClamp = maxLines ? maxLines : (compact ? 3 : 4);
 
   if (compact) {
     return (
@@ -43,20 +47,30 @@ export default function LockedAbstract({ text, compact = false }) {
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#08755B]" />
       <div className="flex items-start gap-1.5">
         <Quote className="h-3 w-3 rotate-180 shrink-0 mt-1 text-[#08755B]" />
-        <p className="text-sm sm:text-[15px] italic leading-relaxed text-muted-foreground font-display">
-          {preview}
+        <p
+          className="text-sm sm:text-[15px] italic leading-relaxed text-muted-foreground font-display"
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: lineClamp,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
+        >
+          {displayText}
         </p>
       </div>
-      <div className="relative z-10">
-        <LabNotice />
-        <div className="mt-4 rounded-2xl bg-[#093227] px-4 py-3 text-[#BFE0D3] text-xs sm:text-sm leading-relaxed flex items-start gap-2.5">
-          <Lock className="h-4 w-4 shrink-0 mt-0.5 text-[#BFE0D3]" />
-          <p>
-            Abstracts are previewed online only. The complete manuscript is available for reading at the{' '}
-            <span className="font-semibold text-[#EAF6F1]">Research Laboratory</span> of De La Salle John Bosco College.
-          </p>
+      {!isFull && (
+        <div className="relative z-10">
+          <LabNotice />
+          <div className="mt-4 rounded-2xl bg-[#093227] px-4 py-3 text-[#BFE0D3] text-xs sm:text-sm leading-relaxed flex items-start gap-2.5">
+            <Lock className="h-4 w-4 shrink-0 mt-0.5 text-[#BFE0D3]" />
+            <p>
+              Abstracts are previewed online only. The complete manuscript is available for reading at the{' '}
+              <span className="font-semibold text-[#EAF6F1]">Research Laboratory</span> of De La Salle John Bosco College.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
