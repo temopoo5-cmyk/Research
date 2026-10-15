@@ -6,8 +6,10 @@ import { coverGradient, formatDate, pluralize } from '../lib/format';
 import {
   Landmark, Search, SlidersHorizontal, FileText, FolderTree, BookOpen,
   ArrowRight, ChevronLeft, ChevronRight, Users, X, Edit, Trash2, CheckCircle2, XCircle,
-  Clock, RotateCcw,
+  Clock, RotateCcw, AlertCircle,
 } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Card, CardContent } from '../components/ui/card';
 
 const PAGE_SIZE = 15;
 
@@ -83,7 +85,7 @@ function Pagination({ page, pages, onChange }) {
   );
 }
 
-export default function AdminBrowseResearch() {
+function AdminBrowseResearchContent() {
   const [params, setParams] = useSearchParams();
 
   const q = params.get('q') || '';
@@ -102,6 +104,7 @@ export default function AdminBrowseResearch() {
   const [pages, setPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => { setDraft(q); }, [q]);
 
@@ -113,12 +116,13 @@ export default function AdminBrowseResearch() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setError(null);
     const query = { page, limit: PAGE_SIZE };
     if (q) query.search = q;
     if (program) query.program = program;
     if (year) query.year = year;
     if (status && status !== 'all') query.status = status;
-    else if (!status) query.status = 'all'; // Signal to API to not filter by status
+    else if (!status) query.status = 'all';
 
     axios.get(`${API}/research/`, { params: query })
       .then(r => {
@@ -128,8 +132,10 @@ export default function AdminBrowseResearch() {
         setTotal(Number.isFinite(r.data?.total) ? r.data.total : 0);
         setLoading(false);
       })
-      .catch(() => {
+      .catch(err => {
         if (cancelled) return;
+        console.error('Failed to fetch research:', err);
+        setError(err.message || 'Failed to load research');
         setResearch([]);
         setPages(1);
         setTotal(0);
@@ -212,6 +218,21 @@ export default function AdminBrowseResearch() {
     }
   };
 
+  if (error) {
+    return (
+      <div className="admin-page space-y-6">
+        <Card className="border-red-200">
+          <CardContent className="py-12 text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-red-700 mb-2">Failed to load research</h3>
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()} className="gradient-btn">Retry</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="admin-page space-y-6">
       {/* Header */}
@@ -265,7 +286,7 @@ export default function AdminBrowseResearch() {
       </div>
 
       {/* Filters & Search */}
-      <div className="admin-panel">
+      <Card>
         <div className="admin-panel-head flex flex-wrap gap-3">
           <form onSubmit={applySearch} className="flex-1 min-w-[280px] flex gap-2">
             <div className="relative flex-1">
@@ -380,10 +401,10 @@ export default function AdminBrowseResearch() {
             )}
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Results Table */}
-      <div className="admin-panel overflow-hidden">
+      <Card>
         <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
             <span className="icon-disc">
@@ -469,9 +490,9 @@ export default function AdminBrowseResearch() {
                     </td>
                     <td><span className="text-[14px]">{r.year || '—'}</span></td>
                     <td>
-                      <Badge variant={r.status} className={`capitalize ${statusConfig[r.status]?.class || ''}`}>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusConfig[r.status]?.class || 'bg-slate-100 text-slate-700 border-slate-200'}`}>
                         {statusConfig[r.status]?.label || r.status}
-                      </Badge>
+                      </span>
                     </td>
                     <td><span className="text-[14px]">{formatDate(r.created_at) || '—'}</span></td>
                     <td>
@@ -535,9 +556,13 @@ export default function AdminBrowseResearch() {
             <Pagination page={page} pages={pages} onChange={goToPage} />
           </>
         )}
-      </div>
+      </Card>
     </div>
   );
 }
 
-// Need to import Clock for the stats card
+export default function AdminBrowseResearch() {
+  return (
+    <AdminBrowseResearchContent />
+  );
+}
