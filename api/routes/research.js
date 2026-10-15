@@ -31,10 +31,10 @@ const SELECT_TAIL = `p.name AS program_name, p.code AS program_code,
    LEFT JOIN authors a ON a.id = ra.author_id
    GROUP BY r.id, p.name, p.code, u.full_name`;
 
-let featuredSupported = false;
+let featuredSupported = true;
 
 async function loadSchema() {
-  if (featuredSupported) return;
+  if (featuredSupported !== undefined) return;
   try {
     const r = await pool.query(
       `SELECT EXISTS (
@@ -46,8 +46,8 @@ async function loadSchema() {
     );
     featuredSupported = Boolean(r.rows[0] && r.rows[0].present);
   } catch (err) {
-    console.error('[api/research] is_featured column check failed:', err && err.message ? err.message : err);
-    featuredSupported = false;
+    console.error('[api/research] is_featured column check failed, assuming column exists:', err && err.message ? err.message : err);
+    featuredSupported = true;
   }
 }
 
