@@ -97,13 +97,14 @@ router.get('/', async (req, res) => {
     const where = whereFromQuery(req.query, values, featuredSupported);
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
+    console.log('[api/research] query:', { where, values, featuredSupported, query: req.query });
     const total = await pool.query(`SELECT COUNT(*)::int AS total FROM research r${where}`, values);
     values.push(limit, (page - 1) * limit);
     const { rows } = await pool.query(`${SELECT}${where} ORDER BY r.created_at DESC LIMIT $${values.length - 1} OFFSET $${values.length}`, values);
     res.json({ data: rows, total: total.rows[0].total, page, pages: Math.ceil(total.rows[0].total / limit) });
   } catch (err) {
-    console.error('[api/research] request failed:', err && err.message ? err.message : err);
-    res.status(500).json({ error: 'Server error' });
+    console.error('[api/research] request failed:', err && err.message ? err.message : err, err && err.stack ? err.stack : '');
+    res.status(500).json({ error: 'Server error', detail: err && err.message ? err.message : String(err) });
   }
 });
 
