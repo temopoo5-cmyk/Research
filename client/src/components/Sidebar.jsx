@@ -11,6 +11,7 @@ const navItems = [
 
 const adminItems = [
   { to: '/admin/research', label: 'Manage Research', icon: BookMarked },
+  { to: '/admin/browse', label: 'Browse Research', icon: Search },
   { to: '/admin/users', label: 'Manage Users', icon: Users },
   { to: '/admin/programs', label: 'Manage Programs', icon: FolderTree },
 ];
