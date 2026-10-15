@@ -32,13 +32,7 @@ const SELECT_TAIL = `p.name AS program_name, p.code AS program_code,
    GROUP BY r.id, p.name, p.code, u.full_name`;
 
 let featuredSupported = false;
-let migrationAttempted = false;
 
-// The is_featured column arrived in a later migration than the rest of the schema.
-// Probe for it and, if it is missing, apply the idempotent migration so the
-// admin-curated featured shelf works without a manual database step. If the
-// database user lacks DDL rights the probe keeps returning false and the featured
-// shelf stays empty rather than failing every research query with a 500.
 async function loadSchema() {
   if (featuredSupported) return;
   try {
@@ -51,26 +45,8 @@ async function loadSchema() {
        ) AS present`
     );
     featuredSupported = Boolean(r.rows[0] && r.rows[0].present);
-    if (!featuredSupported && !migrationAttempted) {
-      migrationAttempted = true;
-      await pool.query(`
-        DO $$
-        BEGIN
-          IF NOT EXISTS (
-            SELECT 1 FROM information_schema.columns
-            WHERE table_schema = current_schema()
-              AND table_name = 'research'
-              AND column_name = 'is_featured'
-          ) THEN
-            ALTER TABLE research ADD COLUMN is_featured BOOLEAN NOT NULL DEFAULT false;
-            CREATE INDEX idx_research_featured ON research (is_featured) WHERE is_featured;
-          END IF;
-        END $$;
-      `);
-      featuredSupported = true;
-    }
   } catch (err) {
-    console.error('[api/research] is_featured migration failed:', err && err.message ? err.message : err);
+    console.error('[api/research] is_featured column check failed:', err && err.message ? err.message : err);
     featuredSupported = false;
   }
 }
