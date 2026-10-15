@@ -262,7 +262,6 @@ function WorksCarousel({ items }) {
                 </span>
                 <div className="min-w-0">
                   <h3 className="research-card-title">{r.title}</h3>
-                  <p className="research-author">{r.authors || 'Unattributed'}</p>
                   {r.year && <span className="research-type">{r.year}</span>}
                 </div>
               </Link>
@@ -550,7 +549,6 @@ export default function Home() {
             <div className="research-table-wrapper">
               <div className="research-row table-header">
                 <div>Title</div>
-                <div>Author</div>
                 <div>Program</div>
                 <div>Date Added</div>
                 <div>Year</div>
@@ -563,7 +561,6 @@ export default function Home() {
                     <FileText className="h-3 w-3 shrink-0" />
                     <span>{r.title}</span>
                   </div>
-                  <div className="research-row-author">{r.authors || 'Unattributed'}</div>
                   <div>
                     {r.program_name && <span className="program-badge">{r.program_name}</span>}
                   </div>
