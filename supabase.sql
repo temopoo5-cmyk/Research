@@ -42,12 +42,36 @@ CREATE TABLE IF NOT EXISTS research (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Authors (separate entity for tracking)
+CREATE TABLE IF NOT EXISTS authors (
+  id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name        TEXT NOT NULL,
+  email       TEXT,
+  affiliation TEXT,
+  orcid       TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (name)
+);
+
+-- Research-Author many-to-many relationship
+CREATE TABLE IF NOT EXISTS research_authors (
+  research_id BIGINT NOT NULL REFERENCES research(id) ON DELETE CASCADE,
+  author_id   BIGINT NOT NULL REFERENCES authors(id) ON DELETE CASCADE,
+  author_order INTEGER NOT NULL DEFAULT 1,
+  is_corresponding BOOLEAN NOT NULL DEFAULT false,
+  PRIMARY KEY (research_id, author_id)
+);
+
 -- Indexes used by the search / filter queries
 CREATE INDEX IF NOT EXISTS idx_research_status    ON research (status);
 CREATE INDEX IF NOT EXISTS idx_research_featured  ON research (is_featured) WHERE is_featured;
 CREATE INDEX IF NOT EXISTS idx_research_year      ON research (year);
 CREATE INDEX IF NOT EXISTS idx_research_program   ON research (program_id);
 CREATE INDEX IF NOT EXISTS idx_users_role         ON users (role);
+CREATE INDEX IF NOT EXISTS idx_authors_name       ON authors (name);
+CREATE INDEX IF NOT EXISTS idx_research_authors_research ON research_authors (research_id);
+CREATE INDEX IF NOT EXISTS idx_research_authors_author   ON research_authors (author_id);
 
 -- ============================================================
 -- SEED DATA  (mirrors server/data/*.json defaults)
@@ -72,3 +96,37 @@ ON CONFLICT (id) DO NOTHING;
 -- If you expose queries through a client with the anon key instead,
 -- you must enable RLS and add policies on every table.
 -- ============================================================
+
+-- ============================================================
+-- MIGRATION: Convert comma-separated authors to author entities
+-- Run this AFTER creating the authors and research_authors tables
+-- ============================================================
+DO $$
+DECLARE
+  r RECORD;
+  author_name TEXT;
+  author_id BIGINT;
+  order_num INTEGER;
+BEGIN
+  -- For each research record with authors
+  FOR r IN SELECT id, authors FROM research WHERE authors IS NOT NULL AND authors != '' LOOP
+    order_num := 1;
+    -- Split comma-separated authors
+    FOR author_name IN SELECT trim(unnest(string_to_array(r.authors, ','))) LOOP
+      IF author_name != '' THEN
+        -- Insert author if not exists (upsert on name)
+        INSERT INTO authors (name)
+        VALUES (author_name)
+        ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+        RETURNING id INTO author_id;
+        
+        -- Link author to research
+        INSERT INTO research_authors (research_id, author_id, author_order)
+        VALUES (r.id, author_id, order_num)
+        ON CONFLICT (research_id, author_id) DO NOTHING;
+        
+        order_num := order_num + 1;
+      END IF;
+    END LOOP;
+  END LOOP;
+END $$;

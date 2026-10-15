@@ -9,10 +9,27 @@ const SELECT_FIELDS = `r.id::int AS id, r.code, r.title, r.authors, r.adviser,
          r.abstract, r.keywords, r.submitted_by, r.status, r.created_at`;
 
 const SELECT_TAIL = `p.name AS program_name, p.code AS program_code,
-         u.full_name AS submitted_by_name
-  FROM research r
-  LEFT JOIN programs p ON p.id = r.program_id
-  LEFT JOIN users u ON u.id = r.submitted_by`;
+         u.full_name AS submitted_by_name,
+         COALESCE(
+           json_agg(
+             json_build_object(
+               'id', a.id,
+               'name', a.name,
+               'email', a.email,
+               'affiliation', a.affiliation,
+               'orcid', a.orcid,
+               'author_order', ra.author_order,
+               'is_corresponding', ra.is_corresponding
+             )
+           ) FILTER (WHERE a.id IS NOT NULL),
+           '[]'
+         ) AS author_details
+   FROM research r
+   LEFT JOIN programs p ON p.id = r.program_id
+   LEFT JOIN users u ON u.id = r.submitted_by
+   LEFT JOIN research_authors ra ON ra.research_id = r.id
+   LEFT JOIN authors a ON a.id = ra.author_id
+   GROUP BY r.id, p.name, p.code, u.full_name`;
 
 let featuredSupported = false;
 let migrationAttempted = false;
@@ -135,40 +152,127 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', authenticateToken, async (req, res) => {
-  const { title, authors, adviser, program_id, year, abstract, keywords } = req.body;
-  if (!title || !authors || !year) return res.status(400).json({ error: 'Required fields missing' });
+  const { title, authors, author_ids, adviser, program_id, year, abstract, keywords } = req.body;
+  if (!title || (!authors && !author_ids) || !year) return res.status(400).json({ error: 'Required fields missing' });
+  const client = await pool.connect();
   try {
-    const count = await pool.query('SELECT COUNT(*)::int AS count FROM research');
+    await client.query('BEGIN');
+    const count = await client.query('SELECT COUNT(*)::int AS count FROM research');
     const code = `RS-${new Date().getFullYear()}-${String(count.rows[0].count + 1).padStart(4, '0')}`;
-    const { rows } = await pool.query(
+    const { rows } = await client.query(
       `INSERT INTO research (code, title, authors, adviser, program_id, year, abstract, keywords, submitted_by, status)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
        RETURNING id::int AS id, code, title, authors, adviser, program_id, year, abstract, keywords, submitted_by, status, created_at`,
       [code, title, authors, adviser || null, program_id ? parseInt(program_id) : null, parseInt(year), abstract || '', keywords || '', req.user.id, req.user.role === 'admin' ? 'approved' : 'pending']
     );
-    res.json(rows[0]);
+    const research = rows[0];
+    
+    // Handle author associations
+    if (author_ids && Array.isArray(author_ids) && author_ids.length > 0) {
+      for (let i = 0; i < author_ids.length; i++) {
+        await client.query(
+          `INSERT INTO research_authors (research_id, author_id, author_order)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (research_id, author_id) DO NOTHING`,
+          [research.id, author_ids[i], i + 1]
+        );
+      }
+    } else if (authors) {
+      // Legacy: create/update authors from comma-separated string
+      const authorNames = authors.split(',').map(n => n.trim()).filter(n => n);
+      for (let i = 0; i < authorNames.length; i++) {
+        const authorResult = await client.query(
+          `INSERT INTO authors (name) VALUES ($1)
+           ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+           RETURNING id`,
+          [authorNames[i]]
+        );
+        await client.query(
+          `INSERT INTO research_authors (research_id, author_id, author_order)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (research_id, author_id) DO NOTHING`,
+          [research.id, authorResult.rows[0].id, i + 1]
+        );
+      }
+    }
+    
+    await client.query('COMMIT');
+    
+    // Return with author details
+    const SELECT = await getSelect();
+    const { rows: finalRows } = await client.query(`${SELECT} WHERE r.id = $1`, [research.id]);
+    res.json(finalRows[0]);
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
+  } finally {
+    client.release();
   }
 });
 
 router.put('/:id', authenticateToken, async (req, res) => {
+  const { title, authors, author_ids, adviser, program_id, year, abstract, keywords } = req.body;
+  const client = await pool.connect();
   try {
-    const existing = await pool.query('SELECT * FROM research WHERE id = $1', [req.params.id]);
+    await client.query('BEGIN');
+    const existing = await client.query('SELECT * FROM research WHERE id = $1', [req.params.id]);
     if (!existing.rows[0]) return res.status(404).json({ error: 'Not found' });
     const cur = existing.rows[0];
     if (req.user.role !== 'admin' && String(cur.submitted_by) !== String(req.user.id)) return res.status(403).json({ error: 'Not authorized' });
-    const { title, authors, adviser, program_id, year, abstract, keywords } = req.body;
-    const { rows } = await pool.query(
+
+    const { rows } = await client.query(
       `UPDATE research SET title=$1, authors=$2, adviser=$3, program_id=$4, year=$5, abstract=$6, keywords=$7
        WHERE id=$8 RETURNING id::int AS id, code, title, authors, adviser, program_id, year, abstract, keywords, submitted_by, status, created_at`,
       [title || cur.title, authors || cur.authors, adviser !== undefined ? adviser : cur.adviser, program_id ? parseInt(program_id) : cur.program_id, year ? parseInt(year) : cur.year, abstract !== undefined ? abstract : cur.abstract, keywords !== undefined ? keywords : cur.keywords, req.params.id]
     );
-    res.json(rows[0]);
+    const research = rows[0];
+
+    // Handle author associations if provided
+    if (author_ids && Array.isArray(author_ids)) {
+      // Remove existing associations
+      await client.query('DELETE FROM research_authors WHERE research_id = $1', [research.id]);
+      // Add new associations
+      for (let i = 0; i < author_ids.length; i++) {
+        await client.query(
+          `INSERT INTO research_authors (research_id, author_id, author_order)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (research_id, author_id) DO NOTHING`,
+          [research.id, author_ids[i], i + 1]
+        );
+      }
+    } else if (authors !== undefined && authors !== cur.authors) {
+      // Legacy: update from comma-separated string
+      await client.query('DELETE FROM research_authors WHERE research_id = $1', [research.id]);
+      const authorNames = authors.split(',').map(n => n.trim()).filter(n => n);
+      for (let i = 0; i < authorNames.length; i++) {
+        const authorResult = await client.query(
+          `INSERT INTO authors (name) VALUES ($1)
+           ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+           RETURNING id`,
+          [authorNames[i]]
+        );
+        await client.query(
+          `INSERT INTO research_authors (research_id, author_id, author_order)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (research_id, author_id) DO NOTHING`,
+          [research.id, authorResult.rows[0].id, i + 1]
+        );
+      }
+    }
+
+    await client.query('COMMIT');
+    
+    // Return with author details
+    const SELECT = await getSelect();
+    const { rows: finalRows } = await client.query(`${SELECT} WHERE r.id = $1`, [research.id]);
+    res.json(finalRows[0]);
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error('[api/research] request failed:', err && err.message ? err.message : err);
     res.status(500).json({ error: 'Server error' });
+  } finally {
+    client.release();
   }
 });
 
@@ -211,6 +315,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     if (!existing.rows[0]) return res.status(404).json({ error: 'Not found' });
     const cur = existing.rows[0];
     if (req.user.role !== 'admin' && String(cur.submitted_by) !== String(req.user.id)) return res.status(403).json({ error: 'Not authorized' });
+    await pool.query('DELETE FROM research_authors WHERE research_id = $1', [req.params.id]);
     await pool.query('DELETE FROM research WHERE id = $1', [req.params.id]);
     res.json({ message: 'Deleted' });
   } catch (err) {

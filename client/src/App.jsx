@@ -14,6 +14,9 @@ import AdminUsers from './pages/AdminUsers';
 import AdminResearch from './pages/AdminResearch';
 import AdminBrowseResearch from './pages/AdminBrowseResearch';
 import AdminPrograms from './pages/AdminPrograms';
+import AdminAuthors from './pages/AdminAuthors';
+import AdminAuthorDetail from './pages/AdminAuthorDetail';
+import AdminAuthorForm from './pages/AdminAuthorForm';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
@@ -90,6 +93,10 @@ function AppRoutes() {
       <Route path="/submit" element={<AdminRoute><AdminLayout><SubmitResearch /></AdminLayout></AdminRoute>} />
       <Route path="/edit-research/:id" element={<AdminRoute><AdminLayout><SubmitResearch /></AdminLayout></AdminRoute>} />
       <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/authors" element={<AdminRoute><AdminLayout><AdminAuthors /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/authors/new" element={<AdminRoute><AdminLayout><AdminAuthorForm /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/authors/:id" element={<AdminRoute><AdminLayout><AdminAuthorDetail /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/authors/:id/edit" element={<AdminRoute><AdminLayout><AdminAuthorForm /></AdminLayout></AdminRoute>} />
       <Route path="/admin/research" element={<AdminRoute><AdminLayout><AdminResearch /></AdminLayout></AdminRoute>} />
       <Route path="/admin/research/:id" element={<AdminRoute><AdminLayout><ResearchDetail /></AdminLayout></AdminRoute>} />
       <Route path="/admin/browse" element={<AdminRoute><AdminLayout><AdminBrowseResearch /></AdminLayout></AdminRoute>} />

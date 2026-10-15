@@ -9,13 +9,21 @@ import { Textarea } from '../components/ui/textarea';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
-import { Info, BookMarked, FileText, ArrowLeft } from 'lucide-react';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+} from '../components/ui/dialog';
+import { Checkbox } from '../components/ui/checkbox';
+import { Info, BookMarked, FileText, ArrowLeft, Plus, UserPlus, Search, X } from 'lucide-react';
 
 export default function SubmitResearch() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const [programs, setPrograms] = useState([]);
+  const [authors, setAuthors] = useState([]);
+  const [selectedAuthorIds, setSelectedAuthorIds] = useState([]);
+  const [authorDialogOpen, setAuthorDialogOpen] = useState(false);
+  const [authorSearch, setAuthorSearch] = useState('');
   const [form, setForm] = useState({ title: '', authors: '', adviser: '', program_id: '', year: new Date().getFullYear(), abstract: '', keywords: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,23 +31,36 @@ export default function SubmitResearch() {
 
   useEffect(() => {
     axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
+    axios.get(`${API}/authors/`, { params: { limit: 200 } }).then(r => { if (Array.isArray(r.data)) setAuthors(r.data); }).catch(() => {});
     if (isEdit) {
       axios.get(`${API}/research/${id}`).then(r => {
         const d = r.data;
-        setForm({ title: d.title, authors: d.authors, adviser: d.adviser || '', program_id: d.program_id ? String(d.program_id) : '', year: d.year, abstract: d.abstract || '', keywords: d.keywords || '' });
+        const authorIds = d.author_details?.map(a => a.id) || [];
+        setSelectedAuthorIds(authorIds);
+        const authorNames = d.author_details?.map(a => a.name).join(', ') || d.authors || '';
+        setForm({ title: d.title, authors: authorNames, adviser: d.adviser || '', program_id: d.program_id ? String(d.program_id) : '', year: d.year, abstract: d.abstract || '', keywords: d.keywords || '' });
       });
     }
   }, [id]);
+
+  const handleAuthorSelect = (authorId) => {
+    setSelectedAuthorIds(prev => prev.includes(authorId) ? prev.filter(id => id !== authorId) : [...prev, authorId]);
+    const names = authors.filter(a => selectedAuthorIds.includes(a.id) || a.id === authorId).map(a => a.name);
+    setForm(prev => ({ ...prev, authors: names.join(', ') }));
+  };
+
+  const filteredAuthors = authors.filter(a => a.name.toLowerCase().includes(authorSearch.toLowerCase()));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
+      const payload = { ...form, author_ids: selectedAuthorIds };
       if (isEdit) {
-        await axios.put(`${API}/research/${id}`, form);
+        await axios.put(`${API}/research/${id}`, payload);
       } else {
-        await axios.post(`${API}/research/`, form);
+        await axios.post(`${API}/research/`, payload);
       }
       navigate(isAdmin ? '/admin/research' : '/research');
     } catch (err) {
@@ -84,16 +105,65 @@ export default function SubmitResearch() {
               <Label htmlFor="title">Title *</Label>
               <Input id="title" value={form.title} onChange={e => setForm({...form, title: e.target.value})} required placeholder="Enter the research title" className="rounded-xl border-[#DCEBE5] bg-ivory" />
             </div>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="authors">Authors *</Label>
-                <Input id="authors" value={form.authors} onChange={e => setForm({...form, authors: e.target.value})} required placeholder="e.g. Juan Dela Cruz, Maria Santos" className="rounded-xl border-[#DCEBE5] bg-ivory" />
+            <div className="space-y-2">
+                <Label>Authors *</Label>
+                <Dialog open={authorDialogOpen} onOpenChange={setAuthorDialogOpen}>
+                  <DialogTrigger asChild>
+                    <div className="relative">
+                      <div className="rounded-xl border-[#DCEBE5] bg-ivory px-4 py-2.5 min-h-[44px] flex flex-wrap items-center gap-2">
+{selectedAuthorIds.length === 0 ? (
+                              <span className="text-[#A3B5AF]">Select authors...</span>
+                            ) : (
+                              <>
+                                {selectedAuthorIds.map(id => {
+                                  const author = authors.find(a => a.id === id);
+                                  return author ? (
+                                    <span key={id} className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-soft-green text-[12px] font-medium text-[#0C765E]">
+                                      {author.name}
+                                      <button type="button" onClick={() => handleAuthorSelect(id)} className="text-[#0C765E] hover:text-red-500"><X className="h-3 w-3" /></button>
+                                    </span>
+                                  ) : null;
+                                })}
+                              </>
+                            )}
+                      </div>
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8AA79E]" />
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-lg max-h-[60vh]">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center justify-between">
+                        Select Authors
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="gap-1.5"><UserPlus className="h-3.5 w-3.5" /> New</Button>
+                        </DialogTrigger>
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8AA79E]" />
+                        <input type="search" value={authorSearch} onChange={e => setAuthorSearch(e.target.value)} placeholder="Search authors..." className="w-full pl-10 pr-4 py-2 rounded-xl border-[#DCEBE5] bg-ivory text-[13.5px] focus-visible:border-emerald-brand" />
+                      </div>
+                      <div className="max-h-[40vh] overflow-y-auto space-y-2">
+                        {filteredAuthors.length === 0 ? (
+                          <p className="text-center text-muted-green py-4">No authors found. <Link to="/admin/authors/new" className="text-emerald-brand underline">Create new author</Link></p>
+                        ) : (
+                          filteredAuthors.map(a => (
+                            <label key={a.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-soft-green transition cursor-pointer">
+                              <Checkbox checked={selectedAuthorIds.includes(a.id)} onCheckedChange={() => handleAuthorSelect(a.id)} />
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-forest truncate">{a.name}</p>
+                                <p className="text-[11px] text-muted-green truncate">{a.affiliation || 'No affiliation'}</p>
+                              </div>
+                            </label>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                <p className="text-[11px] text-muted-green">{selectedAuthorIds.length} author{selectedAuthorIds.length !== 1 ? 's' : ''} selected</p>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="adviser">Adviser</Label>
-                <Input id="adviser" value={form.adviser} onChange={e => setForm({...form, adviser: e.target.value})} placeholder="Research adviser" className="rounded-xl border-[#DCEBE5] bg-ivory" />
-              </div>
-            </div>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>Program</Label>
