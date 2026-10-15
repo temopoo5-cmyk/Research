@@ -8,7 +8,7 @@ const SELECT_FIELDS = `r.id::int AS id, r.code, r.title, r.authors, r.adviser,
          r.program_id, r.year,
          r.abstract, r.keywords, r.submitted_by, r.status, r.created_at`;
 
-const SELECT_TAIL = `p.name AS program_name, p.code AS program_code,
+const SELECT_FROM = `p.name AS program_name, p.code AS program_code,
          u.full_name AS submitted_by_name,
          COALESCE(
            json_agg(
@@ -28,8 +28,9 @@ const SELECT_TAIL = `p.name AS program_name, p.code AS program_code,
    LEFT JOIN programs p ON p.id = r.program_id
    LEFT JOIN users u ON u.id = r.submitted_by
    LEFT JOIN research_authors ra ON ra.research_id = r.id
-   LEFT JOIN authors a ON a.id = ra.author_id
-   GROUP BY r.id, p.name, p.code, u.full_name`;
+   LEFT JOIN authors a ON a.id = ra.author_id`;
+
+const GROUP_BY = `GROUP BY r.id, p.name, p.code, u.full_name`;
 
 let featuredSupported = true;
 
@@ -56,10 +57,10 @@ async function getSelect() {
   const featuredField = featuredSupported
     ? 'COALESCE(r.is_featured, false) AS is_featured'
     : 'false AS is_featured';
-  return `
-  SELECT ${SELECT_FIELDS},
-         ${featuredField},
-         ${SELECT_TAIL}`;
+  return {
+    fields: `SELECT ${SELECT_FIELDS}, ${featuredField}, ${SELECT_FROM}`,
+    groupBy: GROUP_BY
+  };
 }
 
 const TRUTHY = ['1', 'true', 'yes', 'on'];
@@ -100,7 +101,7 @@ router.get('/', async (req, res) => {
     console.log('[api/research] query:', { where, values, featuredSupported, query: req.query });
     const total = await pool.query(`SELECT COUNT(*)::int AS total FROM research r${where}`, values);
     values.push(limit, (page - 1) * limit);
-    const { rows } = await pool.query(`${SELECT}${where} ORDER BY r.created_at DESC LIMIT $${values.length - 1} OFFSET $${values.length}`, values);
+    const { rows } = await pool.query(`${SELECT.fields}${where} ${SELECT.groupBy} ORDER BY r.created_at DESC LIMIT $${values.length - 1} OFFSET $${values.length}`, values);
     res.json({ data: rows, total: total.rows[0].total, page, pages: Math.ceil(total.rows[0].total / limit) });
   } catch (err) {
     console.error('[api/research] request failed:', err && err.message ? err.message : err, err && err.stack ? err.stack : '');
@@ -120,7 +121,7 @@ router.get('/all', authenticateToken, async (req, res) => {
       else conds.push('FALSE');
     }
     const where = conds.length ? ` WHERE ${conds.join(' AND ')}` : '';
-    const { rows } = await pool.query(`${SELECT}${where} ORDER BY r.created_at DESC`, values);
+    const { rows } = await pool.query(`${SELECT.fields}${where} ${SELECT.groupBy} ORDER BY r.created_at DESC`, values);
     res.json(rows);
   } catch (err) {
     console.error('[api/research] request failed:', err && err.message ? err.message : err);
@@ -131,7 +132,7 @@ router.get('/all', authenticateToken, async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const SELECT = await getSelect();
-    const { rows } = await pool.query(`${SELECT} WHERE r.id = $1`, [req.params.id]);
+    const { rows } = await pool.query(`${SELECT.fields} WHERE r.id = $1 ${SELECT.groupBy}`, [req.params.id]);
     if (!rows[0]) return res.status(404).json({ error: 'Not found' });
     res.json(rows[0]);
   } catch (err) {
