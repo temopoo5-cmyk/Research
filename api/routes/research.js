@@ -64,7 +64,10 @@ function whereFromQuery(q, values, withFeatured = true) {
   const push = (cond) => conds.push(cond);
 
   const reqStatus = q.status || 'approved';
-  if (['approved', 'pending', 'rejected'].includes(reqStatus)) { values.push(reqStatus); push(`r.status = $${values.length}`); }
+  if (reqStatus === 'all') {
+    // No status filter - show all
+  } else if (['approved', 'pending', 'rejected'].includes(reqStatus)) { values.push(reqStatus); push(`r.status = $${values.length}`); }
+  else { values.push('approved'); push(`r.status = $${values.length}`); }
 
   if (TRUTHY.includes(String(q.featured).toLowerCase())) {
     // Without the column nothing can be featured, so return an honest empty

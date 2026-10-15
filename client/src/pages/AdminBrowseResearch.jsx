@@ -117,9 +117,10 @@ export default function AdminBrowseResearch() {
     if (q) query.search = q;
     if (program) query.program = program;
     if (year) query.year = year;
-    if (status) query.status = status;
+    if (status && status !== 'all') query.status = status;
+    else if (!status) query.status = 'all'; // Signal to API to not filter by status
 
-    axios.get(`${API}/research/all`, { params: query })
+    axios.get(`${API}/research/`, { params: query })
       .then(r => {
         if (cancelled) return;
         setResearch(Array.isArray(r.data?.data) ? r.data.data : []);
