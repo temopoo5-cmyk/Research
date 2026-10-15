@@ -121,7 +121,7 @@ export default function ResearchList() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const query = { page, limit: PAGE_SIZE };
+    const query = { page, limit: PAGE_SIZE, status: 'all' };
     if (q) query.search = q;
     if (program) query.program = program;
     if (year) query.year = year;

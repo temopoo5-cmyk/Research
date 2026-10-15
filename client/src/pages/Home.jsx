@@ -296,7 +296,7 @@ export default function Home() {
     axios.get(`${API}/research/`, { params: { featured: 1, limit: 50 } })
       .then(r => { if (Array.isArray(r.data?.data)) setFeatured(r.data.data); })
       .catch(() => setLoadError(true));
-    axios.get(`${API}/research/`, { params: { limit: 4 } })
+    axios.get(`${API}/research/`, { params: { limit: 4, status: 'all' } })
       .then(r => { if (Array.isArray(r.data?.data)) setLatest(r.data.data); })
       .catch(() => setLoadError(true));
   }, []);
