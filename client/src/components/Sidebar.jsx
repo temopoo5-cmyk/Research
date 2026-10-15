@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
-import { LayoutDashboard, Upload, Users, FolderTree, BookMarked, LogOut, GraduationCap, X } from 'lucide-react';
+import { LayoutDashboard, Upload, Users, FolderTree, BookMarked, LogOut, GraduationCap, X, Search } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
