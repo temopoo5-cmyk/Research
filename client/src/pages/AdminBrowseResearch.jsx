@@ -497,7 +497,7 @@ function AdminBrowseResearchContent() {
                     <td><span className="text-[14px]">{formatDate(r.created_at) || '—'}</span></td>
                     <td>
                       <div className="flex items-center gap-1.5">
-                        <Link to={`/admin/research/${r.id}`} className="view-details inline-flex items-center gap-1 text-[13.5px] font-semibold" title="View Admin Page">
+                        <Link to={`/research/${r.id}`} className="view-details inline-flex items-center gap-1 text-[13.5px] font-semibold" title="View Public Page">
                           View <ArrowRight className="h-3 w-3" />
                         </Link>
                         <Link to={`/edit-research/${r.id}`} className="p-2 rounded-full text-muted-green hover:bg-soft-green hover:text-forest transition" title="Edit">

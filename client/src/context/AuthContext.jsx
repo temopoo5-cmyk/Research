@@ -6,7 +6,7 @@ const API = '/api';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('rms_token'));
+  const [token, setToken] = useState(sessionStorage.getItem('rms_token'));
   const [loading, setLoading] = useState(!!token);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
 
   const login = async (username, password) => {
     const res = await axios.post(`${API}/auth/login`, { username, password });
-    localStorage.setItem('rms_token', res.data.token);
+    sessionStorage.setItem('rms_token', res.data.token);
     setToken(res.data.token);
     setUser(res.data.user);
     return res.data;
@@ -28,14 +28,14 @@ export function AuthProvider({ children }) {
 
   const register = async (username, password, full_name) => {
     const res = await axios.post(`${API}/auth/register`, { username, password, full_name });
-    localStorage.setItem('rms_token', res.data.token);
+    sessionStorage.setItem('rms_token', res.data.token);
     setToken(res.data.token);
     setUser(res.data.user);
     return res.data;
   };
 
   const logout = () => {
-    localStorage.removeItem('rms_token');
+    sessionStorage.removeItem('rms_token');
     delete axios.defaults.headers.common['Authorization'];
     setToken(null);
     setUser(null);

@@ -91,7 +91,6 @@ function AppRoutes() {
       <Route path="/edit-research/:id" element={<AdminRoute><AdminLayout><SubmitResearch /></AdminLayout></AdminRoute>} />
       <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
       <Route path="/admin/research" element={<AdminRoute><AdminLayout><AdminResearch /></AdminLayout></AdminRoute>} />
-      <Route path="/admin/research/:id" element={<AdminRoute><AdminLayout><ResearchDetail /></AdminLayout></AdminRoute>} />
       <Route path="/admin/browse" element={<AdminRoute><AdminLayout><AdminBrowseResearch /></AdminLayout></AdminRoute>} />
       <Route path="/admin/programs" element={<AdminRoute><AdminLayout><AdminPrograms /></AdminLayout></AdminRoute>} />
     </Routes>
