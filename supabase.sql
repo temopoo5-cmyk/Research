@@ -105,7 +105,7 @@ DO $$
 DECLARE
   r RECORD;
   author_name TEXT;
-  author_id BIGINT;
+  auth_id BIGINT;
   order_num INTEGER;
 BEGIN
   -- For each research record with authors
@@ -118,11 +118,11 @@ BEGIN
         INSERT INTO authors (name)
         VALUES (author_name)
         ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
-        RETURNING id INTO author_id;
+        RETURNING id INTO auth_id;
         
         -- Link author to research
         INSERT INTO research_authors (research_id, author_id, author_order)
-        VALUES (r.id, author_id, order_num)
+        VALUES (r.id, auth_id, order_num)
         ON CONFLICT (research_id, author_id) DO NOTHING;
         
         order_num := order_num + 1;
