@@ -403,7 +403,6 @@ export default function ResearchList() {
                       <tr>
                         <th style={{ width: 52 }}><span className="sr-only">Cover</span></th>
                         <th>Title</th>
-                        <th>Author(s)</th>
                         <th>Program</th>
                         <th>Year</th>
                         <th>Date Added</th>
@@ -421,21 +420,6 @@ export default function ResearchList() {
                           <td>
                             <div className="cell-title">{r.title}</div>
                             {r.adviser && <div className="cell-author">Adviser: {r.adviser}</div>}
-                          </td>
-                          <td>
-                            <div className="cell-author flex flex-wrap gap-1.5">
-                              {r.authors ? r.authors.split(',').map((a, i) => {
-                                const name = a.trim();
-                                return (
-                                  <Link key={i} to={`/research?q=${encodeURIComponent(name)}`} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/80 border border-border shadow-sm text-sm font-medium hover:bg-soft-green hover:text-forest transition">
-                                    <span className="h-4 w-4 rounded-full bg-[#08755B]/20 text-[#0C765E] flex items-center justify-center text-[9px] font-bold font-mono">
-                                      {name.charAt(0).toUpperCase()}
-                                    </span>
-                                    {name}
-                                  </Link>
-                                );
-                              }) : 'Unattributed'}
-                            </div>
                           </td>
                           <td>
                             {r.program_name
