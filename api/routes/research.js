@@ -53,8 +53,20 @@ async function loadSchema() {
     featuredSupported = Boolean(r.rows[0] && r.rows[0].present);
     if (!featuredSupported && !migrationAttempted) {
       migrationAttempted = true;
-      await pool.query('ALTER TABLE research ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false');
-      await pool.query('CREATE INDEX IF NOT EXISTS idx_research_featured ON research (is_featured) WHERE is_featured');
+      await pool.query(`
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_schema = current_schema()
+              AND table_name = 'research'
+              AND column_name = 'is_featured'
+          ) THEN
+            ALTER TABLE research ADD COLUMN is_featured BOOLEAN NOT NULL DEFAULT false;
+            CREATE INDEX idx_research_featured ON research (is_featured) WHERE is_featured;
+          END IF;
+        END $$;
+      `);
       featuredSupported = true;
     }
   } catch (err) {
