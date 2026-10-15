@@ -112,7 +112,7 @@ export default function AdminResearch() {
                 <TableRow key={r.id} className="border-0">
                   <TableCell className="font-mono text-[12px] font-semibold text-[#0C765E]">{r.code}</TableCell>
                   <TableCell>
-                    <Link to={`/research/${r.id}`} className="font-medium text-forest transition hover:text-[#0C765E] hover:underline">{r.title}</Link>
+                    <Link to={`/admin/research/${r.id}`} className="font-medium text-forest transition hover:text-[#0C765E] hover:underline">{r.title}</Link>
                   </TableCell>
                   <TableCell className="text-muted-green">{r.authors}</TableCell>
                   <TableCell className="font-mono text-muted-green">{r.year}</TableCell>
