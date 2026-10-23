@@ -78,17 +78,17 @@ CREATE INDEX IF NOT EXISTS idx_research_authors_author   ON research_authors (au
 -- ============================================================
 
 -- Default admin account: admin / admin123 (bcrypt hash matches existing seed)
-INSERT INTO users (id, username, password, full_name, role, created_at) OVERRIDING SYSTEM VALUE
-VALUES (1, 'admin', '$2a$10$dDYTMkTJV82aMnS98qKZ3.EPcKTkMkFyjiILbJGSGzYgvMbEF9eKS', 'System Administrator', 'admin', now())
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO users (username, password, full_name, role) VALUES
+  ('admin', '$2a$10$dDYTMkTJV82aMnS98qKZ3.EPcKTkMkFyjiILbJGSGzYgvMbEF9eKS', 'System Administrator', 'admin')
+ON CONFLICT (username) DO NOTHING;
 
-INSERT INTO programs (id, name, code, created_at) OVERRIDING SYSTEM VALUE
-VALUES
-  (1, 'Computer Science', 'CS', now()),
-  (2, 'Information Technology', 'IT', now()),
-  (3, 'Information Systems', 'IS', now()),
-  (4, 'Computer Engineering', 'CPE', now())
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO programs (name, code) VALUES
+  ('Computer Science', 'CS'),
+  ('Information Technology', 'IT'),
+  ('Information Systems', 'IS'),
+  ('Computer Engineering', 'CPE'),
+  ('Business Administration', 'BSBA')
+ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name;
 
 -- ============================================================
 -- NOTE: Row Level Security

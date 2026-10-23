@@ -31,7 +31,7 @@ export default function SubmitResearch() {
 
   useEffect(() => {
     axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
-    axios.get(`${API}/authors/`, { params: { limit: 200 } }).then(r => { if (Array.isArray(r.data)) setAuthors(r.data); }).catch(() => {});
+    axios.get(`${API}/authors/`, { params: { limit: 200 } }).then(r => { const arr = Array.isArray(r.data) ? r.data : (r.data?.data || []); setAuthors(arr); }).catch(() => {});
     if (isEdit) {
       axios.get(`${API}/research/${id}`).then(r => {
         const d = r.data;

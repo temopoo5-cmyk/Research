@@ -2,15 +2,10 @@
 -- ResearchHub - DATA INSERT SCRIPT
 -- Paste this whole script into the Supabase SQL Editor and click Run.
 -- Safe to run more than once (duplicate codes are skipped).
--- Requires: supabase.sql (tables) to have been run first.
+-- Requires: supabase.sql (tables + seed programs) to have been run first.
 -- ============================================================
 
--- 1) Make sure the BSBA program exists in the programs table
-INSERT INTO programs (name, code)
-VALUES ('Business Administration', 'BSBA')
-ON CONFLICT DO NOTHING;
-
--- 2) Store the library call numbers in their own column
+-- 1) Store the library call numbers in their own column
 ALTER TABLE research ADD COLUMN IF NOT EXISTS call_number TEXT;
 
 -- 2b) Admin-curated "featured book" flag (drives the Featured Books shelf)
