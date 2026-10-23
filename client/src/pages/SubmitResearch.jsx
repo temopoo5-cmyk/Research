@@ -13,7 +13,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from '../components/ui/dialog';
 import { Checkbox } from '../components/ui/checkbox';
-import { Info, BookMarked, FileText, ArrowLeft, Plus, UserPlus, Search, X } from 'lucide-react';
+import { Info, BookMarked, FileText, ArrowLeft, Plus, UserPlus, Search, X, Save, Loader2 } from 'lucide-react';
 
 export default function SubmitResearch() {
   const { id } = useParams();
@@ -24,6 +24,9 @@ export default function SubmitResearch() {
   const [selectedAuthorIds, setSelectedAuthorIds] = useState([]);
   const [authorDialogOpen, setAuthorDialogOpen] = useState(false);
   const [authorSearch, setAuthorSearch] = useState('');
+  const [newAuthorDialogOpen, setNewAuthorDialogOpen] = useState(false);
+  const [newAuthor, setNewAuthor] = useState({ name: '', email: '', affiliation: '', orcid: '' });
+  const [creatingAuthor, setCreatingAuthor] = useState(false);
   const [form, setForm] = useState({ title: '', authors: '', adviser: '', program_id: '', year: new Date().getFullYear(), abstract: '', keywords: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -67,6 +70,23 @@ export default function SubmitResearch() {
       setForm(f => ({ ...f, authors: names.join(', ') }));
       return next;
     });
+  };
+
+  const handleCreateAuthor = async (e) => {
+    e.preventDefault();
+    if (!newAuthor.name.trim()) return;
+    setCreatingAuthor(true);
+    try {
+      const res = await axios.post(`${API}/authors/`, newAuthor);
+      setAuthors(prev => [res.data, ...prev]);
+      setSelectedAuthorIds(prev => [...prev, res.data.id]);
+      setForm(f => ({ ...f, authors: [...authors.filter(a => selectedAuthorIds.includes(a.id)), res.data].map(a => a.name).join(', ') }));
+      setNewAuthor({ name: '', email: '', affiliation: '', orcid: '' });
+      setNewAuthorDialogOpen(false);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to create author');
+    }
+    setCreatingAuthor(false);
   };
 
   const filteredAuthors = authors.filter(a => a.name.toLowerCase().includes(authorSearch.toLowerCase()));
@@ -154,9 +174,12 @@ export default function SubmitResearch() {
                     <DialogHeader>
                       <DialogTitle className="flex items-center justify-between">
                         Select Authors
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="gap-1.5"><UserPlus className="h-3.5 w-3.5" /> New</Button>
-                        </DialogTrigger>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setNewAuthorDialogOpen(true)}><Save className="h-3.5 w-3.5" /> Enter</Button>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-1.5"><UserPlus className="h-3.5 w-3.5" /> New</Button>
+                          </DialogTrigger>
+                        </div>
                       </DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
@@ -223,6 +246,39 @@ export default function SubmitResearch() {
           </div>
         </div>
       </form>
+
+      <Dialog open={newAuthorDialogOpen} onOpenChange={setNewAuthorDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Author</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreateAuthor} className="space-y-4 p-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-author-name">Name *</Label>
+              <Input id="new-author-name" value={newAuthor.name} onChange={e => setNewAuthor({...newAuthor, name: e.target.value})} required placeholder="Author name" className="rounded-xl border-[#DCEBE5] bg-ivory" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-author-email">Email</Label>
+              <Input id="new-author-email" type="email" value={newAuthor.email} onChange={e => setNewAuthor({...newAuthor, email: e.target.value})} placeholder="author@example.com" className="rounded-xl border-[#DCEBE5] bg-ivory" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-author-affiliation">Affiliation</Label>
+              <Input id="new-author-affiliation" value={newAuthor.affiliation} onChange={e => setNewAuthor({...newAuthor, affiliation: e.target.value})} placeholder="Institution/Organization" className="rounded-xl border-[#DCEBE5] bg-ivory" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-author-orcid">ORCID</Label>
+              <Input id="new-author-orcid" value={newAuthor.orcid} onChange={e => setNewAuthor({...newAuthor, orcid: e.target.value})} placeholder="0000-0000-0000-0000" className="rounded-xl border-[#DCEBE5] bg-ivory" />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button type="submit" disabled={creatingAuthor || !newAuthor.name.trim()} className="gradient-btn rounded-full flex-1">
+                {creatingAuthor ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create & Add'}
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setNewAuthorDialogOpen(false)} className="rounded-full border-[#DCEBE5] text-[13px] font-semibold text-muted-green flex-1">Cancel</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
