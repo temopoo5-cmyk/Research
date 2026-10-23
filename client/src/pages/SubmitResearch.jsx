@@ -61,9 +61,12 @@ export default function SubmitResearch() {
   }, [id]);
 
   const handleAuthorSelect = (authorId) => {
-    setSelectedAuthorIds(prev => prev.includes(authorId) ? prev.filter(id => id !== authorId) : [...prev, authorId]);
-    const names = authors.filter(a => selectedAuthorIds.includes(a.id) || a.id === authorId).map(a => a.name);
-    setForm(prev => ({ ...prev, authors: names.join(', ') }));
+    setSelectedAuthorIds(prev => {
+      const next = prev.includes(authorId) ? prev.filter(id => id !== authorId) : [...prev, authorId];
+      const names = authors.filter(a => next.includes(a.id)).map(a => a.name);
+      setForm(f => ({ ...f, authors: names.join(', ') }));
+      return next;
+    });
   };
 
   const filteredAuthors = authors.filter(a => a.name.toLowerCase().includes(authorSearch.toLowerCase()));
