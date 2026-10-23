@@ -133,8 +133,6 @@ export default function SubmitResearch() {
           <span className="text-[12px] font-semibold text-muted-green"><span className="text-red-500">*</span> Required fields</span>
         </div>
         <div className="admin-panel-body">
-          {error && <div role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13.5px] text-red-700">{error}</div>}
-
           <div className="admin-note mb-6">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-emerald-brand" />
             <span>A unique research code (e.g. <strong className="font-mono font-semibold text-[#0C765E]">RS-2026-0001</strong>) will be automatically assigned when submitted.</span>
