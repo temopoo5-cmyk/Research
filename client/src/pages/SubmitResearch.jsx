@@ -31,7 +31,24 @@ export default function SubmitResearch() {
 
   useEffect(() => {
     axios.get(`${API}/programs/`).then(r => { if (Array.isArray(r.data)) setPrograms(r.data); }).catch(() => {});
-    axios.get(`${API}/authors/`, { params: { limit: 200 } }).then(r => { const arr = Array.isArray(r.data) ? r.data : (r.data?.data || []); setAuthors(arr); }).catch(() => {});
+    // fetch all authors (paginated)
+    const fetchAllAuthors = async () => {
+      try {
+        let allAuthors = [];
+        let page = 1;
+        const limit = 200;
+        while (true) {
+          const res = await axios.get(`${API}/authors/`, { params: { limit, page, sort: 'name' } });
+          const data = res.data.data || res.data;
+          if (!Array.isArray(data) || data.length === 0) break;
+          allAuthors = allAuthors.concat(data);
+          if (data.length < limit) break;
+          page++;
+        }
+        setAuthors(allAuthors);
+      } catch (e) {}
+    };
+    fetchAllAuthors();
     if (isEdit) {
       axios.get(`${API}/research/${id}`).then(r => {
         const d = r.data;
