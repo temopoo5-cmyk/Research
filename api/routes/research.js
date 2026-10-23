@@ -47,8 +47,8 @@ async function loadSchema() {
     );
     featuredSupported = Boolean(r.rows[0] && r.rows[0].present);
   } catch (err) {
-    console.error('[api/research] is_featured column check failed, assuming column exists:', err && err.message ? err.message : err);
-    featuredSupported = true;
+    console.error('[api/research] is_featured column check failed, assuming column does NOT exist:', err && err.message ? err.message : err);
+    featuredSupported = false;
   }
 }
 
