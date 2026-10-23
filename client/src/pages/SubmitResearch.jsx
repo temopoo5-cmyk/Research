@@ -105,8 +105,9 @@ export default function SubmitResearch() {
       setTimeout(() => navigate(isAdmin ? '/admin/research' : '/research'), 1500);
     } catch (err) {
       setError(err.response?.data?.error || 'Submission failed');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
