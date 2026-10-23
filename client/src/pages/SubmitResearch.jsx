@@ -13,7 +13,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from '../components/ui/dialog';
 import { Checkbox } from '../components/ui/checkbox';
-import { Info, BookMarked, FileText, ArrowLeft, Plus, UserPlus, Search, X, Save, Loader2 } from 'lucide-react';
+import { Info, BookMarked, FileText, ArrowLeft, Plus, UserPlus, Search, X, Save, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function SubmitResearch() {
   const { id } = useParams();
@@ -30,6 +30,7 @@ export default function SubmitResearch() {
   const [form, setForm] = useState({ title: '', authors: '', adviser: '', program_id: '', year: new Date().getFullYear(), abstract: '', keywords: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const isEdit = !!id;
 
   useEffect(() => {
@@ -95,14 +96,17 @@ export default function SubmitResearch() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccess(false);
     try {
       const payload = { ...form, author_ids: selectedAuthorIds };
       if (isEdit) {
         await axios.put(`${API}/research/${id}`, payload);
+        setSuccess(true);
       } else {
         await axios.post(`${API}/research/`, payload);
+        setSuccess(true);
       }
-      navigate(isAdmin ? '/admin/research' : '/research');
+      setTimeout(() => navigate(isAdmin ? '/admin/research' : '/research'), 1500);
     } catch (err) {
       setError(err.response?.data?.error || 'Submission failed');
     }
@@ -133,6 +137,8 @@ export default function SubmitResearch() {
           <span className="text-[12px] font-semibold text-muted-green"><span className="text-red-500">*</span> Required fields</span>
         </div>
         <div className="admin-panel-body">
+          {success && <div role="status" className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13.5px] text-emerald-700 flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Research posted successfully!</div>}
+
           <div className="admin-note mb-6">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-emerald-brand" />
             <span>A unique research code (e.g. <strong className="font-mono font-semibold text-[#0C765E]">RS-2026-0001</strong>) will be automatically assigned when submitted.</span>
