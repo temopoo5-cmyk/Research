@@ -32,7 +32,7 @@ const SELECT_FROM = `p.name AS program_name, p.code AS program_code,
 
 const GROUP_BY = `GROUP BY r.id, p.name, p.code, u.full_name`;
 
-let featuredSupported = true;
+let featuredSupported;
 
 async function loadSchema() {
   if (featuredSupported !== undefined) return;
