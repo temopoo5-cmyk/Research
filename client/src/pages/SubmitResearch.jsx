@@ -170,7 +170,7 @@ export default function SubmitResearch() {
                         ) : (
                           filteredAuthors.map(a => (
                             <label key={a.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-soft-green transition cursor-pointer">
-                              <Checkbox checked={selectedAuthorIds.includes(a.id)} onCheckedChange={() => handleAuthorSelect(a.id)} />
+                              <Checkbox checked={selectedAuthorIds.includes(a.id)} onChange={() => handleAuthorSelect(a.id)} />
                               <div className="flex-1 min-w-0">
                                 <p className="font-medium text-forest truncate">{a.name}</p>
                                 <p className="text-[11px] text-muted-green truncate">{a.affiliation || 'No affiliation'}</p>
