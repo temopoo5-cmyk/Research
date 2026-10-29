@@ -7,12 +7,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/auth/google', require('./routes/google'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/research', require('./routes/research'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/programs', require('./routes/programs'));
 app.use('/api/stats', require('./routes/stats'));
 app.use('/api/authors', require('./routes/authors'));
+app.use('/api/backups', require('./routes/backups'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

@@ -12,6 +12,7 @@ import ResearchDetail from './pages/ResearchDetail';
 import AuthorDetail from './pages/AuthorDetail';
 import SubmitResearch from './pages/SubmitResearch';
 import AdminUsers from './pages/AdminUsers';
+import AdminBackups from './pages/AdminBackups';
 import AdminResearch from './pages/AdminResearch';
 import AdminBrowseResearch from './pages/AdminBrowseResearch';
 import AdminPrograms from './pages/AdminPrograms';
@@ -95,6 +96,7 @@ function AppRoutes() {
       <Route path="/submit" element={<AdminRoute><AdminLayout><SubmitResearch /></AdminLayout></AdminRoute>} />
       <Route path="/edit-research/:id" element={<AdminRoute><AdminLayout><SubmitResearch /></AdminLayout></AdminRoute>} />
       <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/backups" element={<AdminRoute><AdminLayout><AdminBackups /></AdminLayout></AdminRoute>} />
       <Route path="/admin/authors" element={<AdminRoute><AdminLayout><AdminAuthors /></AdminLayout></AdminRoute>} />
       <Route path="/admin/authors/new" element={<AdminRoute><AdminLayout><AdminAuthorForm /></AdminLayout></AdminRoute>} />
       <Route path="/admin/authors/:id" element={<AdminRoute><AdminLayout><AdminAuthorDetail /></AdminLayout></AdminRoute>} />

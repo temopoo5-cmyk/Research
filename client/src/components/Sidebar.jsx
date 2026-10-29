@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
-import { LayoutDashboard, Upload, Users, FolderTree, BookMarked, LogOut, GraduationCap, X, Search, User } from 'lucide-react';
+import { LayoutDashboard, Upload, Users, FolderTree, BookMarked, LogOut, GraduationCap, X, Search, User, HardDrive } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -14,6 +14,7 @@ const adminItems = [
   { to: '/admin/browse', label: 'Browse Research', icon: Search },
   { to: '/admin/authors', label: 'Manage Authors', icon: User },
   { to: '/admin/users', label: 'Manage Users', icon: Users },
+  { to: '/admin/backups', label: 'Backup & Recovery', icon: HardDrive },
   { to: '/admin/programs', label: 'Manage Programs', icon: FolderTree },
 ];
 

@@ -7,14 +7,23 @@
   },
   "scripts": {
     "build": "node scripts/check-env.js && cd client && npm install && npm run build",
-    "build:local": "cd client && npm install && npm run build"
+    "build:local": "cd client && npm install && npm run build",
+    "test": "node --test \"tests/*.test.js\"",
+    "migrate:backup": "node scripts/apply-backup-migration.js",
+    "backup:worker": "node scripts/backup-worker.js",
+    "backup:once": "node scripts/backup-worker.js --once",
+    "backup:schedule": "node scripts/backup-worker.js --schedule --drain",
+    "backup:validate": "node scripts/backup-worker.js --validate",
+    "backup:download": "node scripts/backup-download.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "googleapis": "^188.0.0",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.11.5"
+    "pg": "^8.11.5",
+    "tar": "^7.5.22"
   }
 }

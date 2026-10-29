@@ -1,0 +1,67 @@
+name: Backup worker
+
+on:
+  schedule:
+    - cron: '20 * * * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types: [backup-requested]
+
+concurrency:
+  group: researchhub-backup-worker
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      APP_URL: https://research-pi-ten.vercel.app
+      GOOGLE_REDIRECT_URI: https://research-pi-ten.vercel.app/api/auth/google/callback
+      DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+      BACKUP_DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+      RESTORE_STAGING_DATABASE_URL: ${{ secrets.RESTORE_STAGING_DATABASE_URL }}
+      BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_DRIVE_FOLDER_NAME: ${{ secrets.GOOGLE_DRIVE_FOLDER_NAME }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_STORAGE_BUCKET: ${{ secrets.SUPABASE_STORAGE_BUCKET }}
+      BACKUP_ALERT_WEBHOOK_URL: ${{ secrets.BACKUP_ALERT_WEBHOOK_URL }}
+      BACKUP_ALERT_WEBHOOK_TOKEN: ${{ secrets.BACKUP_ALERT_WEBHOOK_TOKEN }}
+      BACKUP_WORKER_ID: github-actions-${{ github.run_id }}
+      BACKUP_WORKER_MAX_JOBS: '5'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install PostgreSQL 17 client tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl ca-certificates lsb-release
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+          pg_dump --version
+          pg_restore --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Ensure backup schema
+        run: npm run migrate:backup
+
+      - name: Run scheduled queue and process pending jobs
+        run: npm run backup:worker -- --schedule --max-jobs=5
