@@ -423,6 +423,25 @@ async function claimNextJob(workerId) {
   return { ...rows[0], worker_id: workerId };
 }
 
+async function claimJobById(jobId, workerId) {
+  await ensureBackupSchema();
+  const lockToken = crypto.randomUUID();
+  const { rows } = await pool.query(
+    `UPDATE backup_jobs
+     SET status = 'running',
+         lock_token = $2,
+         locked_at = now(),
+         started_at = COALESCE(started_at, now()),
+         attempt = attempt + 1,
+         updated_at = now()
+     WHERE id = $1 AND status = 'queued'
+     RETURNING *`,
+    [jobId, lockToken]
+  );
+  if (!rows[0]) return null;
+  return { ...rows[0], worker_id: workerId };
+}
+
 async function completeJob(jobId, lockToken) {
   await ensureBackupSchema();
   const { rows } = await pool.query(
@@ -1262,10 +1281,21 @@ async function listRetentionCandidates({ kind, retentionCount, retentionDays, pr
          AND ($4::uuid IS NULL OR b.id <> $4)
      )
      SELECT * FROM ranked
-     WHERE ($2::int > 0 AND rank > $2)
+     WHERE ($2::int > 0 AND rank >= $2)
         OR ($3::int > 0 AND created_at < now() - ($3::int * interval '1 day'))
      ORDER BY created_at ASC`,
     [kind, retentionCount, retentionDays, protectId]
+  );
+  return rows;
+}
+
+async function listSupersededBackups(kind, keepId) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    `SELECT * FROM backups
+     WHERE kind = $1 AND status = 'completed' AND id <> $2
+     ORDER BY created_at DESC`,
+    [kind, keepId]
   );
   return rows;
 }
@@ -1286,6 +1316,7 @@ module.exports = {
   enqueueManualBackups,
   enqueueScheduledJobs,
   claimNextJob,
+  claimJobById,
   completeJob,
   failJob,
   requeueStaleJobs,
@@ -1325,5 +1356,6 @@ module.exports = {
   enqueueArchiveDelete,
   enqueueArchiveRestore,
   getRecentCompletedDatabaseBackup,
-  listRetentionCandidates
+  listRetentionCandidates,
+  listSupersededBackups
 };

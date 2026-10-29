@@ -181,10 +181,10 @@ export default function AdminBackups() {
       const response = await axios.post(`${API}/backups`, { kind: 'full' });
       setNotice(response.data.warning
         ? `${response.data.message} ${response.data.warning}`
-        : response.data.message || 'Backup started.');
+        : response.data.message || 'Backup completed.');
       await load();
     } catch (err) {
-      setError(err.response?.data?.error || 'Unable to start a backup.');
+      setError(err.response?.data?.error || 'Unable to complete the backup.');
     } finally {
       setBusy('');
     }
@@ -763,7 +763,7 @@ export default function AdminBackups() {
                 </tr>
               ))}
               {backups.length === 0 && (
-                <tr className="border-0"><td colSpan={7} className="py-14 text-center text-[13.5px] text-muted-green">No backups yet. Connect Google Drive and queue a backup.</td></tr>
+                <tr className="border-0"><td colSpan={7} className="py-14 text-center text-[13.5px] text-muted-green">No backups yet. Connect Google Drive and press Backup Now.</td></tr>
               )}
             </tbody>
           </table>

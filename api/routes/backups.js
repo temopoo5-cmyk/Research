@@ -30,6 +30,7 @@ const {
   sanitizeErrorMessage
 } = require('../backup/validation');
 const { cutoffYearFor } = require('../backup/archive');
+const { runJobsInline } = require('../../scripts/lib/workerRunner');
 
 const router = express.Router();
 
@@ -606,14 +607,62 @@ router.post('/', async (req, res) => {
         details: { replaced_by: queued.jobs.map((job) => job.id).join(','), kinds }
       });
     }
-    await triggerWorkerWebhook();
 
-    res.status(202).json({
-      queued: queued.jobs.map(jobView),
+    const summary = await runJobsInline(queued.jobs);
+
+    const failedJobs = summary.jobs.filter((entry) => entry.status !== 'completed');
+    if (failedJobs.length) {
+      const firstError = failedJobs.find((entry) => entry.error);
+      throw new BackupError(firstError ? firstError.error : 'The backup failed before completing.', {
+        status: 502,
+        code: 'BACKUP_FAILED',
+        details: { jobs: failedJobs.map(({ id, kind, status }) => ({ id, kind, status })) }
+      });
+    }
+
+    const completedBackups = summary.jobs.map((entry) => entry.backup).filter(Boolean);
+    const replacedPrevious = [];
+    const replaceErrors = [];
+    try {
+      const ctx = await getDriveContext();
+      for (const backup of completedBackups) {
+        const superseded = await store.listSupersededBackups(backup.kind, backup.id);
+        for (const old of superseded) {
+          try {
+            await deleteBackupArtifacts(ctx, old);
+            await store.markBackupDeleted(old.id, { adminId: req.user.id, reason: 'replaced' });
+            replacedPrevious.push({ id: old.id, kind: old.kind, file_name: old.file_name });
+            await store.logAudit({
+              adminId: req.user.id,
+              action: 'backup.replaced_previous',
+              targetType: 'backup',
+              targetId: old.id,
+              req,
+              details: { kind: old.kind, replaced_by: backup.id, file_name: old.file_name }
+            });
+          } catch (err) {
+            replaceErrors.push(safeErrorMessage(err));
+            await store.logAudit({
+              action: 'backup.replaced_previous.failed',
+              targetType: 'backup',
+              targetId: old.id,
+              details: { kind: old.kind, replaced_by: backup.id, error: safeErrorMessage(err) }
+            });
+          }
+        }
+      }
+    } catch (err) {
+      replaceErrors.push(safeErrorMessage(err));
+    }
+
+    res.json({
+      completed: completedBackups.map(backupView),
       set_id: queued.set_id,
-      replaced: queued.replaced || [],
-      warning,
-      message: 'Backup started. The latest backup replaces the previous one after it completes.'
+      replaced_previous: replacedPrevious,
+      warning: [warning, ...replaceErrors].filter(Boolean).join(' ') || null,
+      message: replacedPrevious.length
+        ? 'Backup completed. The previous backup was replaced.'
+        : 'Backup completed.'
     });
   } catch (err) {
     const publicError = toPublicError(err);

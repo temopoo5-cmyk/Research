@@ -57,6 +57,109 @@ async function markValidationFailedForJob(job, error) {
   }
 }
 
+async function runSingleJob(job, workerId, { retry = true } = {}) {
+  const startedAt = Date.now();
+  log('job started', { id: job.id, kind: job.kind, attempt: job.attempt });
+  await store.upsertWorkerHeartbeat({ workerId, version: workerVersion() });
+
+  try {
+    const result = await processJob(job);
+    const completedJob = await store.completeJob(job.id, job.lock_token);
+    if (!completedJob) {
+      log('job completed locally but lock was lost', { id: job.id });
+    }
+    await store.logAudit({
+      action: 'backup.job.completed',
+      targetType: 'job',
+      targetId: job.id,
+      details: {
+        kind: job.kind,
+        trigger: job.trigger_type,
+        attempt: job.attempt,
+        duration_ms: Date.now() - startedAt
+      }
+    });
+    log('job completed', { id: job.id, kind: job.kind, duration_ms: Date.now() - startedAt });
+    return {
+      status: 'completed',
+      skipped: Boolean(result && result.skipped),
+      backup: (result && result.backup) || null,
+      duration_ms: Date.now() - startedAt
+    };
+  } catch (err) {
+    const message = safeErrorMessage(err);
+    const failure = await store.failJob({
+      jobId: job.id,
+      lockToken: job.lock_token,
+      error: err,
+      retry
+    });
+    if (!failure || !failure.retryScheduled) {
+      await markValidationFailedForJob(job, err);
+      await markArchiveFailedForJob(job, err);
+    }
+    log('job failed', {
+      id: job.id,
+      kind: job.kind,
+      retry_scheduled: Boolean(failure && failure.retryScheduled),
+      error: message
+    });
+
+    if (!failure || !failure.retryScheduled) {
+      await store.logAudit({
+        action: 'backup.job.failed',
+        targetType: 'job',
+        targetId: job.id,
+        details: {
+          kind: job.kind,
+          trigger: job.trigger_type,
+          attempt: job.attempt,
+          error: message
+        }
+      });
+      await notifyBackupFailure({
+        jobId: job.id,
+        kind: job.kind,
+        error: err,
+        attempt: job.attempt,
+        maxAttempts: job.max_attempts
+      });
+    }
+    return {
+      status: failure && failure.retryScheduled ? 'retry_scheduled' : 'failed',
+      error: message,
+      duration_ms: Date.now() - startedAt
+    };
+  } finally {
+    await store.upsertWorkerHeartbeat({ workerId, version: workerVersion() }).catch(() => {});
+  }
+}
+
+async function runJobsInline(jobs, { workerId = null } = {}) {
+  const inlineWorkerId = workerId || `api-inline-${crypto.randomUUID()}`;
+  const summary = {
+    worker_id: inlineWorkerId,
+    completed: 0,
+    failed: 0,
+    jobs: []
+  };
+  await store.upsertWorkerHeartbeat({ workerId: inlineWorkerId, version: workerVersion() }).catch(() => {});
+
+  for (const pendingJob of jobs) {
+    const job = await store.claimJobById(pendingJob.id, inlineWorkerId);
+    if (!job) {
+      summary.jobs.push({ id: pendingJob.id, kind: pendingJob.kind, status: 'not_claimed' });
+      continue;
+    }
+    const result = await runSingleJob(job, inlineWorkerId, { retry: false });
+    if (result.status === 'completed') summary.completed += 1;
+    else summary.failed += 1;
+    summary.jobs.push({ id: job.id, kind: job.kind, ...result });
+  }
+
+  return summary;
+}
+
 async function runWorker({ maxJobs = 1, schedule = false, validateBackupId = null, staleMinutes = 180 } = {}) {
   await ensureBackupSchema();
   const workerId = process.env.BACKUP_WORKER_ID || crypto.randomUUID();
@@ -139,90 +242,13 @@ async function runWorker({ maxJobs = 1, schedule = false, validateBackupId = nul
     const job = await store.claimNextJob(workerId);
     if (!job) break;
 
-    const startedAt = Date.now();
-    log('job started', { id: job.id, kind: job.kind, attempt: job.attempt });
-    await store.upsertWorkerHeartbeat({ workerId, version: workerVersion() });
-
-    try {
-      const result = await processJob(job);
-      const completedJob = await store.completeJob(job.id, job.lock_token);
-      if (!completedJob) {
-        log('job completed locally but lock was lost', { id: job.id });
-      }
-      summary.completed += 1;
-      summary.jobs.push({
-        id: job.id,
-        kind: job.kind,
-        status: 'completed',
-        skipped: Boolean(result && result.skipped),
-        backup_id: result && result.backup ? result.backup.id : null,
-        duration_ms: Date.now() - startedAt
-      });
-      await store.logAudit({
-        action: 'backup.job.completed',
-        targetType: 'job',
-        targetId: job.id,
-        details: {
-          kind: job.kind,
-          trigger: job.trigger_type,
-          attempt: job.attempt,
-          duration_ms: Date.now() - startedAt
-        }
-      });
-      log('job completed', { id: job.id, kind: job.kind, duration_ms: Date.now() - startedAt });
-    } catch (err) {
-      const message = safeErrorMessage(err);
-      const failure = await store.failJob({
-        jobId: job.id,
-        lockToken: job.lock_token,
-        error: err,
-        retry: true
-      });
-      summary.failed += 1;
-      summary.jobs.push({
-        id: job.id,
-        kind: job.kind,
-        status: failure && failure.retryScheduled ? 'retry_scheduled' : 'failed',
-        error: message,
-        duration_ms: Date.now() - startedAt
-      });
-      if (!failure || !failure.retryScheduled) {
-        await markValidationFailedForJob(job, err);
-        await markArchiveFailedForJob(job, err);
-      }
-      log('job failed', {
-        id: job.id,
-        kind: job.kind,
-        retry_scheduled: Boolean(failure && failure.retryScheduled),
-        error: message
-      });
-
-      if (!failure || !failure.retryScheduled) {
-        await store.logAudit({
-          action: 'backup.job.failed',
-          targetType: 'job',
-          targetId: job.id,
-          details: {
-            kind: job.kind,
-            trigger: job.trigger_type,
-            attempt: job.attempt,
-            error: message
-          }
-        });
-        await notifyBackupFailure({
-          jobId: job.id,
-          kind: job.kind,
-          error: err,
-          attempt: job.attempt,
-          maxAttempts: job.max_attempts
-        });
-      }
-    } finally {
-      await store.upsertWorkerHeartbeat({ workerId, version: workerVersion() }).catch(() => {});
-    }
+    const result = await runSingleJob(job, workerId);
+    if (result.status === 'completed') summary.completed += 1;
+    else summary.failed += 1;
+    summary.jobs.push({ id: job.id, kind: job.kind, ...result });
   }
 
   return summary;
 }
 
-module.exports = { runWorker, workerVersion };
+module.exports = { runWorker, runJobsInline, workerVersion };
