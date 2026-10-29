@@ -5,6 +5,7 @@ const { ensureBackupSchema } = require('../backup/schema');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const {
   getConfig,
+  missingGoogleConfig,
   assertEncryptionConfigured,
   isGoogleConfigured,
   isEncryptionConfigured,
@@ -255,7 +256,13 @@ router.get('/overview', async (req, res) => {
     ]);
 
     const warnings = [];
-    if (!isGoogleConfigured(config)) warnings.push('Google OAuth is not configured. Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URI.');
+    const missingGoogle = missingGoogleConfig(config);
+    if (missingGoogle.length) {
+      warnings.push(`Google OAuth is not configured. Missing: ${missingGoogle.join(', ')}.`);
+      if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
+        warnings.push(`This is a Vercel ${process.env.VERCEL_ENV} deployment. Environment variables scoped only to Production are not available here.`);
+      }
+    }
     if (!isEncryptionConfigured(config)) warnings.push('BACKUP_ENCRYPTION_KEY is not set. Backups and token storage are disabled.');
     if (connection && connection.status === 'needs_reconnect') warnings.push('Google Drive authorization expired. Reconnect Google Drive.');
     if (!connection) warnings.push('Google Drive is not connected.');

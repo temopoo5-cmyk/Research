@@ -55,11 +55,16 @@ function getConfig() {
   };
 }
 
-function assertGoogleConfigured(config = getConfig()) {
+function missingGoogleConfig(config = getConfig()) {
   const missing = [];
   if (!config.clientId) missing.push('GOOGLE_CLIENT_ID');
   if (!config.clientSecret) missing.push('GOOGLE_CLIENT_SECRET');
   if (!config.redirectUri) missing.push('GOOGLE_REDIRECT_URI');
+  return missing;
+}
+
+function assertGoogleConfigured(config = getConfig()) {
+  const missing = missingGoogleConfig(config);
   if (missing.length) {
     throw new BackupError(
       `Google Drive is not configured. Missing: ${missing.join(', ')}`,
@@ -84,7 +89,7 @@ function isStorageConfigured(config = getConfig()) {
 }
 
 function isGoogleConfigured(config = getConfig()) {
-  return Boolean(config.clientId && config.clientSecret && config.redirectUri);
+  return missingGoogleConfig(config).length === 0;
 }
 
 function isEncryptionConfigured(config = getConfig()) {
@@ -101,6 +106,7 @@ module.exports = {
   getAppUrl,
   getRedirectUri,
   getGoogleScopes,
+  missingGoogleConfig,
   assertGoogleConfigured,
   assertEncryptionConfigured,
   isStorageConfigured,
