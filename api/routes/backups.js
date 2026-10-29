@@ -268,8 +268,7 @@ router.get('/overview', async (req, res) => {
     if (!connection) warnings.push('Google Drive is not connected.');
     if (settings.auto_enabled && !connection) warnings.push('Automatic backups are enabled, but Google Drive is not connected.');
     if (settings.include_storage && !isStorageConfigured(config)) warnings.push('Storage backups are enabled in settings, but Supabase Storage is not configured.');
-    if (!config.stagingDatabaseUrl) warnings.push('RESTORE_STAGING_DATABASE_URL is not set. Database restore validation is unavailable.');
-    if (!config.cronSecret) warnings.push('CRON_SECRET is not set. Vercel cron requests will be rejected.');
+    if (settings.auto_enabled && !config.cronSecret) warnings.push('CRON_SECRET is not set. Vercel cron requests will be rejected.');
     if ((settings.auto_enabled || activeJobs.length > 0) && !heartbeat) warnings.push('No backup worker has checked in yet. Configure the worker or GitHub Actions workflow.');
     if (heartbeat && settings.auto_enabled) {
       const seen = new Date(heartbeat.last_seen_at).getTime();

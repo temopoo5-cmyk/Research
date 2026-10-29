@@ -672,6 +672,12 @@ export default function AdminBackups() {
                 <p className="flex items-center gap-2 font-bold"><AlertTriangle className="h-4 w-4" /> Production is never overwritten automatically</p>
                 <p className="mt-1">Validation restores the backup into RESTORE_STAGING_DATABASE_URL only. Production cutover is manual and requires explicit approval.</p>
               </div>
+              {!configured.staging && (
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-900">
+                  <p className="font-bold">Staging database not configured</p>
+                  <p className="mt-1">Add RESTORE_STAGING_DATABASE_URL in Vercel and GitHub Actions before queuing restore validation.</p>
+                </div>
+              )}
               {restoreTarget?.last_validation && (
                 <div className="rounded-xl border border-[#E6EDE9] bg-ivory px-4 py-3 text-[13px] text-muted-green">
                   <p className="font-semibold text-forest">Latest validation: <span className="capitalize">{restoreTarget.last_validation.status}</span></p>
@@ -688,7 +694,7 @@ export default function AdminBackups() {
                 <Button variant="outline" className="rounded-full border-[#DCEBE5] text-[13px] font-semibold text-muted-green hover:bg-soft-green hover:text-forest" onClick={requestCutover} disabled={busy === 'cutover'}>
                   {busy === 'cutover' ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />} Cutover steps
                 </Button>
-                <Button className="gradient-btn rounded-full" onClick={queueValidation} disabled={restoreConfirm !== 'RESTORE' || busy === 'validate'}>
+                <Button className="gradient-btn rounded-full" onClick={queueValidation} disabled={!configured.staging || restoreConfirm !== 'RESTORE' || busy === 'validate'}>
                   {busy === 'validate' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />} Queue staged validation
                 </Button>
               </DialogFooter>
