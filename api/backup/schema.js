@@ -157,15 +157,18 @@ END $$;
 let schemaPromise;
 
 async function runMigration(client) {
-  await client.query('SELECT pg_advisory_lock(hashtext($1))', [SCHEMA_LOCK_KEY]);
+  await client.query('BEGIN');
   try {
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [SCHEMA_LOCK_KEY]);
     await client.query(SQL);
-  } finally {
+    await client.query('COMMIT');
+  } catch (err) {
     try {
-      await client.query('SELECT pg_advisory_unlock(hashtext($1))', [SCHEMA_LOCK_KEY]);
+      await client.query('ROLLBACK');
     } catch (_) {
-      // The lock is released automatically when the connection is returned/closed.
+      // The transaction and its advisory lock are released with the connection.
     }
+    throw err;
   }
 }
 
