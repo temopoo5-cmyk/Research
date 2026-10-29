@@ -590,15 +590,30 @@ router.post('/', async (req, res) => {
       targetType: 'job',
       targetId: queued.jobs.map((job) => job.id).join(','),
       req,
-      details: { kinds, set_id: queued.set_id }
+      details: {
+        kinds,
+        set_id: queued.set_id,
+        replaced_jobs: (queued.replaced || []).map((job) => ({ id: job.id, kind: job.kind }))
+      }
     });
+    if (queued.replaced && queued.replaced.length) {
+      await store.logAudit({
+        adminId: req.user.id,
+        action: 'backup.replaced_queued',
+        targetType: 'job',
+        targetId: queued.replaced.map((job) => job.id).join(','),
+        req,
+        details: { replaced_by: queued.jobs.map((job) => job.id).join(','), kinds }
+      });
+    }
     await triggerWorkerWebhook();
 
     res.status(202).json({
       queued: queued.jobs.map(jobView),
       set_id: queued.set_id,
+      replaced: queued.replaced || [],
       warning,
-      message: 'Backup queued. The dedicated backup worker will process it on its next run.'
+      message: 'Backup started. The latest backup replaces the previous one after it completes.'
     });
   } catch (err) {
     const publicError = toPublicError(err);

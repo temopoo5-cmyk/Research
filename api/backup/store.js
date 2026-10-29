@@ -269,15 +269,30 @@ async function enqueueManualBackups({ kinds, requestedBy, maxAttempts = 3, paylo
     await client.query("SELECT pg_advisory_xact_lock(hashtext('researchhub_manual_backup'))");
     const active = await client.query(
       `SELECT id, kind, status FROM backup_jobs
-       WHERE status IN ('queued', 'running') AND kind = ANY($1::text[])`,
+       WHERE status IN ('queued', 'running') AND kind = ANY($1::text[])
+       FOR UPDATE`,
       [kinds]
     );
-    if (active.rows.length) {
-      throw new BackupError('A backup of this type is already queued or running.', {
+    const running = active.rows.filter((row) => row.status === 'running');
+    if (running.length) {
+      throw new BackupError('A backup is already running. Wait for it to finish, then try again.', {
         status: 409,
-        code: 'BACKUP_ALREADY_ACTIVE',
-        details: { active: active.rows.map((row) => ({ id: row.id, kind: row.kind, status: row.status })) }
+        code: 'BACKUP_ALREADY_RUNNING',
+        details: { active: running.map((row) => ({ id: row.id, kind: row.kind, status: row.status })) }
       });
+    }
+
+    const replaced = active.rows.map((row) => ({ id: row.id, kind: row.kind, status: row.status }));
+    if (replaced.length) {
+      await client.query(
+        `UPDATE backup_jobs SET
+           status = 'canceled',
+           error_message = 'Replaced by a newer manual backup request.',
+           finished_at = now(),
+           updated_at = now()
+         WHERE id = ANY($1::uuid[]) AND status = 'queued'`,
+        [replaced.map((row) => row.id)]
+      );
     }
 
     const setId = crypto.randomUUID();
@@ -293,7 +308,7 @@ async function enqueueManualBackups({ kinds, requestedBy, maxAttempts = 3, paylo
       jobs.push(rows[0]);
     }
     await client.query('COMMIT');
-    return { jobs, set_id: setId };
+    return { jobs, set_id: setId, replaced };
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
@@ -1244,7 +1259,6 @@ async function listRetentionCandidates({ kind, retentionCount, retentionDays, pr
        FROM backups b
        WHERE b.kind = $1
          AND b.status = 'completed'
-         AND b.trigger_type = 'scheduled'
          AND ($4::uuid IS NULL OR b.id <> $4)
      )
      SELECT * FROM ranked

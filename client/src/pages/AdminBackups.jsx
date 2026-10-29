@@ -181,10 +181,10 @@ export default function AdminBackups() {
       const response = await axios.post(`${API}/backups`, { kind: 'full' });
       setNotice(response.data.warning
         ? `${response.data.message} ${response.data.warning}`
-        : response.data.message || 'Backup queued.');
+        : response.data.message || 'Backup started.');
       await load();
     } catch (err) {
-      setError(err.response?.data?.error || 'Unable to queue a backup.');
+      setError(err.response?.data?.error || 'Unable to start a backup.');
     } finally {
       setBusy('');
     }

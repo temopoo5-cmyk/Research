@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS backup_settings (
   frequency         TEXT NOT NULL DEFAULT 'daily' CHECK (frequency IN ('daily', 'weekly')),
   hour_utc          SMALLINT NOT NULL DEFAULT 2 CHECK (hour_utc BETWEEN 0 AND 23),
   weekday           SMALLINT NOT NULL DEFAULT 1 CHECK (weekday BETWEEN 0 AND 6),
-  retention_count   INTEGER NOT NULL DEFAULT 14 CHECK (retention_count BETWEEN 1 AND 365),
+  retention_count   INTEGER NOT NULL DEFAULT 1 CHECK (retention_count BETWEEN 1 AND 365),
   retention_days    INTEGER NOT NULL DEFAULT 0 CHECK (retention_days BETWEEN 0 AND 3650),
   include_storage   BOOLEAN NOT NULL DEFAULT false,
   max_attempts      SMALLINT NOT NULL DEFAULT 3 CHECK (max_attempts BETWEEN 1 AND 10),
