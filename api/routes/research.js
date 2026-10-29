@@ -146,8 +146,15 @@ router.post('/', authenticateToken, async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const count = await client.query('SELECT COUNT(*)::int AS count FROM research');
-    const code = `RS-${new Date().getFullYear()}-${String(count.rows[0].count + 1).padStart(4, '0')}`;
+    const codeYear = String(new Date().getFullYear());
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`research_code_${codeYear}`]);
+    const sequence = await client.query(
+      `SELECT COALESCE(MAX(split_part(code, '-', 3)::int), 0)::int AS max_seq
+       FROM research
+       WHERE code ~ ('^RS-' || $1::text || '-[0-9]+$')`,
+      [codeYear]
+    );
+    const code = `RS-${codeYear}-${String(sequence.rows[0].max_seq + 1).padStart(4, '0')}`;
     const { rows } = await client.query(
       `INSERT INTO research (code, title, authors, adviser, program_id, year, abstract, keywords, submitted_by, status)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)

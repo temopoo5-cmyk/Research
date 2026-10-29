@@ -35,7 +35,7 @@ function formatDateTime(value) {
 }
 
 function statusVariant(status) {
-  if (['completed', 'connected'].includes(status)) return 'success';
+  if (['completed', 'connected', 'ready', 'restored'].includes(status)) return 'success';
   if (['failed', 'needs_reconnect', 'error'].includes(status)) return 'rejected';
   if (['deleted', 'disconnected', 'canceled'].includes(status)) return 'secondary';
   return 'pending';
@@ -44,6 +44,7 @@ function statusVariant(status) {
 function kindLabel(kind) {
   if (kind === 'database') return 'PostgreSQL';
   if (kind === 'storage') return 'Storage';
+  if (kind === 'year_archive') return 'Yearly archive';
   return kind;
 }
 
@@ -69,6 +70,13 @@ export default function AdminBackups() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [validationTarget, setValidationTarget] = useState(null);
+  const [archives, setArchives] = useState([]);
+  const [archiveYears, setArchiveYears] = useState([]);
+  const [archiveCutoff, setArchiveCutoff] = useState(null);
+  const [archiveDeleteTarget, setArchiveDeleteTarget] = useState(null);
+  const [archiveDeleteConfirm, setArchiveDeleteConfirm] = useState('');
+  const [archiveRestoreTarget, setArchiveRestoreTarget] = useState(null);
+  const [archiveRestoreConfirm, setArchiveRestoreConfirm] = useState('');
   const settingsDirtyRef = useRef(false);
 
   const applyOverview = (data) => {
@@ -78,16 +86,21 @@ export default function AdminBackups() {
 
   const load = async () => {
     try {
-      const [overviewResponse, backupsResponse, activityResponse] = await Promise.all([
+      const [overviewResponse, backupsResponse, activityResponse, archivesResponse] = await Promise.all([
         axios.get(`${API}/backups/overview`),
         axios.get(`${API}/backups/?limit=100`),
-        axios.get(`${API}/backups/activity?limit=30`)
+        axios.get(`${API}/backups/activity?limit=30`),
+        axios.get(`${API}/backups/archives?limit=100`)
       ]);
       applyOverview(overviewResponse.data);
       const nextBackups = Array.isArray(backupsResponse.data?.backups) ? backupsResponse.data.backups : [];
       setBackups(nextBackups);
       setRestoreTarget((current) => current ? (nextBackups.find((backup) => backup.id === current.id) || current) : current);
       setActivity(Array.isArray(activityResponse.data?.activity) ? activityResponse.data.activity : []);
+      const nextArchives = Array.isArray(archivesResponse.data?.archives) ? archivesResponse.data.archives : [];
+      setArchives(nextArchives);
+      setArchiveYears(Array.isArray(archivesResponse.data?.eligible_years) ? archivesResponse.data.eligible_years : []);
+      setArchiveCutoff(archivesResponse.data?.cutoff_year || null);
     } catch (err) {
       setError(err.response?.data?.error || 'Unable to load backup status.');
     } finally {
@@ -177,6 +190,69 @@ export default function AdminBackups() {
     }
   };
 
+  const createYearArchive = async (year) => {
+    setBusy(`archive-${year}`);
+    setError('');
+    setNotice('');
+    try {
+      const response = await axios.post(`${API}/backups/archives`, { year, confirm: 'ARCHIVE' });
+      setNotice(response.data.message || `${year} archive queued.`);
+      await load();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Unable to queue this yearly archive.');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const approveArchiveDelete = async () => {
+    if (!archiveDeleteTarget) return;
+    const expected = `DELETE-YEAR ${archiveDeleteTarget.year}`;
+    if (archiveDeleteConfirm !== expected) {
+      setError(`Type ${expected} to confirm.`);
+      return;
+    }
+    setBusy('archive-delete');
+    setError('');
+    try {
+      const response = await axios.post(`${API}/backups/archives/${archiveDeleteTarget.id}/approve-delete`, {
+        confirm: expected
+      });
+      setNotice(response.data.message || 'Archive deletion approved.');
+      setArchiveDeleteTarget(null);
+      setArchiveDeleteConfirm('');
+      await load();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Unable to approve archive deletion.');
+    } finally {
+      setBusy('');
+    }
+  };
+
+  const restoreYearArchive = async () => {
+    if (!archiveRestoreTarget) return;
+    const expected = `RESTORE-YEAR ${archiveRestoreTarget.year}`;
+    if (archiveRestoreConfirm !== expected) {
+      setError(`Type ${expected} to confirm.`);
+      return;
+    }
+    setBusy('archive-restore');
+    setError('');
+    try {
+      const response = await axios.post(`${API}/backups/archives/${archiveRestoreTarget.id}/restore`, {
+        confirm: expected
+      });
+      setNotice(response.data.message || 'Archive restore queued.');
+      setArchiveRestoreTarget(null);
+      setArchiveRestoreConfirm('');
+      await load();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Unable to queue archive restore.');
+    } finally {
+      setBusy('');
+    }
+  };
+
   const saveSettings = async (event) => {
     event.preventDefault();
     if (!settingsForm) return;
@@ -191,12 +267,17 @@ export default function AdminBackups() {
         retention_count: Number(settingsForm.retention_count),
         retention_days: Number(settingsForm.retention_days),
         include_storage: Boolean(settingsForm.include_storage),
-        max_attempts: Number(settingsForm.max_attempts)
+        max_attempts: Number(settingsForm.max_attempts),
+        archive_enabled: Boolean(settingsForm.archive_enabled),
+        archive_after_years: Number(settingsForm.archive_after_years),
+        archive_month: Number(settingsForm.archive_month),
+        archive_day: Number(settingsForm.archive_day),
+        archive_hour_utc: Number(settingsForm.archive_hour_utc)
       };
       const response = await axios.put(`${API}/backups/settings`, payload);
       setSettingsForm(response.data.settings);
       settingsDirtyRef.current = false;
-      setNotice('Automatic backup settings saved.');
+        setNotice('Backup settings saved.');
       await load();
     } catch (err) {
       setError(err.response?.data?.error || 'Unable to save backup settings.');
@@ -522,12 +603,183 @@ export default function AdminBackups() {
                   </Button>
                 </div>
               </div>
+
+              <div className="space-y-4 rounded-2xl border border-[#E6EDE9] bg-ivory p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <p className="text-[13.5px] font-bold text-forest">Yearly research archives</p>
+                    <p className="text-[12px] text-[#8AA79E]">Keep the current year plus previous years, then archive older approved and rejected research.</p>
+                  </div>
+                  <Badge variant={settingsForm.archive_enabled ? 'success' : 'secondary'}>
+                    {settingsForm.archive_enabled ? 'Enabled' : 'Disabled'}
+                  </Badge>
+                </div>
+                <label className="flex items-center gap-3 text-[13.5px] font-semibold text-forest">
+                  <Checkbox checked={Boolean(settingsForm.archive_enabled)} onChange={(event) => updateSettings({ archive_enabled: event.target.checked })} />
+                  Enable yearly archives
+                </label>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="space-y-2">
+                    <Label>Keep previous years</Label>
+                    <Input type="number" min="1" max="50" value={settingsForm.archive_after_years} onChange={(event) => updateSettings({ archive_after_years: Number(event.target.value) })} className="rounded-xl border-[#DCEBE5] bg-white" />
+                    <p className="text-[11.5px] text-[#8AA79E]">With 5, 2026 archives 2020 and older.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Month</Label>
+                    <Select value={String(settingsForm.archive_month)} onValueChange={(value) => updateSettings({ archive_month: Number(value) })}>
+                      <SelectTrigger className="rounded-xl border-[#DCEBE5] bg-white"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }).map((_, index) => (
+                          <SelectItem key={index + 1} value={String(index + 1)}>
+                            {new Date(Date.UTC(2026, index, 1)).toLocaleString('en-US', { month: 'long', timeZone: 'UTC' })}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Day</Label>
+                    <Input type="number" min="1" max="28" value={settingsForm.archive_day} onChange={(event) => updateSettings({ archive_day: Number(event.target.value) })} className="rounded-xl border-[#DCEBE5] bg-white" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Hour (UTC)</Label>
+                    <Select value={String(settingsForm.archive_hour_utc)} onValueChange={(value) => updateSettings({ archive_hour_utc: Number(value) })}>
+                      <SelectTrigger className="rounded-xl border-[#DCEBE5] bg-white"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 24 }).map((_, hour) => (
+                          <SelectItem key={hour} value={String(hour)}>{String(hour).padStart(2, '0')}:00 UTC</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-[12px] text-[#8AA79E]">
+                    {settingsForm.archive_next_run_at ? `Next archive run: ${formatDateTime(settingsForm.archive_next_run_at)}` : 'Archive scheduling is disabled.'}
+                  </p>
+                  <Button type="submit" className="gradient-btn rounded-full" disabled={busy === 'settings'}>
+                    {busy === 'settings' ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />} Save archive settings
+                  </Button>
+                </div>
+              </div>
+
               <p className="text-[12px] text-[#8AA79E]">
                 The scheduler only queues work. A dedicated worker (GitHub Actions or a long-running host) runs pg_dump and uploads to Google Drive.
               </p>
             </>
           )}
         </form>
+      </div>
+
+      <div className="admin-panel overflow-hidden">
+        <div className="admin-panel-head">
+          <div>
+            <h2 className="admin-panel-title"><HardDrive className="h-4 w-4 text-emerald-brand" /> Yearly research archives</h2>
+            <p className="mt-1 text-[12.5px] text-muted-green">
+              {archiveCutoff ? `Eligibility cutoff: ${archiveCutoff} and older.` : 'Archive cutoff is loading.'} Deletion always requires manual approval after verification.
+            </p>
+          </div>
+          <span className="text-[13px] font-semibold text-muted-green">{archives.length} archive(s)</span>
+        </div>
+        <div className="admin-panel-body space-y-5">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#8AA79E]">Eligible research years</p>
+            {archiveYears.length === 0 ? (
+              <p className="mt-2 text-[13px] text-muted-green">No approved or rejected research is old enough to archive.</p>
+            ) : (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {archiveYears.map((entry) => {
+                  const activeStatus = entry.latest_archive_status;
+                  const canArchive = !['queued', 'archiving', 'verifying', 'delete_queued', 'deleting', 'restore_queued', 'restoring'].includes(activeStatus);
+                  return (
+                    <div key={entry.year} className="flex items-center gap-2 rounded-full border border-[#DCEBE5] bg-ivory px-3 py-1.5 text-[12.5px]">
+                      <span className="font-semibold text-forest">{entry.year}</span>
+                      <span className="text-[#8AA79E]">{entry.research_count} record(s)</span>
+                      {activeStatus && <Badge variant={statusVariant(activeStatus)} className="capitalize">{activeStatus}</Badge>}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 rounded-full border-[#DCEBE5] bg-white px-2.5 text-[11.5px] font-semibold text-muted-green hover:bg-soft-green hover:text-forest"
+                        onClick={() => createYearArchive(entry.year)}
+                        disabled={!canArchive || busy === `archive-${entry.year}` || connection?.status !== 'connected'}
+                      >
+                        {busy === `archive-${entry.year}` ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />} Archive
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="admin-table w-full min-w-[860px]">
+              <thead>
+                <tr>
+                  <th className="text-left">Year</th>
+                  <th className="text-left">Records</th>
+                  <th className="text-left">Archive file</th>
+                  <th className="text-left">Status</th>
+                  <th className="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {archives.map((archive) => (
+                  <tr key={archive.id}>
+                    <td className="font-semibold text-forest">{archive.year}</td>
+                    <td className="text-[12.5px] text-muted-green">
+                      {archive.research_count} research · {archive.author_link_count} author links
+                      {archive.deleted_count > 0 ? ` · ${archive.deleted_count} deleted` : ''}
+                      {archive.restored_count > 0 ? ` · ${archive.restored_count} restored` : ''}
+                    </td>
+                    <td>
+                      <p className="font-mono text-[11.5px] text-forest">{archive.file_name || 'Pending upload'}</p>
+                      <p className="text-[11px] text-[#8AA79E]">{formatDateTime(archive.created_at)} · {formatBytes(archive.encrypted_size)}</p>
+                    </td>
+                    <td>
+                      <Badge variant={statusVariant(archive.status)} className="capitalize">{archive.status}</Badge>
+                      {archive.error_message && <p className="mt-1 max-w-[240px] text-[11.5px] text-red-600">{archive.error_message}</p>}
+                    </td>
+                    <td>
+                      <div className="flex flex-wrap justify-end gap-1.5">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full border-[#DCEBE5] text-[12px] font-semibold text-muted-green hover:bg-soft-green hover:text-forest"
+                          onClick={() => downloadBackup({ id: archive.backup_id, file_name: archive.file_name })}
+                          disabled={!archive.backup_id || archive.backup_status !== 'completed' || busy === `download-${archive.backup_id}`}
+                        >
+                          {busy === `download-${archive.backup_id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />} Download
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full border-red-200 text-[12px] font-semibold text-red-600 hover:bg-red-50"
+                          onClick={() => { setArchiveDeleteTarget(archive); setArchiveDeleteConfirm(''); }}
+                          disabled={archive.status !== 'ready'}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" /> Approve delete
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-full border-[#DCEBE5] text-[12px] font-semibold text-muted-green hover:bg-soft-green hover:text-forest"
+                          onClick={() => { setArchiveRestoreTarget(archive); setArchiveRestoreConfirm(''); }}
+                          disabled={archive.status !== 'completed'}
+                        >
+                          <Database className="h-3.5 w-3.5" /> Restore
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {archives.length === 0 && (
+                  <tr className="border-0"><td colSpan={5} className="py-10 text-center text-[13.5px] text-muted-green">No yearly archives yet.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div className="admin-panel overflow-hidden">
@@ -577,10 +829,10 @@ export default function AdminBackups() {
                       <Button variant="outline" size="sm" className="rounded-full border-[#DCEBE5] text-[12px] font-semibold text-muted-green hover:bg-soft-green hover:text-forest" onClick={() => downloadBackup(backup)} disabled={backup.status !== 'completed' || busy === `download-${backup.id}`}>
                         {busy === `download-${backup.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />} Download
                       </Button>
-                      <Button variant="outline" size="sm" className="rounded-full border-[#DCEBE5] text-[12px] font-semibold text-muted-green hover:bg-soft-green hover:text-forest" onClick={() => { setRestoreTarget(backup); setRestoreConfirm(''); setRestoreInstructions(null); setRestoreReady(false); }} disabled={backup.status !== 'completed'}>
+                      <Button variant="outline" size="sm" className="rounded-full border-[#DCEBE5] text-[12px] font-semibold text-muted-green hover:bg-soft-green hover:text-forest" onClick={() => { setRestoreTarget(backup); setRestoreConfirm(''); setRestoreInstructions(null); setRestoreReady(false); }} disabled={backup.kind === 'year_archive' || backup.status !== 'completed'}>
                         <Database className="h-3.5 w-3.5" /> Restore
                       </Button>
-                      <Button variant="ghost" size="sm" aria-label={`Delete ${backup.file_name}`} className="h-8 w-8 rounded-full p-0 text-red-500 hover:bg-red-50 hover:text-red-700" onClick={() => { setDeleteTarget(backup); setDeleteConfirm(''); }} disabled={['deleted', 'uploading', 'verifying'].includes(backup.status)}>
+                      <Button variant="ghost" size="sm" aria-label={`Delete ${backup.file_name}`} className="h-8 w-8 rounded-full p-0 text-red-500 hover:bg-red-50 hover:text-red-700" onClick={() => { setDeleteTarget(backup); setDeleteConfirm(''); }} disabled={backup.kind === 'year_archive' || ['deleted', 'uploading', 'verifying'].includes(backup.status)}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
@@ -719,6 +971,53 @@ export default function AdminBackups() {
             <Button variant="outline" className="rounded-full border-[#DCEBE5] text-[13px] font-semibold text-muted-green" onClick={() => setDeleteTarget(null)}>Cancel</Button>
             <Button className="rounded-full bg-red-600 text-white hover:bg-red-700" onClick={deleteBackup} disabled={deleteConfirm !== 'DELETE' || busy === 'delete'}>
               {busy === 'delete' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />} Delete backup
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(archiveDeleteTarget)} onOpenChange={(open) => { if (!open) { setArchiveDeleteTarget(null); setArchiveDeleteConfirm(''); } }}>
+        <DialogContent className="border-[#E6EDE9] bg-white">
+          <DialogHeader>
+            <DialogTitle className="font-display text-2xl text-forest">Approve research deletion?</DialogTitle>
+            <DialogDescription>
+              {archiveDeleteTarget ? `This will delete ${archiveDeleteTarget.research_count} approved/rejected research records from ${archiveDeleteTarget.year} after the worker re-verifies the archive and current records. Author profiles and users are kept.` : ''}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-800">
+              A completed full database backup within 48 hours is required. If any archived research changed, deletion is blocked and a new archive is needed.
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="archive-delete-confirm">Type {archiveDeleteTarget ? `DELETE-YEAR ${archiveDeleteTarget.year}` : 'DELETE-YEAR <year>'} to confirm</Label>
+              <Input id="archive-delete-confirm" value={archiveDeleteConfirm} onChange={(event) => setArchiveDeleteConfirm(event.target.value)} className="rounded-xl border-[#DCEBE5] bg-ivory" />
+            </div>
+          </div>
+          <DialogFooter className="pt-2">
+            <Button variant="outline" className="rounded-full border-[#DCEBE5] text-[13px] font-semibold text-muted-green" onClick={() => setArchiveDeleteTarget(null)}>Cancel</Button>
+            <Button className="rounded-full bg-red-600 text-white hover:bg-red-700" onClick={approveArchiveDelete} disabled={busy === 'archive-delete' || !archiveDeleteTarget || archiveDeleteConfirm !== `DELETE-YEAR ${archiveDeleteTarget.year}`}>
+              {busy === 'archive-delete' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />} Approve deletion
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(archiveRestoreTarget)} onOpenChange={(open) => { if (!open) { setArchiveRestoreTarget(null); setArchiveRestoreConfirm(''); } }}>
+        <DialogContent className="border-[#E6EDE9] bg-white">
+          <DialogHeader>
+            <DialogTitle className="font-display text-2xl text-forest">Restore yearly archive?</DialogTitle>
+            <DialogDescription>
+              {archiveRestoreTarget ? `This restores missing research from ${archiveRestoreTarget.year}. Existing codes are skipped; related programs and authors are matched by code or name.` : ''}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="archive-restore-confirm">Type {archiveRestoreTarget ? `RESTORE-YEAR ${archiveRestoreTarget.year}` : 'RESTORE-YEAR <year>'} to confirm</Label>
+            <Input id="archive-restore-confirm" value={archiveRestoreConfirm} onChange={(event) => setArchiveRestoreConfirm(event.target.value)} className="rounded-xl border-[#DCEBE5] bg-ivory" />
+          </div>
+          <DialogFooter className="pt-2">
+            <Button variant="outline" className="rounded-full border-[#DCEBE5] text-[13px] font-semibold text-muted-green" onClick={() => setArchiveRestoreTarget(null)}>Cancel</Button>
+            <Button className="gradient-btn rounded-full" onClick={restoreYearArchive} disabled={busy === 'archive-restore' || !archiveRestoreTarget || archiveRestoreConfirm !== `RESTORE-YEAR ${archiveRestoreTarget.year}`}>
+              {busy === 'archive-restore' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />} Queue restore
             </Button>
           </DialogFooter>
         </DialogContent>

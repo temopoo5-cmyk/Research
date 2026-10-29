@@ -17,4 +17,15 @@ function buildManifestFileName(backupFileName) {
   return safeFileName(`${backupFileName}.manifest.json`);
 }
 
-module.exports = { timestampForFile, shortJobId, buildBackupFileName, buildManifestFileName };
+function buildYearArchiveFileName({ year, version = 1 }) {
+  const base = version > 1 ? `research-${year}-v${version}` : `research-${year}`;
+  return safeFileName(`${base}.json.enc`);
+}
+
+module.exports = {
+  timestampForFile,
+  shortJobId,
+  buildBackupFileName,
+  buildManifestFileName,
+  buildYearArchiveFileName
+};

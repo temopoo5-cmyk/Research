@@ -9,7 +9,8 @@ async function main() {
   const tables = await pool.query(
     `SELECT table_name
      FROM information_schema.tables
-     WHERE table_schema = 'public' AND table_name LIKE 'backup%'
+     WHERE table_schema = 'public'
+       AND (table_name LIKE 'backup%' OR table_name = 'research_archives')
      ORDER BY table_name`
   );
   console.log(`Backup schema ${SCHEMA_VERSION} is applied.`);

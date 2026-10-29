@@ -28,6 +28,7 @@ const {
 } = require('./pgTools');
 const { storageConfig, listObjectsRecursive, downloadObject } = require('./supabaseStorage');
 const { safeObjectDestination, isSafeArchivePath } = require('./archiveSafety');
+const { processYearArchiveJob } = require('./archiveService');
 
 async function makeTempDir(prefix) {
   const root = process.env.BACKUP_TEMP_DIR || path.join(os.tmpdir(), 'researchhub-backups');
@@ -653,6 +654,7 @@ async function processJob(job) {
   if (job.kind === 'database') return createDatabaseBackup(job);
   if (job.kind === 'storage') return createStorageBackup(job);
   if (job.kind === 'restore_validation') return validateRestore(job);
+  if (job.kind === 'year_archive') return processYearArchiveJob(job);
   throw new BackupError(`Unsupported backup job kind: ${job.kind}`, { code: 'UNSUPPORTED_JOB_KIND' });
 }
 

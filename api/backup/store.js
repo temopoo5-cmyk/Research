@@ -2,7 +2,12 @@ const crypto = require('crypto');
 const os = require('os');
 const pool = require('../db');
 const { ensureBackupSchema } = require('./schema');
-const { computeNextRunAt, sanitizeErrorMessage, stagingTargetLabel } = require('./validation');
+const {
+  computeNextRunAt,
+  computeNextArchiveRunAt,
+  sanitizeErrorMessage,
+  stagingTargetLabel
+} = require('./validation');
 const { isStorageConfigured, getConfig } = require('./config');
 const { BackupError, safeErrorMessage } = require('./errors');
 
@@ -20,6 +25,21 @@ const BACKUP_FIELDS = new Set([
   'manifest',
   'status',
   'completed_at',
+  'error_message'
+]);
+
+const ARCHIVE_FIELDS = new Set([
+  'status',
+  'backup_id',
+  'research_count',
+  'author_link_count',
+  'deleted_count',
+  'restored_count',
+  'manifest',
+  'approved_by',
+  'approved_at',
+  'deleted_at',
+  'restored_at',
   'error_message'
 ]);
 
@@ -153,7 +173,9 @@ async function updateSettings(settings, adminId) {
   try {
     await client.query('BEGIN');
     await client.query('SELECT id FROM backup_settings WHERE id = 1 FOR UPDATE');
-    const nextRunAt = settings.auto_enabled ? computeNextRunAt(settings, new Date()) : null;
+    const now = new Date();
+    const nextRunAt = settings.auto_enabled ? computeNextRunAt(settings, now) : null;
+    const archiveNextRunAt = settings.archive_enabled ? computeNextArchiveRunAt(settings, now) : null;
     const { rows } = await client.query(
       `UPDATE backup_settings SET
          auto_enabled = $1,
@@ -166,6 +188,12 @@ async function updateSettings(settings, adminId) {
          max_attempts = $8,
          next_run_at = $9,
          updated_by = $10,
+         archive_enabled = $11,
+         archive_after_years = $12,
+         archive_month = $13,
+         archive_day = $14,
+         archive_hour_utc = $15,
+         archive_next_run_at = $16,
          updated_at = now()
        WHERE id = 1
        RETURNING *`,
@@ -179,7 +207,13 @@ async function updateSettings(settings, adminId) {
         settings.include_storage,
         settings.max_attempts,
         nextRunAt,
-        adminId
+        adminId,
+        settings.archive_enabled,
+        settings.archive_after_years,
+        settings.archive_month,
+        settings.archive_day,
+        settings.archive_hour_utc,
+        archiveNextRunAt
       ]
     );
     await client.query('COMMIT');
@@ -459,6 +493,22 @@ async function requeueStaleJobs(staleMinutes = 180) {
        SET status = 'failed', error_message = 'Worker stopped before completing this validation.',
            finished_at = now()
        WHERE job_id = ANY($1::uuid[]) AND status IN ('queued', 'running')`,
+      [failedIds]
+    );
+    await pool.query(
+      `UPDATE research_archives a
+       SET status = CASE j.payload->>'operation'
+                      WHEN 'delete' THEN 'ready'
+                      WHEN 'restore' THEN 'completed'
+                      ELSE 'failed'
+                    END,
+           error_message = 'Worker stopped before completing this archive job.',
+           updated_at = now()
+       FROM backup_jobs j
+       WHERE j.id = ANY($1::uuid[])
+         AND (j.payload->>'archiveId') IS NOT NULL
+         AND a.id = (j.payload->>'archiveId')::uuid
+         AND a.status <> ALL (ARRAY['ready', 'completed', 'restored'])`,
       [failedIds]
     );
   }
@@ -778,6 +828,414 @@ async function getRestoreValidationByJob(jobId) {
   return rowOrNull(rows);
 }
 
+async function listResearchArchives(limit = 100) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    `SELECT a.*,
+       b.file_name AS backup_file_name,
+       b.encrypted_size AS backup_encrypted_size,
+       b.drive_file_id AS backup_drive_file_id,
+       b.status AS backup_status,
+       b.completed_at AS backup_completed_at
+     FROM research_archives a
+     LEFT JOIN backups b ON b.id = a.backup_id
+     ORDER BY a.year DESC, a.created_at DESC
+     LIMIT $1`,
+    [limit]
+  );
+  return rows;
+}
+
+async function getResearchArchive(id) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    `SELECT a.*,
+       b.file_name AS backup_file_name,
+       b.encrypted_size AS backup_encrypted_size,
+       b.drive_file_id AS backup_drive_file_id,
+       b.status AS backup_status,
+       b.completed_at AS backup_completed_at
+     FROM research_archives a
+     LEFT JOIN backups b ON b.id = a.backup_id
+     WHERE a.id = $1`,
+    [id]
+  );
+  return rowOrNull(rows);
+}
+
+async function getResearchArchiveByJob(jobId) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    `SELECT a.*,
+       b.file_name AS backup_file_name,
+       b.encrypted_size AS backup_encrypted_size,
+       b.drive_file_id AS backup_drive_file_id,
+       b.status AS backup_status,
+       b.completed_at AS backup_completed_at
+     FROM research_archives a
+     JOIN backups b ON b.id = a.backup_id
+     WHERE b.job_id = $1`,
+    [jobId]
+  );
+  return rowOrNull(rows);
+}
+
+async function listArchiveEligibleYears(cutoffYear) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    `SELECT y.year,
+            y.research_count,
+            a.id AS latest_archive_id,
+            a.status AS latest_archive_status,
+            a.backup_id AS latest_archive_backup_id
+     FROM (
+       SELECT year, count(*)::int AS research_count
+       FROM research
+       WHERE year <= $1 AND status IN ('approved', 'rejected')
+       GROUP BY year
+     ) y
+     LEFT JOIN LATERAL (
+       SELECT id, status, backup_id
+       FROM research_archives a
+       WHERE a.year = y.year
+       ORDER BY created_at DESC
+       LIMIT 1
+     ) a ON true
+     ORDER BY y.year`,
+    [cutoffYear]
+  );
+  return rows;
+}
+
+async function countResearchArchivesForYear(year) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    'SELECT count(*)::int AS count FROM research_archives WHERE year = $1',
+    [year]
+  );
+  return Number(rows[0] ? rows[0].count : 0);
+}
+
+async function getLatestResearchArchiveForYear(year) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    `SELECT * FROM research_archives WHERE year = $1 ORDER BY created_at DESC LIMIT 1`,
+    [year]
+  );
+  return rowOrNull(rows);
+}
+
+async function createResearchArchive({ year, cutoffYear, requestedBy = null, manifest = {} }) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    `INSERT INTO research_archives (year, cutoff_year, requested_by, manifest, status)
+     VALUES ($1, $2, $3, $4, 'queued')
+     RETURNING *`,
+    [year, cutoffYear, requestedBy, JSON.stringify(manifest)]
+  );
+  return rows[0];
+}
+
+async function updateResearchArchive(id, fields) {
+  await ensureBackupSchema();
+  const keys = Object.keys(fields).filter((key) => ARCHIVE_FIELDS.has(key));
+  if (!keys.length) return null;
+  const values = [];
+  const assignments = keys.map((key, index) => {
+    let value = fields[key];
+    if (key === 'manifest' && value && typeof value === 'object') value = JSON.stringify(value);
+    values.push(value);
+    return `${key} = $${index + 1}`;
+  });
+  values.push(id);
+  const { rows } = await pool.query(
+    `UPDATE research_archives SET ${assignments.join(', ')}, updated_at = now()
+     WHERE id = $${values.length} RETURNING *`,
+    values
+  );
+  return rowOrNull(rows);
+}
+
+async function enqueueYearArchive({ year, cutoffYear, requestedBy = null, triggerType = 'manual' }) {
+  await ensureBackupSchema();
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query("SELECT pg_advisory_xact_lock(hashtext('researchhub_year_archive'))");
+    const active = await client.query(
+      `SELECT id, status FROM research_archives
+       WHERE year = $1
+         AND status IN ('queued', 'archiving', 'verifying',
+                        'delete_queued', 'deleting', 'restore_queued', 'restoring')
+       ORDER BY created_at DESC LIMIT 1`,
+      [year]
+    );
+    if (active.rows[0]) {
+      throw new BackupError('A yearly archive for this year is already queued or running.', {
+        status: 409,
+        code: 'ARCHIVE_ALREADY_ACTIVE',
+        details: { archive_id: active.rows[0].id, status: active.rows[0].status }
+      });
+    }
+
+    const { rows: archiveRows } = await client.query(
+      `INSERT INTO research_archives (year, cutoff_year, requested_by, status)
+       VALUES ($1, $2, $3, 'queued')
+       RETURNING *`,
+      [year, cutoffYear, requestedBy]
+    );
+    const archive = archiveRows[0];
+    const { rows: jobRows } = await client.query(
+      `INSERT INTO backup_jobs
+         (kind, trigger_type, requested_by, payload, max_attempts)
+       VALUES ('year_archive', $1, $2, $3, 3)
+       RETURNING *`,
+      [
+        triggerType,
+        requestedBy,
+        JSON.stringify({ operation: 'archive', archiveId: archive.id, year, cutoffYear })
+      ]
+    );
+    await client.query('COMMIT');
+    return { archive, job: jobRows[0] };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+async function enqueueScheduledArchives() {
+  await ensureBackupSchema();
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query("SELECT pg_advisory_xact_lock(hashtext('researchhub_year_archive'))");
+    const { rows: settingRows } = await client.query('SELECT * FROM backup_settings WHERE id = 1 FOR UPDATE');
+    const settings = settingRows[0];
+    if (!settings) {
+      await client.query('COMMIT');
+      return { enqueued: [], reason: 'settings_missing' };
+    }
+    if (!settings.archive_enabled) {
+      await client.query('COMMIT');
+      return { enqueued: [], reason: 'archive_disabled' };
+    }
+
+    const now = new Date();
+    const dueAt = settings.archive_next_run_at ? new Date(settings.archive_next_run_at) : now;
+    if (settings.archive_next_run_at && dueAt.getTime() > now.getTime()) {
+      await client.query('COMMIT');
+      return { enqueued: [], reason: 'not_due', next_run_at: settings.archive_next_run_at };
+    }
+
+    const nextRunAt = computeNextArchiveRunAt(settings, now);
+    const { rows: connectionRows } = await client.query(
+      'SELECT status FROM backup_drive_connections WHERE id = 1'
+    );
+    const connection = connectionRows[0];
+    if (!connection || connection.status !== 'connected') {
+      await client.query(
+        `UPDATE backup_settings
+         SET archive_next_run_at = $1, archive_last_run_at = now(), updated_at = now()
+         WHERE id = 1`,
+        [nextRunAt]
+      );
+      await client.query('COMMIT');
+      return {
+        enqueued: [],
+        reason: 'drive_not_connected',
+        warning: 'Scheduled yearly archiving skipped because Google Drive is not connected.',
+        next_run_at: nextRunAt
+      };
+    }
+
+    const cutoffYear = now.getUTCFullYear() - Number(settings.archive_after_years) - 1;
+    const { rows: years } = await client.query(
+      `SELECT r.year, count(*)::int AS research_count
+       FROM research r
+       WHERE r.year <= $1
+         AND r.status IN ('approved', 'rejected')
+         AND NOT EXISTS (
+           SELECT 1 FROM research_archives a
+           WHERE a.year = r.year
+             AND a.status IN ('queued', 'archiving', 'verifying', 'ready',
+                              'delete_queued', 'deleting', 'restore_queued', 'restoring')
+         )
+       GROUP BY r.year
+       ORDER BY r.year`,
+      [cutoffYear]
+    );
+
+    const enqueued = [];
+    for (const row of years) {
+      const year = Number(row.year);
+      const { rows: archiveRows } = await client.query(
+        `INSERT INTO research_archives (year, cutoff_year, status)
+         VALUES ($1, $2, 'queued')
+         RETURNING *`,
+        [year, cutoffYear]
+      );
+      const archive = archiveRows[0];
+      const { rows: jobRows } = await client.query(
+        `INSERT INTO backup_jobs
+           (kind, trigger_type, payload, dedupe_key, max_attempts)
+         VALUES ('year_archive', 'scheduled', $1, $2, 3)
+         ON CONFLICT (dedupe_key) DO NOTHING
+         RETURNING *`,
+        [
+          JSON.stringify({ operation: 'archive', archiveId: archive.id, year, cutoffYear }),
+          `scheduled:year_archive:${year}:${dueAt.toISOString()}`
+        ]
+      );
+      if (jobRows[0]) {
+        enqueued.push({ archive, job: jobRows[0] });
+      } else {
+        await client.query('DELETE FROM research_archives WHERE id = $1', [archive.id]);
+      }
+    }
+
+    await client.query(
+      `UPDATE backup_settings
+       SET archive_last_run_at = now(), archive_next_run_at = $1, updated_at = now()
+       WHERE id = 1`,
+      [nextRunAt]
+    );
+    await client.query('COMMIT');
+    return { enqueued, next_run_at: nextRunAt, cutoff_year: cutoffYear, reason: enqueued.length ? null : 'no_eligible_years' };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+async function enqueueArchiveDelete({ archiveId, approvedBy }) {
+  await ensureBackupSchema();
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const { rows: archiveRows } = await client.query(
+      'SELECT * FROM research_archives WHERE id = $1 FOR UPDATE',
+      [archiveId]
+    );
+    const archive = archiveRows[0];
+    if (!archive) {
+      throw new BackupError('Year archive not found.', { status: 404, code: 'ARCHIVE_NOT_FOUND' });
+    }
+    if (archive.status !== 'ready') {
+      throw new BackupError('Only a verified, ready archive can be approved for deletion.', {
+        status: 409,
+        code: 'ARCHIVE_NOT_READY'
+      });
+    }
+    const { rows: backupRows } = await client.query(
+      'SELECT * FROM backups WHERE id = $1 AND status = $2',
+      [archive.backup_id, 'completed']
+    );
+    if (!backupRows[0] || !backupRows[0].drive_file_id) {
+      throw new BackupError('The archive file is not available for verification.', {
+        status: 409,
+        code: 'ARCHIVE_BACKUP_UNAVAILABLE'
+      });
+    }
+
+    await client.query(
+      `UPDATE research_archives
+       SET status = 'delete_queued', approved_by = $2, approved_at = now(), error_message = NULL, updated_at = now()
+       WHERE id = $1`,
+      [archiveId, approvedBy]
+    );
+    const { rows: jobRows } = await client.query(
+      `INSERT INTO backup_jobs
+         (kind, trigger_type, requested_by, payload, max_attempts)
+       VALUES ('year_archive', 'manual', $1, $2, 1)
+       RETURNING *`,
+      [
+        approvedBy,
+        JSON.stringify({ operation: 'delete', archiveId, year: archive.year, cutoffYear: archive.cutoff_year })
+      ]
+    );
+    await client.query('COMMIT');
+    return { job: jobRows[0] };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+async function enqueueArchiveRestore({ archiveId, requestedBy }) {
+  await ensureBackupSchema();
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const { rows: archiveRows } = await client.query(
+      'SELECT * FROM research_archives WHERE id = $1 FOR UPDATE',
+      [archiveId]
+    );
+    const archive = archiveRows[0];
+    if (!archive) {
+      throw new BackupError('Year archive not found.', { status: 404, code: 'ARCHIVE_NOT_FOUND' });
+    }
+    if (archive.status !== 'completed') {
+      throw new BackupError('Only a completed archive whose research was deleted can be restored.', {
+        status: 409,
+        code: 'ARCHIVE_NOT_RESTORABLE'
+      });
+    }
+    const { rows: backupRows } = await client.query(
+      'SELECT * FROM backups WHERE id = $1 AND status = $2',
+      [archive.backup_id, 'completed']
+    );
+    if (!backupRows[0] || !backupRows[0].drive_file_id) {
+      throw new BackupError('The archive file is not available for restore.', {
+        status: 409,
+        code: 'ARCHIVE_BACKUP_UNAVAILABLE'
+      });
+    }
+
+    await client.query(
+      `UPDATE research_archives
+       SET status = 'restore_queued', error_message = NULL, updated_at = now()
+       WHERE id = $1`,
+      [archiveId]
+    );
+    const { rows: jobRows } = await client.query(
+      `INSERT INTO backup_jobs
+         (kind, trigger_type, requested_by, payload, max_attempts)
+       VALUES ('year_archive', 'manual', $1, $2, 1)
+       RETURNING *`,
+      [
+        requestedBy,
+        JSON.stringify({ operation: 'restore', archiveId, year: archive.year })
+      ]
+    );
+    await client.query('COMMIT');
+    return { job: jobRows[0] };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+async function getRecentCompletedDatabaseBackup({ sinceHours = 48 } = {}) {
+  await ensureBackupSchema();
+  const { rows } = await pool.query(
+    `SELECT * FROM backups
+     WHERE kind = 'database' AND status = 'completed'
+       AND completed_at >= now() - ($1::int * interval '1 hour')
+     ORDER BY completed_at DESC LIMIT 1`,
+    [sinceHours]
+  );
+  return rowOrNull(rows);
+}
+
 async function listRetentionCandidates({ kind, retentionCount, retentionDays, protectId = null }) {
   await ensureBackupSchema();
   const { rows } = await pool.query(
@@ -840,5 +1298,18 @@ module.exports = {
   getRestoreValidation,
   getLatestValidationForBackup,
   getRestoreValidationByJob,
+  listResearchArchives,
+  getResearchArchive,
+  getResearchArchiveByJob,
+  listArchiveEligibleYears,
+  countResearchArchivesForYear,
+  getLatestResearchArchiveForYear,
+  createResearchArchive,
+  updateResearchArchive,
+  enqueueYearArchive,
+  enqueueScheduledArchives,
+  enqueueArchiveDelete,
+  enqueueArchiveRestore,
+  getRecentCompletedDatabaseBackup,
   listRetentionCandidates
 };

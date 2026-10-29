@@ -59,6 +59,19 @@ function computeNextRunAt(settings, from = new Date()) {
   return next;
 }
 
+function computeNextArchiveRunAt(settings, from = new Date()) {
+  const month = Number(settings.archive_month || 1) - 1;
+  const day = Number(settings.archive_day || 1);
+  const hour = Number(settings.archive_hour_utc || 0);
+  let year = from.getUTCFullYear();
+  let next = new Date(Date.UTC(year, month, day, hour, 0, 0, 0));
+  if (next.getTime() <= from.getTime()) {
+    year += 1;
+    next = new Date(Date.UTC(year, month, day, hour, 0, 0, 0));
+  }
+  return next;
+}
+
 function validateSettingsInput(body, current) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     throw new BackupError('Settings payload must be an object.', { status: 400, code: 'INVALID_SETTINGS' });
@@ -72,7 +85,12 @@ function validateSettingsInput(body, current) {
     'retention_count',
     'retention_days',
     'include_storage',
-    'max_attempts'
+    'max_attempts',
+    'archive_enabled',
+    'archive_after_years',
+    'archive_month',
+    'archive_day',
+    'archive_hour_utc'
   ]);
 
   for (const key of Object.keys(body)) {
@@ -95,6 +113,11 @@ function validateSettingsInput(body, current) {
   if ('retention_count' in body) next.retention_count = intInRange(body.retention_count, 1, 365, 'retention_count');
   if ('retention_days' in body) next.retention_days = intInRange(body.retention_days, 0, 3650, 'retention_days');
   if ('max_attempts' in body) next.max_attempts = intInRange(body.max_attempts, 1, 10, 'max_attempts');
+  if ('archive_enabled' in body) next.archive_enabled = boolValue(body.archive_enabled, 'archive_enabled');
+  if ('archive_after_years' in body) next.archive_after_years = intInRange(body.archive_after_years, 1, 50, 'archive_after_years');
+  if ('archive_month' in body) next.archive_month = intInRange(body.archive_month, 1, 12, 'archive_month');
+  if ('archive_day' in body) next.archive_day = intInRange(body.archive_day, 1, 28, 'archive_day');
+  if ('archive_hour_utc' in body) next.archive_hour_utc = intInRange(body.archive_hour_utc, 0, 23, 'archive_hour_utc');
 
   if (Object.keys(next).length === 0) {
     throw new BackupError('No supported settings were provided.', { status: 400, code: 'INVALID_SETTINGS' });
@@ -125,6 +148,38 @@ function validateDeleteConfirmation(value) {
     throw new BackupError('Type DELETE to confirm deleting this backup.', {
       status: 400,
       code: 'DELETE_CONFIRMATION_REQUIRED'
+    });
+  }
+  return true;
+}
+
+function validateArchiveConfirmation(value) {
+  if (String(value || '') !== 'ARCHIVE') {
+    throw new BackupError('Type ARCHIVE to confirm creating this yearly archive.', {
+      status: 400,
+      code: 'ARCHIVE_CONFIRMATION_REQUIRED'
+    });
+  }
+  return true;
+}
+
+function validateArchiveDeleteConfirmation(value, year) {
+  const expected = `DELETE-YEAR ${year}`;
+  if (String(value || '') !== expected) {
+    throw new BackupError(`Type ${expected} to confirm deleting this year's research.`, {
+      status: 400,
+      code: 'ARCHIVE_DELETE_CONFIRMATION_REQUIRED'
+    });
+  }
+  return true;
+}
+
+function validateArchiveRestoreConfirmation(value, year) {
+  const expected = `RESTORE-YEAR ${year}`;
+  if (String(value || '') !== expected) {
+    throw new BackupError(`Type ${expected} to confirm restoring this archive.`, {
+      status: 400,
+      code: 'ARCHIVE_RESTORE_CONFIRMATION_REQUIRED'
     });
   }
   return true;
@@ -180,11 +235,16 @@ module.exports = {
   BACKUP_KINDS,
   isUuid,
   requireUuid,
+  intInRange,
   computeNextRunAt,
+  computeNextArchiveRunAt,
   validateSettingsInput,
   validateKind,
   validateRestoreConfirmation,
   validateDeleteConfirmation,
+  validateArchiveConfirmation,
+  validateArchiveDeleteConfirmation,
+  validateArchiveRestoreConfirmation,
   sanitizeRedirectPath,
   safeFileName,
   sanitizeErrorMessage,

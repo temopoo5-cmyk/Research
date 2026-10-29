@@ -21,10 +21,15 @@ const {
   validateKind,
   validateRestoreConfirmation,
   validateDeleteConfirmation,
+  validateArchiveConfirmation,
+  validateArchiveDeleteConfirmation,
+  validateArchiveRestoreConfirmation,
+  intInRange,
   requireUuid,
   safeFileName,
   sanitizeErrorMessage
 } = require('../backup/validation');
+const { cutoffYearFor } = require('../backup/archive');
 
 const router = express.Router();
 
@@ -51,9 +56,41 @@ function settingsView(settings) {
     retention_days: settings.retention_days,
     include_storage: settings.include_storage,
     max_attempts: settings.max_attempts,
+    archive_enabled: settings.archive_enabled,
+    archive_after_years: settings.archive_after_years,
+    archive_month: settings.archive_month,
+    archive_day: settings.archive_day,
+    archive_hour_utc: settings.archive_hour_utc,
+    archive_last_run_at: settings.archive_last_run_at,
+    archive_next_run_at: settings.archive_next_run_at,
     last_success_at: settings.last_success_at,
     next_run_at: settings.next_run_at,
     updated_at: settings.updated_at
+  };
+}
+
+function archiveView(archive) {
+  if (!archive) return null;
+  return {
+    id: archive.id,
+    year: archive.year,
+    cutoff_year: archive.cutoff_year,
+    status: archive.status,
+    backup_id: archive.backup_id,
+    research_count: archive.research_count,
+    author_link_count: archive.author_link_count,
+    deleted_count: archive.deleted_count,
+    restored_count: archive.restored_count,
+    approved_at: archive.approved_at,
+    deleted_at: archive.deleted_at,
+    restored_at: archive.restored_at,
+    error_message: archive.error_message,
+    file_name: archive.backup_file_name || null,
+    encrypted_size: archive.backup_encrypted_size == null ? null : Number(archive.backup_encrypted_size),
+    backup_status: archive.backup_status || null,
+    backup_completed_at: archive.backup_completed_at || null,
+    created_at: archive.created_at,
+    updated_at: archive.updated_at
   };
 }
 
@@ -205,6 +242,7 @@ router.get('/cron', authorizeCron, async (req, res) => {
     await ensureBackupSchema();
     const stale = await store.requeueStaleJobs();
     const scheduled = await store.enqueueScheduledJobs();
+    const scheduledArchives = await store.enqueueScheduledArchives();
     if (scheduled.warning) {
       await store.logAudit({
         action: 'backup.scheduled.skipped',
@@ -214,23 +252,38 @@ router.get('/cron', authorizeCron, async (req, res) => {
         details: { reason: scheduled.reason || 'warning', warning: scheduled.warning }
       });
     }
-    if (Array.isArray(scheduled.enqueued) && scheduled.enqueued.length) {
+    if (scheduledArchives.warning) {
+      await store.logAudit({
+        action: 'archive.scheduled.skipped',
+        targetType: 'settings',
+        targetId: '1',
+        req,
+        details: { reason: scheduledArchives.reason || 'warning', warning: scheduledArchives.warning }
+      });
+    }
+    const archiveJobs = (scheduledArchives.enqueued || []).map((entry) => entry.job);
+    if ((Array.isArray(scheduled.enqueued) && scheduled.enqueued.length) || archiveJobs.length) {
       await store.logAudit({
         action: 'backup.scheduled.enqueued',
         targetType: 'job',
-        targetId: scheduled.enqueued.map((job) => job.id).join(','),
+        targetId: [...(scheduled.enqueued || []), ...archiveJobs].map((job) => job.id).join(','),
         req,
-        details: { count: scheduled.enqueued.length, kinds: scheduled.enqueued.map((job) => job.kind) }
+        details: {
+          count: (scheduled.enqueued || []).length + archiveJobs.length,
+          kinds: [...(scheduled.enqueued || []), ...archiveJobs].map((job) => job.kind)
+        }
       });
       await triggerWorkerWebhook();
     }
     res.json({
       ok: true,
       requeued_stale: stale.length,
-      enqueued: (scheduled.enqueued || []).map(jobView),
+      enqueued: [...(scheduled.enqueued || []), ...archiveJobs].map(jobView),
+      enqueued_archives: archiveJobs.map(jobView),
       next_run_at: scheduled.next_run_at || null,
-      warning: scheduled.warning || null,
-      reason: scheduled.reason || null
+      next_archive_run_at: scheduledArchives.next_run_at || null,
+      warning: scheduled.warning || scheduledArchives.warning || null,
+      reason: scheduled.reason || scheduledArchives.reason || null
     });
   } catch (err) {
     const publicError = toPublicError(err);
@@ -267,10 +320,11 @@ router.get('/overview', async (req, res) => {
     if (connection && connection.status === 'needs_reconnect') warnings.push('Google Drive authorization expired. Reconnect Google Drive.');
     if (!connection) warnings.push('Google Drive is not connected.');
     if (settings.auto_enabled && !connection) warnings.push('Automatic backups are enabled, but Google Drive is not connected.');
+    if (settings.archive_enabled && !connection) warnings.push('Yearly archiving is enabled, but Google Drive is not connected.');
     if (settings.include_storage && !isStorageConfigured(config)) warnings.push('Storage backups are enabled in settings, but Supabase Storage is not configured.');
-    if (settings.auto_enabled && !config.cronSecret) warnings.push('CRON_SECRET is not set. Vercel cron requests will be rejected.');
-    if ((settings.auto_enabled || activeJobs.length > 0) && !heartbeat) warnings.push('No backup worker has checked in yet. Configure the worker or GitHub Actions workflow.');
-    if (heartbeat && settings.auto_enabled) {
+    if ((settings.auto_enabled || settings.archive_enabled) && !config.cronSecret) warnings.push('CRON_SECRET is not set. Vercel cron requests will be rejected.');
+    if ((settings.auto_enabled || settings.archive_enabled || activeJobs.length > 0) && !heartbeat) warnings.push('No backup worker has checked in yet. Configure the worker or GitHub Actions workflow.');
+    if (heartbeat && (settings.auto_enabled || settings.archive_enabled)) {
       const seen = new Date(heartbeat.last_seen_at).getTime();
       if (Number.isFinite(seen) && Date.now() - seen > FAILURE_WINDOW_MS) warnings.push('The backup worker has not checked in for over 26 hours.');
     }
@@ -289,6 +343,7 @@ router.get('/overview', async (req, res) => {
       last_success: backupView(lastSuccess),
       last_success_at: settings.last_success_at || (lastSuccess ? lastSuccess.completed_at : null),
       next_scheduled_at: settings.auto_enabled ? settings.next_run_at : null,
+      next_archive_scheduled_at: settings.archive_enabled ? settings.archive_next_run_at : null,
       active_jobs: activeJobs.map(jobView),
       recent_failures: failures.map(jobView),
       worker: heartbeat ? {
@@ -358,6 +413,133 @@ router.get('/', async (req, res) => {
     const limit = intLimit(req.query.limit, 100, 200);
     const backups = await store.listBackups(limit);
     res.json({ backups: backups.map(backupView) });
+  } catch (err) {
+    const publicError = toPublicError(err);
+    res.status(publicError.status).json(publicError.body);
+  }
+});
+
+router.get('/archives', async (req, res) => {
+  noStore(res);
+  try {
+    const limit = intLimit(req.query.limit, 100, 200);
+    const settings = await store.getSettings();
+    const cutoffYear = cutoffYearFor(new Date(), settings.archive_after_years);
+    const [archives, eligibleYears] = await Promise.all([
+      store.listResearchArchives(limit),
+      store.listArchiveEligibleYears(cutoffYear)
+    ]);
+    res.json({
+      archives: archives.map(archiveView),
+      eligible_years: eligibleYears.map((row) => ({
+        year: row.year,
+        research_count: row.research_count,
+        latest_archive_id: row.latest_archive_id,
+        latest_archive_status: row.latest_archive_status
+      })),
+      cutoff_year: cutoffYear
+    });
+  } catch (err) {
+    const publicError = toPublicError(err);
+    res.status(publicError.status).json(publicError.body);
+  }
+});
+
+router.post('/archives', async (req, res) => {
+  noStore(res);
+  try {
+    validateArchiveConfirmation(req.body && req.body.confirm);
+    const settings = await store.getSettings();
+    const cutoffYear = cutoffYearFor(new Date(), settings.archive_after_years);
+    const year = intInRange(req.body && req.body.year, 1900, cutoffYear, 'year');
+    const config = getConfig();
+    assertEncryptionConfigured(config);
+    const connection = await store.getConnection();
+    if (!connection || connection.status !== 'connected') {
+      throw new BackupError('Connect Google Drive before creating a yearly archive.', {
+        status: 409,
+        code: 'DRIVE_NOT_CONNECTED'
+      });
+    }
+
+    const queued = await store.enqueueYearArchive({
+      year,
+      cutoffYear,
+      requestedBy: req.user.id,
+      triggerType: 'manual'
+    });
+    await store.logAudit({
+      adminId: req.user.id,
+      action: 'archive.requested',
+      targetType: 'research_archive',
+      targetId: queued.archive.id,
+      req,
+      details: { year, cutoff_year: cutoffYear }
+    });
+    await triggerWorkerWebhook();
+    res.status(202).json({
+      archive: archiveView(queued.archive),
+      job: jobView(queued.job),
+      message: 'Yearly archive queued. The backup worker will export, encrypt, upload, and verify it.'
+    });
+  } catch (err) {
+    const publicError = toPublicError(err);
+    res.status(publicError.status).json(publicError.body);
+  }
+});
+
+router.post('/archives/:id/approve-delete', async (req, res) => {
+  noStore(res);
+  try {
+    const id = requireUuid(req.params.id, 'archive id');
+    const archive = await store.getResearchArchive(id);
+    if (!archive) {
+      throw new BackupError('Year archive not found.', { status: 404, code: 'ARCHIVE_NOT_FOUND' });
+    }
+    validateArchiveDeleteConfirmation(req.body && req.body.confirm, archive.year);
+    const queued = await store.enqueueArchiveDelete({ archiveId: id, approvedBy: req.user.id });
+    await store.logAudit({
+      adminId: req.user.id,
+      action: 'archive.delete_approved',
+      targetType: 'research_archive',
+      targetId: id,
+      req,
+      details: { year: archive.year, research_count: archive.research_count }
+    });
+    await triggerWorkerWebhook();
+    res.status(202).json({
+      job: jobView(queued.job),
+      message: 'Approved. The worker will re-verify the archive and current records before deleting archived research.'
+    });
+  } catch (err) {
+    const publicError = toPublicError(err);
+    res.status(publicError.status).json(publicError.body);
+  }
+});
+
+router.post('/archives/:id/restore', async (req, res) => {
+  noStore(res);
+  try {
+    const id = requireUuid(req.params.id, 'archive id');
+    const archive = await store.getResearchArchive(id);
+    if (!archive) {
+      throw new BackupError('Year archive not found.', { status: 404, code: 'ARCHIVE_NOT_FOUND' });
+    }
+    validateArchiveRestoreConfirmation(req.body && req.body.confirm, archive.year);
+    const queued = await store.enqueueArchiveRestore({ archiveId: id, requestedBy: req.user.id });
+    await store.logAudit({
+      adminId: req.user.id,
+      action: 'archive.restore_requested',
+      targetType: 'research_archive',
+      targetId: id,
+      req,
+      details: { year: archive.year }
+    });
+    await triggerWorkerWebhook();
+    res.status(202).json({
+      job: jobView(queued.job),
+      message: 'Restore queued. Existing research codes will be skipped.'
+    });
   } catch (err) {
     const publicError = toPublicError(err);
     res.status(publicError.status).json(publicError.body);
@@ -516,10 +698,16 @@ router.post('/:id/validate', async (req, res) => {
     const id = requireUuid(req.params.id, 'backup id');
     validateRestoreConfirmation(req.body && req.body.confirm);
     const backup = await store.getBackupById(id);
-    if (!backup || backup.status !== 'completed') {
-      throw new BackupError('Only completed backups can be validated.', { status: 404, code: 'BACKUP_NOT_FOUND' });
-    }
-    const config = getConfig();
+      if (!backup || backup.status !== 'completed') {
+        throw new BackupError('Only completed backups can be validated.', { status: 404, code: 'BACKUP_NOT_FOUND' });
+      }
+      if (backup.kind === 'year_archive') {
+        throw new BackupError('Use the yearly archive restore action for archive files.', {
+          status: 409,
+          code: 'ARCHIVE_RESTORE_REQUIRED'
+        });
+      }
+      const config = getConfig();
     if (backup.kind === 'database' && !config.stagingDatabaseUrl) {
       throw new BackupError(
         'RESTORE_STAGING_DATABASE_URL is not configured. A separate staging database is required to validate a database restore safely.',
@@ -562,13 +750,19 @@ router.post('/:id/restore-request', async (req, res) => {
       });
     }
     const backup = await store.getBackupById(id);
-    if (!backup || backup.status !== 'completed') {
-      throw new BackupError('Only completed backups can be selected for recovery.', {
-        status: 404,
-        code: 'BACKUP_NOT_FOUND'
-      });
-    }
-    const validation = await store.getLatestValidationForBackup(id);
+      if (!backup || backup.status !== 'completed') {
+        throw new BackupError('Only completed backups can be selected for recovery.', {
+          status: 404,
+          code: 'BACKUP_NOT_FOUND'
+        });
+      }
+      if (backup.kind === 'year_archive') {
+        throw new BackupError('Use the yearly archive restore action for archive files.', {
+          status: 409,
+          code: 'ARCHIVE_RESTORE_REQUIRED'
+        });
+      }
+      const validation = await store.getLatestValidationForBackup(id);
     const readyForCutover = Boolean(validation && validation.status === 'completed' && validation.checks && validation.checks.ok);
 
     await store.logAudit({
@@ -629,11 +823,17 @@ router.delete('/:id', async (req, res) => {
     if (!backup || backup.status === 'deleted') {
       throw new BackupError('Backup not found.', { status: 404, code: 'BACKUP_NOT_FOUND' });
     }
-    if (['uploading', 'verifying'].includes(backup.status)) {
-      throw new BackupError('An in-progress backup cannot be deleted.', { status: 409, code: 'BACKUP_IN_PROGRESS' });
-    }
+      if (['uploading', 'verifying'].includes(backup.status)) {
+        throw new BackupError('An in-progress backup cannot be deleted.', { status: 409, code: 'BACKUP_IN_PROGRESS' });
+      }
+      if (backup.kind === 'year_archive') {
+        throw new BackupError('Yearly archive files are retained and cannot be deleted from backup history.', {
+          status: 409,
+          code: 'ARCHIVE_BACKUP_PROTECTED'
+        });
+      }
 
-    if (backup.drive_file_id || backup.manifest_drive_file_id) {
+      if (backup.drive_file_id || backup.manifest_drive_file_id) {
       const ctx = await getDriveContext();
       await deleteBackupArtifacts(ctx, backup);
     }

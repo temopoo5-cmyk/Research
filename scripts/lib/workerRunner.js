@@ -18,6 +18,29 @@ function log(message, meta = {}) {
   console.log(`[backup-worker] ${message}${suffix}`);
 }
 
+async function markArchiveFailedForJob(job, error) {
+  if (job.kind !== 'year_archive') return;
+  try {
+    const payload = job.payload || {};
+    const archive = payload.archiveId
+      ? await store.getResearchArchive(payload.archiveId)
+      : await store.getResearchArchiveByJob(job.id);
+    if (archive && !['completed', 'restored', 'ready'].includes(archive.status)) {
+      const status = payload.operation === 'delete'
+        ? 'ready'
+        : payload.operation === 'restore'
+          ? 'completed'
+          : 'failed';
+      await store.updateResearchArchive(archive.id, {
+        status,
+        error_message: safeErrorMessage(error)
+      });
+    }
+  } catch (_) {
+    // The job failure is already recorded; archive bookkeeping is best effort.
+  }
+}
+
 async function markValidationFailedForJob(job, error) {
   if (job.kind !== 'restore_validation') return;
   try {
@@ -67,6 +90,25 @@ async function runWorker({ maxJobs = 1, schedule = false, validateBackupId = nul
     } catch (err) {
       summary.scheduled = { error: safeErrorMessage(err) };
       log('scheduled backup enqueue failed', { error: safeErrorMessage(err) });
+    }
+
+    try {
+      summary.scheduled_archives = await store.enqueueScheduledArchives();
+      if (summary.scheduled_archives.warning) {
+        log('scheduled archive warning', { warning: summary.scheduled_archives.warning });
+        await store.logAudit({
+          action: 'archive.scheduled.skipped',
+          targetType: 'settings',
+          targetId: '1',
+          details: {
+            reason: summary.scheduled_archives.reason || 'warning',
+            warning: summary.scheduled_archives.warning
+          }
+        });
+      }
+    } catch (err) {
+      summary.scheduled_archives = { error: safeErrorMessage(err) };
+      log('scheduled archive enqueue failed', { error: safeErrorMessage(err) });
     }
   }
 
@@ -146,6 +188,7 @@ async function runWorker({ maxJobs = 1, schedule = false, validateBackupId = nul
       });
       if (!failure || !failure.retryScheduled) {
         await markValidationFailedForJob(job, err);
+        await markArchiveFailedForJob(job, err);
       }
       log('job failed', {
         id: job.id,

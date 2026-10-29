@@ -40,6 +40,13 @@ CREATE TABLE IF NOT EXISTS backup_settings (
   retention_days    INTEGER NOT NULL DEFAULT 0 CHECK (retention_days BETWEEN 0 AND 3650),
   include_storage   BOOLEAN NOT NULL DEFAULT false,
   max_attempts      SMALLINT NOT NULL DEFAULT 3 CHECK (max_attempts BETWEEN 1 AND 10),
+  archive_enabled   BOOLEAN NOT NULL DEFAULT false,
+  archive_after_years SMALLINT NOT NULL DEFAULT 5 CHECK (archive_after_years BETWEEN 1 AND 50),
+  archive_month     SMALLINT NOT NULL DEFAULT 1 CHECK (archive_month BETWEEN 1 AND 12),
+  archive_day       SMALLINT NOT NULL DEFAULT 1 CHECK (archive_day BETWEEN 1 AND 28),
+  archive_hour_utc  SMALLINT NOT NULL DEFAULT 3 CHECK (archive_hour_utc BETWEEN 0 AND 23),
+  archive_last_run_at TIMESTAMPTZ,
+  archive_next_run_at TIMESTAMPTZ,
   last_success_at   TIMESTAMPTZ,
   next_run_at       TIMESTAMPTZ,
   updated_by        BIGINT REFERENCES users(id) ON DELETE SET NULL,
@@ -49,7 +56,7 @@ INSERT INTO backup_settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS backup_jobs (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  kind            TEXT NOT NULL CHECK (kind IN ('database', 'storage', 'restore_validation')),
+  kind            TEXT NOT NULL CHECK (kind IN ('database', 'storage', 'restore_validation', 'year_archive')),
   trigger_type    TEXT NOT NULL CHECK (trigger_type IN ('manual', 'scheduled', 'retry')),
   requested_by    BIGINT REFERENCES users(id) ON DELETE SET NULL,
   status          TEXT NOT NULL DEFAULT 'queued' CHECK (status IN ('queued', 'running', 'completed', 'failed', 'canceled')),
@@ -74,7 +81,7 @@ CREATE TABLE IF NOT EXISTS backups (
   id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   job_id                UUID UNIQUE REFERENCES backup_jobs(id) ON DELETE SET NULL,
   set_id                UUID,
-  kind                  TEXT NOT NULL CHECK (kind IN ('database', 'storage')),
+  kind                  TEXT NOT NULL CHECK (kind IN ('database', 'storage', 'year_archive')),
   trigger_type          TEXT NOT NULL,
   status                TEXT NOT NULL DEFAULT 'uploading' CHECK (status IN ('uploading', 'verifying', 'completed', 'failed', 'deleted')),
   drive_file_id         TEXT UNIQUE,
@@ -103,6 +110,33 @@ CREATE TABLE IF NOT EXISTS backups (
 CREATE INDEX IF NOT EXISTS idx_backups_created ON backups (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_backups_status ON backups (status);
 CREATE INDEX IF NOT EXISTS idx_backups_kind_trigger ON backups (kind, trigger_type);
+
+CREATE TABLE IF NOT EXISTS research_archives (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  year              INTEGER NOT NULL,
+  cutoff_year       INTEGER NOT NULL,
+  status            TEXT NOT NULL DEFAULT 'queued' CHECK (status IN (
+                      'queued', 'archiving', 'verifying', 'ready',
+                      'delete_queued', 'deleting', 'completed',
+                      'restore_queued', 'restoring', 'restored', 'failed'
+                    )),
+  backup_id         UUID UNIQUE REFERENCES backups(id) ON DELETE SET NULL,
+  research_count    INTEGER NOT NULL DEFAULT 0,
+  author_link_count INTEGER NOT NULL DEFAULT 0,
+  deleted_count     INTEGER NOT NULL DEFAULT 0,
+  restored_count    INTEGER NOT NULL DEFAULT 0,
+  manifest          JSONB NOT NULL DEFAULT '{}'::jsonb,
+  requested_by      BIGINT REFERENCES users(id) ON DELETE SET NULL,
+  approved_by       BIGINT REFERENCES users(id) ON DELETE SET NULL,
+  approved_at       TIMESTAMPTZ,
+  deleted_at        TIMESTAMPTZ,
+  restored_at       TIMESTAMPTZ,
+  error_message     TEXT,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_research_archives_year ON research_archives (year, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_research_archives_status ON research_archives (status);
 
 CREATE TABLE IF NOT EXISTS backup_restore_validations (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -152,3 +186,19 @@ BEGIN
     ALTER TABLE backups ALTER COLUMN job_id DROP NOT NULL;
   END IF;
 END $$;
+
+ALTER TABLE backup_settings ADD COLUMN IF NOT EXISTS archive_enabled BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE backup_settings ADD COLUMN IF NOT EXISTS archive_after_years SMALLINT NOT NULL DEFAULT 5 CHECK (archive_after_years BETWEEN 1 AND 50);
+ALTER TABLE backup_settings ADD COLUMN IF NOT EXISTS archive_month SMALLINT NOT NULL DEFAULT 1 CHECK (archive_month BETWEEN 1 AND 12);
+ALTER TABLE backup_settings ADD COLUMN IF NOT EXISTS archive_day SMALLINT NOT NULL DEFAULT 1 CHECK (archive_day BETWEEN 1 AND 28);
+ALTER TABLE backup_settings ADD COLUMN IF NOT EXISTS archive_hour_utc SMALLINT NOT NULL DEFAULT 3 CHECK (archive_hour_utc BETWEEN 0 AND 23);
+ALTER TABLE backup_settings ADD COLUMN IF NOT EXISTS archive_last_run_at TIMESTAMPTZ;
+ALTER TABLE backup_settings ADD COLUMN IF NOT EXISTS archive_next_run_at TIMESTAMPTZ;
+
+ALTER TABLE backup_jobs DROP CONSTRAINT IF EXISTS backup_jobs_kind_check;
+ALTER TABLE backup_jobs ADD CONSTRAINT backup_jobs_kind_check
+  CHECK (kind IN ('database', 'storage', 'restore_validation', 'year_archive'));
+
+ALTER TABLE backups DROP CONSTRAINT IF EXISTS backups_kind_check;
+ALTER TABLE backups ADD CONSTRAINT backups_kind_check
+  CHECK (kind IN ('database', 'storage', 'year_archive'));
