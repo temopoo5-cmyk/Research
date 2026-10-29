@@ -260,14 +260,6 @@ export default function AdminBackups() {
     setError('');
     try {
       const payload = {
-        auto_enabled: Boolean(settingsForm.auto_enabled),
-        frequency: settingsForm.frequency,
-        hour_utc: Number(settingsForm.hour_utc),
-        weekday: Number(settingsForm.weekday),
-        retention_count: Number(settingsForm.retention_count),
-        retention_days: Number(settingsForm.retention_days),
-        include_storage: Boolean(settingsForm.include_storage),
-        max_attempts: Number(settingsForm.max_attempts),
         archive_enabled: Boolean(settingsForm.archive_enabled),
         archive_after_years: Number(settingsForm.archive_after_years),
         archive_month: Number(settingsForm.archive_month),
@@ -277,7 +269,7 @@ export default function AdminBackups() {
       const response = await axios.put(`${API}/backups/settings`, payload);
       setSettingsForm(response.data.settings);
       settingsDirtyRef.current = false;
-        setNotice('Backup settings saved.');
+      setNotice('Backup settings saved.');
       await load();
     } catch (err) {
       setError(err.response?.data?.error || 'Unable to save backup settings.');
@@ -535,85 +527,16 @@ export default function AdminBackups() {
 
       <div className="admin-panel">
         <div className="admin-panel-head">
-          <h2 className="admin-panel-title"><CalendarClock className="h-4 w-4 text-emerald-brand" /> Automatic backups</h2>
-          {settings && <Badge variant={settings.auto_enabled ? 'success' : 'secondary'}>{settings.auto_enabled ? 'Enabled' : 'Disabled'}</Badge>}
+          <h2 className="admin-panel-title"><CalendarClock className="h-4 w-4 text-emerald-brand" /> Yearly archive schedule</h2>
+          {settingsForm && <Badge variant={settingsForm.archive_enabled ? 'success' : 'secondary'}>{settingsForm.archive_enabled ? 'Enabled' : 'Disabled'}</Badge>}
         </div>
         <form onSubmit={saveSettings} className="admin-panel-body space-y-5">
           {!settingsForm ? (
             <p className="text-[13.5px] text-muted-green">Loading settings...</p>
           ) : (
             <>
-              <label className="flex items-center gap-3 text-[13.5px] font-semibold text-forest">
-                <Checkbox checked={Boolean(settingsForm.auto_enabled)} onChange={(event) => updateSettings({ auto_enabled: event.target.checked })} />
-                Enable automatic backups
-              </label>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="space-y-2">
-                  <Label>Frequency</Label>
-                  <Select value={settingsForm.frequency} onValueChange={(value) => updateSettings({ frequency: value })}>
-                    <SelectTrigger className="rounded-xl border-[#DCEBE5] bg-ivory"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="daily">Daily</SelectItem>
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Hour (UTC)</Label>
-                  <Select value={String(settingsForm.hour_utc)} onValueChange={(value) => updateSettings({ hour_utc: Number(value) })}>
-                    <SelectTrigger className="rounded-xl border-[#DCEBE5] bg-ivory"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 24 }).map((_, hour) => (
-                        <SelectItem key={hour} value={String(hour)}>{String(hour).padStart(2, '0')}:00 UTC</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Weekday</Label>
-                  <Select value={String(settingsForm.weekday)} onValueChange={(value) => updateSettings({ weekday: Number(value) })} disabled={settingsForm.frequency !== 'weekly'}>
-                    <SelectTrigger className="rounded-xl border-[#DCEBE5] bg-ivory"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day, index) => (
-                        <SelectItem key={day} value={String(index)}>{day}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Max attempts</Label>
-                  <Input type="number" min="1" max="10" value={settingsForm.max_attempts} onChange={(event) => updateSettings({ max_attempts: Number(event.target.value) })} className="rounded-xl border-[#DCEBE5] bg-ivory" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Keep newest</Label>
-                  <Input type="number" min="1" max="365" value={settingsForm.retention_count} onChange={(event) => updateSettings({ retention_count: Number(event.target.value) })} className="rounded-xl border-[#DCEBE5] bg-ivory" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Delete after (days)</Label>
-                  <Input type="number" min="0" max="3650" value={settingsForm.retention_days} onChange={(event) => updateSettings({ retention_days: Number(event.target.value) })} className="rounded-xl border-[#DCEBE5] bg-ivory" />
-                  <p className="text-[11.5px] text-[#8AA79E]">0 disables age-based retention. Manual backups are kept.</p>
-                </div>
-                <label className="flex items-end gap-3 pb-2 text-[13.5px] font-semibold text-forest">
-                  <Checkbox checked={Boolean(settingsForm.include_storage)} onChange={(event) => updateSettings({ include_storage: event.target.checked })} />
-                  Include Supabase Storage
-                </label>
-                <div className="flex items-end pb-1">
-                  <Button type="submit" className="gradient-btn w-full rounded-full" disabled={busy === 'settings'}>
-                    {busy === 'settings' ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />} Save settings
-                  </Button>
-                </div>
-              </div>
-
               <div className="space-y-4 rounded-2xl border border-[#E6EDE9] bg-ivory p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div>
-                    <p className="text-[13.5px] font-bold text-forest">Yearly research archives</p>
-                    <p className="text-[12px] text-[#8AA79E]">Keep the current year plus previous years, then archive older approved and rejected research.</p>
-                  </div>
-                  <Badge variant={settingsForm.archive_enabled ? 'success' : 'secondary'}>
-                    {settingsForm.archive_enabled ? 'Enabled' : 'Disabled'}
-                  </Badge>
-                </div>
+                <p className="text-[12px] text-[#8AA79E]">Keep the current year plus previous years, then archive older approved and rejected research.</p>
                 <label className="flex items-center gap-3 text-[13.5px] font-semibold text-forest">
                   <Checkbox checked={Boolean(settingsForm.archive_enabled)} onChange={(event) => updateSettings({ archive_enabled: event.target.checked })} />
                   Enable yearly archives
@@ -664,7 +587,7 @@ export default function AdminBackups() {
               </div>
 
               <p className="text-[12px] text-[#8AA79E]">
-                The scheduler only queues work. A dedicated worker (GitHub Actions or a long-running host) runs pg_dump and uploads to Google Drive.
+                The scheduler only queues work. A dedicated worker exports, encrypts, uploads, and verifies archives in Google Drive.
               </p>
             </>
           )}
